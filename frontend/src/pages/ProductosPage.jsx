@@ -293,11 +293,12 @@ export default function ProductosPage() {
   const activeCount = productos.filter((p) => p.activo).length;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-indigo-500 selection:text-white">
+    <div className="flex min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-indigo-500 selection:text-white">
       {/* Barra de navegación */}
       <Navigation />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="flex-1 min-w-0">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* ENCABEZADO DE SECCIÓN */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <div>
@@ -1053,6 +1054,7 @@ export default function ProductosPage() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

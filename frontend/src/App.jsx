@@ -7,6 +7,11 @@ import DashboardPage from "./pages/DashboardPage";
 import EmployeePage from "./pages/EmployeePage";
 import ProductosPage from "./pages/ProductosPage";
 import KardexPage from "./pages/KardexPage";
+import PuntoVentaPage from "./pages/PuntoVentaPage";
+import CotizacionesPage from "./pages/CotizacionesPage";
+import AuditoriaPage from "./pages/AuditoriaPage";
+import ClientesPage from "./pages/ClientesPage";
+import CierreCajaPage from "./pages/CierreCajaPage";
 
 // 🔒 Ruta protegida — Si no existe el token físico en el navegador, se expulsa inmediatamente
 function PrivateRoute({ children }) {
@@ -36,9 +41,9 @@ function AdminRoute({ children }) {
   const { user } = useAuth();
   const tokenExistente = !!localStorage.getItem("token");
 
-  // 1. Si no hay token, al login de cabeza
-  if (!tokenExistente) {
-    return <Navigate to="/login" replace />;
+  // 1. Si no hay token o no es admin, lo rebota al catálogo
+  if (!tokenExistente || (user && user.role !== "admin")) {
+    return <Navigate to="/inventario/productos" replace />;
   }
 
   // 2. Si el token existe pero el objeto 'user' aún está cargando en React, congelamos la UI un instante
@@ -48,11 +53,6 @@ function AdminRoute({ children }) {
         Verificando nivel de acceso...
       </div>
     );
-  }
-
-  // 3. ¡CONTROL DE ACCESO!: Si el rol NO es admin, lo rebota de inmediato al catálogo de productos
-  if (user.role !== "admin") {
-    return <Navigate to="/inventario/productos" replace />;
   }
 
   return children;
@@ -90,9 +90,9 @@ export default function App() {
         <Route
           path="/register"
           element={
-            <PublicRoute>
+            <AdminRoute>
               <RegisterPage />
-            </PublicRoute>
+            </AdminRoute>
           }
         />
 
@@ -102,6 +102,54 @@ export default function App() {
           element={
             <PrivateRoute>
               <DashboardPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/pos"
+          element={
+            <PrivateRoute>
+              <PuntoVentaPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/cotizaciones"
+          element={
+            <PrivateRoute>
+              <CotizacionesPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/usuarios"
+          element={
+            <AdminRoute>
+              <RegisterPage />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/auditoria"
+          element={
+            <AdminRoute>
+              <AuditoriaPage />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/clientes"
+          element={
+            <PrivateRoute>
+              <ClientesPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/cierre-caja"
+          element={
+            <PrivateRoute>
+              <CierreCajaPage />
             </PrivateRoute>
           }
         />
@@ -123,7 +171,6 @@ export default function App() {
             </PrivateRoute>
           }
         />
-        {/* 🔒 AQUÍ ESTÁ EL CAMBIO: Ahora envuelto con AdminRoute */}
         <Route
           path="/inventario/kardex"
           element={

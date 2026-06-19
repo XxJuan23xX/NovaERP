@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
                 'name'     => 'Administrador NovaERP',
                 'password' => Hash::make('admin123'),
                 'role'     => 'admin',
+                'sucursal' => 'Matriz',
             ]
         );
 
@@ -35,6 +36,7 @@ class DatabaseSeeder extends Seeder
                 'name'     => 'Empleado Ventas',
                 'password' => Hash::make('empleado123'),
                 'role'     => 'empleado',
+                'sucursal' => 'Sucursal Norte',
             ]
         );
 
