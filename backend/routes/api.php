@@ -19,6 +19,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Registro de personal (exclusivo para Administradores)
     Route::middleware('role:admin')->group(function () {
         Route::post('/register', [AuthController::class, 'register']);
+        Route::get('/users', [AuthController::class, 'index']);
+        Route::patch('/users/{id}/toggle-status', [AuthController::class, 'toggleStatus']);
     });
 
     // Usuario autenticado

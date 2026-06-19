@@ -109,4 +109,49 @@ class AuthController extends Controller
             'message' => 'Sesión cerrada exitosamente y token revocado'
         ]);
     }
+
+    /**
+     * Get all users.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function index()
+    {
+        $users = User::all();
+        return response()->json([
+            'status' => 'success',
+            'data' => $users
+        ]);
+    }
+
+    /**
+     * Toggle user active status.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function toggleStatus($id)
+    {
+        $user = User::findOrFail($id);
+        
+        // Prevent admin from disabling their own account
+        if ($user->id === Auth::id()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No puedes desactivar tu propia cuenta'
+            ], 400);
+        }
+
+        $user->activo = !$user->activo;
+        $user->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Estado del usuario actualizado exitosamente',
+            'data' => [
+                'id' => $user->id,
+                'activo' => $user->activo
+            ]
+        ]);
+    }
 }
