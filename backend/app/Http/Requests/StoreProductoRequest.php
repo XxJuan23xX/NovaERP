@@ -21,7 +21,6 @@ class StoreProductoRequest extends FormRequest
     {
         return [
             'sku'            => 'required|string|max:50|unique:productos,sku',
-            'codigo_barras'  => 'nullable|string|max:100|unique:productos,codigo_barras',
             'nombre'         => 'required|string|max:200',
             'descripcion'    => 'nullable|string|max:500',
             'categoria_id'   => 'required|integer|exists:categorias,id',
@@ -42,7 +41,6 @@ class StoreProductoRequest extends FormRequest
         return [
             'sku.required'          => 'El SKU es obligatorio.',
             'sku.unique'            => 'Ya existe un producto con ese SKU.',
-            'codigo_barras.unique'  => 'Ya existe un producto con ese código de barras.',
             'nombre.required'       => 'El nombre del producto es obligatorio.',
             'categoria_id.required' => 'Debe seleccionar una categoría.',
             'categoria_id.exists'   => 'La categoría seleccionada no existe.',

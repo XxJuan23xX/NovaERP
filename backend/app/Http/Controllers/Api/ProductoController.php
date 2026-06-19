@@ -35,24 +35,24 @@ class ProductoController extends Controller
         // ─── Columnas a seleccionar según el rol ────────────────────────────
         // El empleado NUNCA recibe precio_compra, ni siquiera en el objeto PHP.
         $columnas = $isAdmin
-            ? ['id', 'sku', 'codigo_barras', 'nombre', 'descripcion',
+            ? ['id', 'sku', 'nombre', 'descripcion',
                'categoria_id', 'marca_id', 'precio_compra', 'precio_venta',
                'stock_minimo', 'unidad_medida', 'activo', 'created_at', 'updated_at']
-            : ['id', 'sku', 'codigo_barras', 'nombre', 'descripcion',
+            : ['id', 'sku', 'nombre', 'descripcion',
                'categoria_id', 'marca_id', 'precio_venta',
                'stock_minimo', 'unidad_medida', 'activo', 'created_at', 'updated_at'];
 
         // ─── Query base ──────────────────────────────────────────────────────
         $query = Producto::select($columnas)
             ->with(['categoria:id,nombre', 'marca:id,nombre'])
+            ->withSum('almacenes as stock', 'producto_almacen.stock_actual')
             ->where('activo', true);
 
-        // ─── Búsqueda por texto (nombre, SKU, código de barras) ─────────────
+        // ─── Búsqueda por texto (nombre, SKU) ────────────────────────────────
         if ($busqueda = $request->query('busqueda')) {
             $query->where(function ($q) use ($busqueda) {
                 $q->where('nombre', 'like', "%{$busqueda}%")
-                  ->orWhere('sku', 'like', "%{$busqueda}%")
-                  ->orWhere('codigo_barras', 'like', "%{$busqueda}%");
+                  ->orWhere('sku', 'like', "%{$busqueda}%");
             });
         }
 
@@ -67,9 +67,8 @@ class ProductoController extends Controller
         // ─── Ordenamiento ────────────────────────────────────────────────────
         $query->orderBy('nombre', 'asc');
 
-        // ─── Paginación ──────────────────────────────────────────────────────
-        $perPage = min($request->integer('per_page', 15), 100); // Máximo 100 por página
-        $productos = $query->paginate($perPage);
+        // ─── Obtener todos los productos (Paginación local en frontend) ─────
+        $productos = $query->get();
 
         return ProductoResource::collection($productos);
     }
@@ -92,10 +91,10 @@ class ProductoController extends Controller
 
         // ─── Columnas según rol (doble capa de seguridad) ───────────────────
         $columnas = $isAdmin
-            ? ['id', 'sku', 'codigo_barras', 'nombre', 'descripcion',
+            ? ['id', 'sku', 'nombre', 'descripcion',
                'categoria_id', 'marca_id', 'precio_compra', 'precio_venta',
                'stock_minimo', 'unidad_medida', 'activo', 'created_at', 'updated_at']
-            : ['id', 'sku', 'codigo_barras', 'nombre', 'descripcion',
+            : ['id', 'sku', 'nombre', 'descripcion',
                'categoria_id', 'marca_id', 'precio_venta',
                'stock_minimo', 'unidad_medida', 'activo', 'created_at', 'updated_at'];
 
@@ -105,6 +104,7 @@ class ProductoController extends Controller
                 'marca:id,nombre',
                 'almacenes', // Stock por almacén visible para ambos roles (solo lectura)
             ])
+            ->withSum('almacenes as stock', 'producto_almacen.stock_actual')
             ->findOrFail($id);
 
         return response()->json([
@@ -119,15 +119,78 @@ class ProductoController extends Controller
      * Crea un nuevo producto en el catálogo.
      * Acceso: SOLO admin (bloqueado por middleware 'role:admin' en rutas Y por el FormRequest).
      */
-    public function store(StoreProductoRequest $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
-        $producto = Producto::create($request->validated());
+        // Generar SKU incremental automático (formato SKU-00001)
+        $ultimoProducto = Producto::withTrashed()
+            ->where('sku', 'like', 'SKU-%')
+            ->orderBy('id', 'desc')
+            ->first();
+        $nuevoNumero = 1;
 
-        return response()->json([
-            'status'  => 'success',
-            'message' => 'Producto creado correctamente.',
-            'data'    => new ProductoResource($producto->load(['categoria', 'marca'])),
-        ], 201);
+        if ($ultimoProducto && preg_match('/SKU-(\d+)/', $ultimoProducto->sku, $matches)) {
+            $nuevoNumero = intval($matches[1]) + 1;
+        }
+
+        $sku = 'SKU-' . str_pad($nuevoNumero, 5, '0', STR_PAD_LEFT);
+        $request->merge(['sku' => $sku]);
+
+        $validated = $request->validate([
+            'sku'            => 'required|string|max:50|unique:productos,sku',
+            'nombre'         => 'required|string|max:200',
+            'descripcion'    => 'nullable|string|max:500',
+            'categoria_id'   => 'required|integer|exists:categorias,id',
+            'marca_id'       => 'required|integer|exists:marcas,id',
+            'precio_compra'  => 'required|numeric|min:0|max:9999999999.99',
+            'precio_venta'   => 'required|numeric|min:0|max:9999999999.99',
+            'stock_minimo'   => 'nullable|integer|min:0',
+            'unidad_medida'  => 'nullable|string|max:30',
+            'activo'         => 'nullable|boolean',
+        ], [
+            'sku.unique'            => 'Ya existe un producto con ese SKU.',
+            'nombre.required'       => 'El nombre del producto es obligatorio.',
+            'categoria_id.required' => 'Debe seleccionar una categoría.',
+            'categoria_id.exists'   => 'La categoría seleccionada no existe.',
+            'marca_id.required'     => 'Debe seleccionar una marca.',
+            'marca_id.exists'       => 'La marca seleccionada no existe.',
+            'precio_compra.required'=> 'El precio de compra es obligatorio.',
+            'precio_compra.numeric' => 'El precio de compra debe ser un número.',
+            'precio_venta.required' => 'El precio de venta es obligatorio.',
+            'precio_venta.numeric'  => 'El precio de venta debe ser un número.',
+        ]);
+
+        \Illuminate\Support\Facades\DB::beginTransaction();
+        try {
+            $producto = Producto::create($validated);
+
+            // Registrar stock inicial si se envía cantidad y almacén
+            $stock = $request->integer('stock') ?: $request->integer('stock_inicial') ?: 0;
+            $almacenId = $request->input('almacen_id') ?: $request->input('almacen');
+
+            if ($stock > 0 && $almacenId) {
+                $inventarioService = app(\App\Services\InventarioService::class);
+                $inventarioService->registrarMovimiento(
+                    productoId:     $producto->id,
+                    almacenId:      $almacenId,
+                    userId:         $request->user()->id,
+                    tipoMovimiento: \App\Models\KardexMovimiento::TIPO_ENTRADA_AJUSTE,
+                    cantidad:       $stock,
+                    motivo:         'Registro inicial de existencias al crear producto'
+                );
+            }
+
+            \Illuminate\Support\Facades\DB::commit();
+
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Producto creado correctamente.',
+                'data'    => new ProductoResource($producto->load(['categoria', 'marca'])->loadSum('almacenes as stock', 'producto_almacen.stock_actual')),
+            ], 201);
+
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\DB::rollBack();
+            throw $e;
+        }
     }
 
     /**
@@ -136,16 +199,78 @@ class ProductoController extends Controller
      * Actualiza un producto existente.
      * Acceso: SOLO admin (bloqueado por middleware 'role:admin' en rutas Y por el FormRequest).
      */
-    public function update(UpdateProductoRequest $request, int $id): JsonResponse
+    public function update(Request $request, int $id): JsonResponse
     {
         $producto = Producto::findOrFail($id);
-        $producto->update($request->validated());
 
-        return response()->json([
-            'status'  => 'success',
-            'message' => 'Producto actualizado correctamente.',
-            'data'    => new ProductoResource($producto->fresh()->load(['categoria', 'marca'])),
+        $validated = $request->validate([
+            'sku'           => 'sometimes|required|string|max:50|unique:productos,sku,' . $id,
+            'nombre'        => 'sometimes|required|string|max:200',
+            'descripcion'   => 'sometimes|nullable|string|max:500',
+            'categoria_id'  => 'sometimes|required|integer|exists:categorias,id',
+            'marca_id'      => 'sometimes|required|integer|exists:marcas,id',
+            'precio_compra' => 'sometimes|required|numeric|min:0|max:9999999999.99',
+            'precio_venta'  => 'sometimes|required|numeric|min:0|max:9999999999.99',
+            'stock_minimo'  => 'sometimes|nullable|integer|min:0',
+            'unidad_medida' => 'sometimes|nullable|string|max:30',
+            'activo'        => 'sometimes|nullable|boolean',
+            'almacen_id'    => 'sometimes|nullable|integer|exists:almacenes,id',
+            'stock'         => 'sometimes|nullable|integer|min:0',
+        ], [
+            'sku.unique'           => 'Ya existe un producto con ese SKU.',
+            'nombre.required'      => 'El nombre del producto es obligatorio.',
+            'categoria_id.exists'  => 'La categoría seleccionada no existe.',
+            'marca_id.exists'      => 'La marca seleccionada no existe.',
+            'precio_compra.numeric'=> 'El precio de compra debe ser un número.',
+            'precio_venta.numeric' => 'El precio de venta debe ser un número.',
         ]);
+
+        \Illuminate\Support\Facades\DB::beginTransaction();
+        try {
+            $producto->update($validated);
+
+            $almacenId = $request->input('almacen_id');
+            $stockNuevo = $request->has('stock') ? $request->integer('stock') : null;
+
+            if ($almacenId && $stockNuevo !== null) {
+                // Obtener stock actual en la sucursal seleccionada
+                $pivote = \Illuminate\Support\Facades\DB::table('producto_almacen')
+                    ->where('producto_id', $producto->id)
+                    ->where('almacen_id', $almacenId)
+                    ->first();
+
+                $stockActual = $pivote ? $pivote->stock_actual : 0;
+                $delta = $stockNuevo - $stockActual;
+
+                if ($delta !== 0) {
+                    $inventarioService = app(\App\Services\InventarioService::class);
+                    $tipoMovimiento = $delta > 0
+                        ? \App\Models\KardexMovimiento::TIPO_ENTRADA_AJUSTE
+                        : \App\Models\KardexMovimiento::TIPO_SALIDA_AJUSTE;
+
+                    $inventarioService->registrarMovimiento(
+                        productoId:     $producto->id,
+                        almacenId:      $almacenId,
+                        userId:         $request->user()->id,
+                        tipoMovimiento: $tipoMovimiento,
+                        cantidad:       abs($delta),
+                        motivo:         'Ajuste de existencias desde edición de producto'
+                    );
+                }
+            }
+
+            \Illuminate\Support\Facades\DB::commit();
+
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Producto actualizado correctamente.',
+                'data'    => new ProductoResource($producto->fresh()->load(['categoria', 'marca'])->loadSum('almacenes as stock', 'producto_almacen.stock_actual')),
+            ]);
+
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\DB::rollBack();
+            throw $e;
+        }
     }
 
     /**

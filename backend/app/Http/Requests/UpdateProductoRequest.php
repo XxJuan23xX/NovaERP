@@ -26,8 +26,6 @@ class UpdateProductoRequest extends FormRequest
         return [
             'sku'           => ['sometimes', 'required', 'string', 'max:50',
                                 Rule::unique('productos', 'sku')->ignore($productoId)],
-            'codigo_barras' => ['sometimes', 'nullable', 'string', 'max:100',
-                                Rule::unique('productos', 'codigo_barras')->ignore($productoId)],
             'nombre'        => 'sometimes|required|string|max:200',
             'descripcion'   => 'sometimes|nullable|string|max:500',
             'categoria_id'  => 'sometimes|required|integer|exists:categorias,id',
@@ -37,6 +35,8 @@ class UpdateProductoRequest extends FormRequest
             'stock_minimo'  => 'sometimes|nullable|integer|min:0',
             'unidad_medida' => 'sometimes|nullable|string|max:30',
             'activo'        => 'sometimes|nullable|boolean',
+            'almacen_id'    => 'sometimes|nullable|integer|exists:almacenes,id',
+            'stock'         => 'sometimes|nullable|integer|min:0',
         ];
     }
 
@@ -47,7 +47,6 @@ class UpdateProductoRequest extends FormRequest
     {
         return [
             'sku.unique'           => 'Ya existe un producto con ese SKU.',
-            'codigo_barras.unique' => 'Ya existe un producto con ese código de barras.',
             'nombre.required'      => 'El nombre del producto es obligatorio.',
             'categoria_id.exists'  => 'La categoría seleccionada no existe.',
             'marca_id.exists'      => 'La marca seleccionada no existe.',

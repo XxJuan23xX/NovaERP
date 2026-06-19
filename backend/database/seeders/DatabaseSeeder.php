@@ -64,7 +64,6 @@ class DatabaseSeeder extends Seeder
         $producto1 = Producto::firstOrCreate(
             ['sku' => 'LAP-LEN-IP3'],
             [
-                'codigo_barras' => '191999234561',
                 'nombre'        => 'Laptop Lenovo IdeaPad 3',
                 'descripcion'   => 'Laptop de 15.6 pulgadas con procesador AMD Ryzen 5, 8GB RAM, 256GB SSD',
                 'categoria_id'  => $catComputacion->id,
@@ -80,7 +79,6 @@ class DatabaseSeeder extends Seeder
         $producto2 = Producto::firstOrCreate(
             ['sku' => 'CEL-SAM-S24'],
             [
-                'codigo_barras' => '8806095312345',
                 'nombre'        => 'Samsung Galaxy S24 Ultra',
                 'descripcion'   => 'Smartphone de gama alta con 256GB de almacenamiento y cámara de 200MP',
                 'categoria_id'  => $catElectronica->id,
