@@ -11,11 +11,15 @@ use App\Http\Controllers\Api\AlmacenController;
 use App\Http\Controllers\Api\KardexController;
 
 // ─── Rutas públicas (sin autenticación) ─────────────────────────────────────
-Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);
 
 // ─── Rutas protegidas (requieren token Sanctum válido) ───────────────────────
 Route::middleware('auth:sanctum')->group(function () {
+
+    // Registro de personal (exclusivo para Administradores)
+    Route::middleware('role:admin')->group(function () {
+        Route::post('/register', [AuthController::class, 'register']);
+    });
 
     // Usuario autenticado
     Route::get('/user', fn (Request $request) => $request->user());

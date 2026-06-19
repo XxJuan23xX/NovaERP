@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { AuthContext } from './AuthContext'
-import { authService } from '../services/api'
+import api, { authService } from '../services/api'
 
 export default function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
@@ -14,8 +14,28 @@ export default function AuthProvider({ children }) {
   })
   const [token, setToken] = useState(() => localStorage.getItem('token') || null)
   
-  // CORRECCIÓN: Inicia en false porque user y token ya se inicializaron arriba sincrónicamente
-  const [loading] = useState(false)
+  const [loading, setLoading] = useState(() => !!localStorage.getItem('token'))
+
+  useEffect(() => {
+    const initAuth = async () => {
+      const savedToken = localStorage.getItem('token')
+      if (savedToken) {
+        try {
+          const response = await api.get('/user')
+          setUser(response.data)
+          localStorage.setItem('user', JSON.stringify(response.data))
+        } catch (e) {
+          console.error('Error verifying token on mount:', e)
+          setToken(null)
+          setUser(null)
+          localStorage.removeItem('token')
+          localStorage.removeItem('user')
+        }
+      }
+      setLoading(false)
+    }
+    initAuth()
+  }, [])
 
   const login = async (email, password) => {
     try {
