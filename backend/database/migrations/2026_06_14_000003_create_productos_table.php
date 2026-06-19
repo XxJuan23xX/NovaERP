@@ -19,7 +19,6 @@ return new class extends Migration
 
             // Identificadores únicos del producto
             $table->string('sku', 50)->unique()->comment('Stock Keeping Unit - código interno');
-            $table->string('codigo_barras', 100)->unique()->nullable()->comment('Código de barras EAN/UPC');
             $table->string('nombre', 200);
             $table->string('descripcion', 500)->nullable();
 

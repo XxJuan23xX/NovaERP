@@ -24,11 +24,11 @@ class ProductoResource extends JsonResource
         $data = [
             'id'             => $this->id,
             'sku'            => $this->sku,
-            'codigo_barras'  => $this->codigo_barras,
             'nombre'         => $this->nombre,
             'descripcion'    => $this->descripcion,
             'unidad_medida'  => $this->unidad_medida,
             'stock_minimo'   => $this->stock_minimo,
+            'stock'          => (int) ($this->stock ?? 0),
             'activo'         => $this->activo,
             'precio_venta'   => (float) $this->precio_venta,
 

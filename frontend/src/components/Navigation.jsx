@@ -191,6 +191,19 @@ export default function Navigation() {
     },
   ];
 
+  // ── FILTRAR MENÚ SEGÚN EL ROL DE USUARIO ──
+  const filteredMenuItems = menuItems.filter((item) => {
+    if (user?.role === "empleado") {
+      return ["/pos", "/inventario/productos", "/cotizaciones"].includes(item.path);
+    }
+    return true;
+  }).map((item) => {
+    if (user?.role === "empleado" && item.path === "/inventario/productos") {
+      return { ...item, name: "Consulta Productos" };
+    }
+    return item;
+  });
+
   return (
     <aside
       className={`h-screen sticky top-0 flex flex-col justify-between bg-slate-900 border-r border-slate-850 z-50 transition-all duration-305 ${
@@ -275,7 +288,7 @@ export default function Navigation() {
 
       {/* ── SECCIÓN MEDIA: ENLACES DE MENÚ ── */}
       <nav className="flex-1 overflow-y-auto py-6 px-3 space-y-1.5 scrollbar-thin scrollbar-thumb-slate-800">
-        {menuItems.map((item) => {
+        {filteredMenuItems.map((item) => {
           const active = isActive(item.path);
           return (
             <Link
