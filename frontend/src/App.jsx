@@ -12,6 +12,7 @@ import CotizacionesPage from "./pages/CotizacionesPage";
 import AuditoriaPage from "./pages/AuditoriaPage";
 import ClientesPage from "./pages/ClientesPage";
 import CierreCajaPage from "./pages/CierreCajaPage";
+import UsuariosPage from "./pages/UsuariosPage";
 
 // 🔒 Ruta protegida — Si no existe el token físico en el navegador, se expulsa inmediatamente
 function PrivateRoute({ children }) {
@@ -125,7 +126,7 @@ export default function App() {
           path="/usuarios"
           element={
             <AdminRoute>
-              <RegisterPage />
+              <UsuariosPage />
             </AdminRoute>
           }
         />
