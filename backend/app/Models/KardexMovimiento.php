@@ -22,6 +22,7 @@ class KardexMovimiento extends Model
     const TIPO_SALIDA_MERMA   = 'SALIDA_MERMA';
     const TIPO_SALIDA_ROBO    = 'SALIDA_ROBO';
     const TIPO_SALIDA_AJUSTE  = 'SALIDA_AJUSTE';
+    const TIPO_SALIDA_VENTA   = 'SALIDA_VENTA';
 
     protected $fillable = [
         'producto_id',
@@ -80,6 +81,7 @@ class KardexMovimiento extends Model
             self::TIPO_SALIDA_MERMA,
             self::TIPO_SALIDA_ROBO,
             self::TIPO_SALIDA_AJUSTE,
+            self::TIPO_SALIDA_VENTA,
         ];
     }
 

@@ -831,7 +831,7 @@ export default function ProductosPage() {
                             <span
                               className={
                                 isZero
-                                  ? "text-red-650 font-bold"
+                                  ? "text-red-600 font-bold"
                                   : isLow
                                     ? "text-orange-600 font-bold"
                                     : "text-slate-900"
@@ -839,7 +839,7 @@ export default function ProductosPage() {
                             >
                               {currentStock}
                             </span>
-                            <span className="text-slate-450 text-[10px]">
+                            <span className="text-slate-400 text-[10px]">
                               {" "}
                               / {minStock} mín
                             </span>
@@ -869,7 +869,7 @@ export default function ProductosPage() {
 
                           {/* COSTO COMPRA (ADMIN ONLY) */}
                           {isAdmin && (
-                            <td className="px-3 py-2.5 text-right whitespace-nowrap font-semibold text-slate-450">
+                            <td className="px-3 py-2.5 text-right whitespace-nowrap font-semibold text-slate-400">
                               {prod.precio_compra !== undefined
                                 ? `$${Number(prod.precio_compra).toLocaleString("es-MX", { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`
                                 : "Protegido"}
@@ -994,7 +994,7 @@ export default function ProductosPage() {
               </div>
               <button
                 onClick={handleCloseStockModal}
-                className="text-slate-400 hover:text-slate-650 p-1.5 rounded-lg hover:bg-slate-100 cursor-pointer"
+                className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 cursor-pointer"
               >
                 ✕
               </button>
@@ -1028,7 +1028,7 @@ export default function ProductosPage() {
                         className="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-xl"
                       >
                         <div>
-                          <div className="font-semibold text-sm text-slate-850">
+                          <div className="font-semibold text-sm text-slate-800">
                             {alm.nombre}
                           </div>
                           <div className="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
@@ -1075,7 +1075,7 @@ export default function ProductosPage() {
               </h2>
               <button
                 onClick={handleCloseModal}
-                className="text-slate-400 hover:text-slate-650 p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
+                className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

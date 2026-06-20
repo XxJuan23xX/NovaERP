@@ -30,11 +30,11 @@ export default function KardexPage() {
           </div>
 
           {/* TABLA DE MOVIMIENTOS */}
-          <div className="bg-slate-900 border border-slate-850 rounded-2xl overflow-hidden shadow-xl">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-950 border-b border-slate-850 text-slate-400 text-xs font-bold uppercase tracking-wider">
+                  <tr className="bg-slate-950 border-b border-slate-800 text-slate-400 text-xs font-bold uppercase tracking-wider">
                     <th className="px-6 py-4">Fecha &amp; Hora</th>
                     <th className="px-6 py-4">Producto</th>
                     <th className="px-6 py-4">Tipo</th>
@@ -43,9 +43,9 @@ export default function KardexPage() {
                     <th className="px-6 py-4">Motivo / Notas</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-850 text-sm text-slate-300">
+                <tbody className="divide-y divide-slate-800 text-sm text-slate-300">
                   {mockHistorial.map((log) => (
-                    <tr key={log.id} className="hover:bg-slate-850/35 transition-colors">
+                    <tr key={log.id} className="hover:bg-slate-800/35 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap font-mono text-xs text-slate-400">
                         {log.fecha}
                       </td>
