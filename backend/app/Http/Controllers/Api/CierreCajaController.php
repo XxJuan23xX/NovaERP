@@ -258,4 +258,105 @@ class CierreCajaController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * GET /api/caja/sesion-activa
+     *
+     * Verifica si el usuario logueado tiene una sesión activa (estado = 'abierta').
+     */
+    public function sesionActiva(Request $request): JsonResponse
+    {
+        $userId = $request->user()->id;
+        $sesion = SesionCaja::with(['caja.almacen'])
+            ->where('estado', 'abierta')
+            ->where('user_id', $userId)
+            ->first();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $sesion
+        ]);
+    }
+
+    /**
+     * GET /api/caja/cajas-disponibles
+     *
+     * Obtiene cajas activas que no tengan una sesión abierta actualmente.
+     */
+    public function cajasDisponibles(Request $request): JsonResponse
+    {
+        // Obtener IDs de cajas que tienen una sesión abierta
+        $cajasOcupadasIds = SesionCaja::where('estado', 'abierta')
+            ->pluck('caja_id')
+            ->toArray();
+
+        // Obtener cajas activas que no estén ocupadas
+        $cajas = Caja::with(['almacen'])
+            ->where('activo', true)
+            ->whereNotIn('id', $cajasOcupadasIds)
+            ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $cajas
+        ]);
+    }
+
+    /**
+     * POST /api/caja/apertura
+     *
+     * Abre una nueva sesión de caja/turno.
+     */
+    public function apertura(Request $request): JsonResponse
+    {
+        $request->validate([
+            'caja_id' => 'required|integer|exists:cajas,id',
+            'fondo_inicial' => 'required|numeric|min:0'
+        ]);
+
+        $userId = $request->user()->id;
+        $cajaId = $request->input('caja_id');
+        $fondoInicial = $request->input('fondo_inicial');
+
+        // Verificar si el usuario ya tiene una sesión abierta
+        $sesionUsuario = SesionCaja::where('user_id', $userId)
+            ->where('estado', 'abierta')
+            ->first();
+
+        if ($sesionUsuario) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Ya tienes una sesión de caja abierta.'
+            ], 422);
+        }
+
+        // Verificar si la caja ya está ocupada por otra sesión abierta
+        $sesionCaja = SesionCaja::where('caja_id', $cajaId)
+            ->where('estado', 'abierta')
+            ->first();
+
+        if ($sesionCaja) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Esta caja ya está ocupada por otra sesión de turno.'
+            ], 422);
+        }
+
+        // Crear la sesión
+        $sesion = SesionCaja::create([
+            'caja_id' => $cajaId,
+            'user_id' => $userId,
+            'fondo_inicial' => $fondoInicial,
+            'estado' => 'abierta',
+            'fecha_apertura' => now(),
+        ]);
+
+        $sesion->load(['caja.almacen']);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Sesión de caja abierta correctamente.',
+            'data' => $sesion
+        ], 201);
+    }
 }

@@ -97,9 +97,22 @@ class VentaController extends Controller
         $metodoPago = $request->input('metodo_pago');
         $productosInput = $request->input('productos');
 
+        // Buscar sesión de caja abierta para el cajero
+        $sesion = \App\Models\SesionCaja::where('user_id', $userId)
+            ->where('estado', 'abierta')
+            ->first();
+
+        // Si no hay sesión para el cajero, lanzar error de validación
+        if (!$sesion) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No tienes una sesión de caja abierta. Por favor, inicia tu turno antes de registrar ventas.'
+            ], 422);
+        }
+
         try {
             // 2. Procesar venta dentro de una transacción de BD
-            $venta = DB::transaction(function () use ($userId, $almacenId, $metodoPago, $productosInput) {
+            $venta = DB::transaction(function () use ($userId, $almacenId, $metodoPago, $productosInput, $sesion) {
 
                 // Generar número de ticket único: V-2000 en adelante
                 $ultimoId = Venta::max('id') ?? 2000;
@@ -154,6 +167,7 @@ class VentaController extends Controller
                 // Crear la Venta
                 $venta = Venta::create([
                     'numero_ticket' => $numeroTicket,
+                    'sesion_caja_id' => $sesion->id,
                     'user_id' => $userId,
                     'almacen_id' => $almacenId,
                     'subtotal' => $subtotalGeneral,

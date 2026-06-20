@@ -116,6 +116,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('caja')->group(function () {
             Route::get('/cierre-resumen', [\App\Http\Controllers\Api\CierreCajaController::class, 'cierreResumen']);
             Route::post('/cierre', [\App\Http\Controllers\Api\CierreCajaController::class, 'store']);
+            Route::get('/sesion-activa', [\App\Http\Controllers\Api\CierreCajaController::class, 'sesionActiva']);
+            Route::get('/cajas-disponibles', [\App\Http\Controllers\Api\CierreCajaController::class, 'cajasDisponibles']);
+            Route::post('/apertura', [\App\Http\Controllers\Api\CierreCajaController::class, 'apertura']);
         });
     });
 });
