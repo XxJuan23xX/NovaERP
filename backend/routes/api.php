@@ -111,5 +111,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/pos/ventas',          [VentaController::class, 'store']);
         Route::get('/pos/siguiente-ticket', [VentaController::class, 'siguienteTicket']);
         Route::get('/pos/ventas/{id}',      [VentaController::class, 'show']);
+
+        // MÓDULO: CIERRE DE CAJA
+        Route::prefix('caja')->group(function () {
+            Route::get('/cierre-resumen', [\App\Http\Controllers\Api\CierreCajaController::class, 'cierreResumen']);
+            Route::post('/cierre', [\App\Http\Controllers\Api\CierreCajaController::class, 'store']);
+        });
     });
 });

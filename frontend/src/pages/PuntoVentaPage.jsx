@@ -10,7 +10,7 @@ export default function PuntoVentaPage() {
   const [busqueda, setBusqueda] = useState('')
   const [ticketNo, setTicketNo] = useState('')
   const [cart, setCart] = useState([])
-  const [metodoPago, setMetodoPago] = useState('tarjeta') // tarjeta, efectivo, transferencia
+  const [metodoPago, setMetodoPago] = useState('tarjeta') // tarjeta, efectivo
   
   // UI States
   const [loading, setLoading] = useState(false)
@@ -511,7 +511,7 @@ export default function PuntoVentaPage() {
             <span className="text-[10px] font-black uppercase tracking-wider text-slate-700 block mb-2">
               Método de Pago
             </span>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => setMetodoPago('efectivo')}
@@ -533,17 +533,6 @@ export default function PuntoVentaPage() {
                 }`}
               >
                 Tarjeta
-              </button>
-              <button
-                type="button"
-                onClick={() => setMetodoPago('transferencia')}
-                className={`py-2 px-1 text-center font-black text-[12px] rounded-xl border transition-all active:scale-95 cursor-pointer ${
-                  metodoPago === 'transferencia'
-                    ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm shadow-indigo-600/10'
-                    : 'bg-white border-slate-300 text-slate-800 hover:bg-slate-100'
-                }`}
-              >
-                Transferencia
               </button>
             </div>
           </div>

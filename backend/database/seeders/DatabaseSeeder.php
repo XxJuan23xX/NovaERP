@@ -8,9 +8,14 @@ use App\Models\KardexMovimiento;
 use App\Models\Marca;
 use App\Models\Producto;
 use App\Models\User;
+use App\Models\Caja;
+use App\Models\SesionCaja;
+use App\Models\Venta;
+use App\Models\VentaDetalle;
 use App\Services\InventarioService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -130,5 +135,64 @@ class DatabaseSeeder extends Seeder
                 costoUnitario:       850.00
             );
         }
+
+        // ─── 7. Módulo Cierre de Caja: Caja, Sesiones de caja y Ventas ─────────
+        // Limpiamos los registros de ventas de prueba para evitar duplicaciones
+        DB::table('venta_detalles')->delete();
+        DB::table('ventas')->delete();
+        DB::table('sesiones_caja')->delete();
+        DB::table('cajas')->delete();
+
+        // Crear Caja Principal
+        $caja = Caja::create([
+            'nombre'     => 'Caja Principal 01',
+            'almacen_id' => $almacenCentral->id,
+            'activo'     => true,
+        ]);
+
+        // Crear Sesión Abierta
+        $sesion = SesionCaja::create([
+            'caja_id'        => $caja->id,
+            'user_id'        => $admin->id,
+            'fondo_inicial'  => 5000.00,
+            'estado'         => 'abierta',
+            'fecha_apertura' => now()->subHours(8),
+        ]);
+
+        // Helper para registrar las ventas consolidadas
+        $registrarVentaAux = function ($ticket, $user, $almacen, $sesion, $total, $metodoPago, $estado = 'completada') use ($producto1) {
+            $subtotal = round($total / 1.16, 2);
+            $iva = round($total - $subtotal, 2);
+            
+            $venta = Venta::create([
+                'numero_ticket'  => $ticket,
+                'sesion_caja_id' => $sesion->id,
+                'user_id'        => $user->id,
+                'almacen_id'     => $almacen->id,
+                'subtotal'       => $subtotal,
+                'iva'            => $iva,
+                'total'          => $total,
+                'metodo_pago'    => $metodoPago,
+                'estado'         => $estado,
+            ]);
+
+            VentaDetalle::create([
+                'venta_id'        => $venta->id,
+                'producto_id'     => $producto1->id,
+                'cantidad'        => 1,
+                'precio_unitario' => $subtotal,
+                'subtotal'        => $subtotal,
+            ]);
+        };
+
+        // Ventas del Administrador
+        $registrarVentaAux('V-2001', $admin, $almacenCentral, $sesion, 22400.00, 'efectivo', 'completada');
+        $registrarVentaAux('V-2002', $admin, $almacenCentral, $sesion, 40000.00, 'tarjeta', 'completada');
+        $registrarVentaAux('V-2003', $admin, $almacenCentral, $sesion, 8500.00, 'efectivo', 'cancelada');
+
+        // Ventas del Empleado
+        $registrarVentaAux('V-2004', $empleado, $almacenCentral, $sesion, 10000.00, 'efectivo', 'completada');
+        $registrarVentaAux('V-2005', $empleado, $almacenCentral, $sesion, 26400.00, 'tarjeta', 'completada');
+        $registrarVentaAux('V-2006', $empleado, $almacenCentral, $sesion, 10000.00, 'tarjeta', 'cancelada');
     }
 }

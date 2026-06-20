@@ -12,12 +12,14 @@ class Venta extends Model
 
     protected $fillable = [
         'numero_ticket',
+        'sesion_caja_id',
         'user_id',
         'almacen_id',
         'subtotal',
         'iva',
         'total',
         'metodo_pago',
+        'estado',
     ];
 
     protected $casts = [

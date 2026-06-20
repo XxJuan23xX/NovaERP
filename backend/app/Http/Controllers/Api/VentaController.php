@@ -78,7 +78,7 @@ class VentaController extends Controller
         // 1. Validar la petición
         $validator = Validator::make($request->all(), [
             'almacen_id' => 'required|integer|exists:almacenes,id',
-            'metodo_pago' => ['required', 'string', Rule::in(['efectivo', 'tarjeta', 'transferencia'])],
+            'metodo_pago' => ['required', 'string', Rule::in(['efectivo', 'tarjeta'])],
             'productos' => 'required|array|min:1',
             'productos.*.producto_id' => 'required|integer|exists:productos,id',
             'productos.*.cantidad' => 'required|integer|min:1',
