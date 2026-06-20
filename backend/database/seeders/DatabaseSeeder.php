@@ -150,49 +150,7 @@ class DatabaseSeeder extends Seeder
             'activo'     => true,
         ]);
 
-        // Crear Sesión Abierta
-        $sesion = SesionCaja::create([
-            'caja_id'        => $caja->id,
-            'user_id'        => $admin->id,
-            'fondo_inicial'  => 5000.00,
-            'estado'         => 'abierta',
-            'fecha_apertura' => now()->subHours(8),
-        ]);
-
-        // Helper para registrar las ventas consolidadas
-        $registrarVentaAux = function ($ticket, $user, $almacen, $sesion, $total, $metodoPago, $estado = 'completada') use ($producto1) {
-            $subtotal = round($total / 1.16, 2);
-            $iva = round($total - $subtotal, 2);
-            
-            $venta = Venta::create([
-                'numero_ticket'  => $ticket,
-                'sesion_caja_id' => $sesion->id,
-                'user_id'        => $user->id,
-                'almacen_id'     => $almacen->id,
-                'subtotal'       => $subtotal,
-                'iva'            => $iva,
-                'total'          => $total,
-                'metodo_pago'    => $metodoPago,
-                'estado'         => $estado,
-            ]);
-
-            VentaDetalle::create([
-                'venta_id'        => $venta->id,
-                'producto_id'     => $producto1->id,
-                'cantidad'        => 1,
-                'precio_unitario' => $subtotal,
-                'subtotal'        => $subtotal,
-            ]);
-        };
-
-        // Ventas del Administrador
-        $registrarVentaAux('V-2001', $admin, $almacenCentral, $sesion, 22400.00, 'efectivo', 'completada');
-        $registrarVentaAux('V-2002', $admin, $almacenCentral, $sesion, 40000.00, 'tarjeta', 'completada');
-        $registrarVentaAux('V-2003', $admin, $almacenCentral, $sesion, 8500.00, 'efectivo', 'cancelada');
-
-        // Ventas del Empleado
-        $registrarVentaAux('V-2004', $empleado, $almacenCentral, $sesion, 10000.00, 'efectivo', 'completada');
-        $registrarVentaAux('V-2005', $empleado, $almacenCentral, $sesion, 26400.00, 'tarjeta', 'completada');
-        $registrarVentaAux('V-2006', $empleado, $almacenCentral, $sesion, 10000.00, 'tarjeta', 'cancelada');
+        // Nota: No pre-creamos ninguna sesión de caja activa ni ventas asociadas
+        // para permitir el flujo limpio de apertura manual.
     }
 }

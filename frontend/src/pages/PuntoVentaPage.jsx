@@ -1,8 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
 import Navigation from "../components/Navigation";
 import api from "../services/api";
-
+import { useAuth } from "../context/useAuth";
 export default function PuntoVentaPage() {
+  const { user: currentUser } = useAuth();
   // ── ESTADOS DEL COMPONENTE ──
   const [almacenes, setAlmacenes] = useState([]);
   const [almacenSeleccionado, setAlmacenSeleccionado] = useState("");
@@ -24,6 +25,10 @@ export default function PuntoVentaPage() {
   const [sesionActivaId, setSesionActivaId] = useState(null); // ID de la sesión activa en estado local
   const [cajasDisponibles, setCajasDisponibles] = useState([]);
   const [cajaSeleccionadaId, setCajaSeleccionadaId] = useState("");
+  const [almacenAperturaId, setAlmacenAperturaId] = useState("");
+  const [usuariosCajeros, setUsuariosCajeros] = useState([]);
+  const [usuarioSeleccionadoId, setUsuarioSeleccionadoId] = useState("");
+  const [successApertura, setSuccessApertura] = useState("");
   const [fondoInicial, setFondoInicial] = useState("5000");
   const [showAperturaModal, setShowAperturaModal] = useState(false);
   const [errorApertura, setErrorApertura] = useState("");
@@ -97,7 +102,20 @@ export default function PuntoVentaPage() {
         } else {
           // No hay sesión activa: mostrar modal de apertura
           setShowAperturaModal(true);
-          await cargarCajasDisponibles();
+          
+          // Cargar usuarios si es administrador para permitir elegir cajero
+          if (currentUser && currentUser.role === "admin") {
+            try {
+              const resUsers = await api.get("/users");
+              if (resUsers.data?.status === "success") {
+                const list = resUsers.data.data || [];
+                setUsuariosCajeros(list);
+                setUsuarioSeleccionadoId(currentUser.id);
+              }
+            } catch (err) {
+              console.warn("Error al cargar cajeros para apertura:", err);
+            }
+          }
         }
 
         // 2. Cargar almacenes
@@ -105,6 +123,9 @@ export default function PuntoVentaPage() {
         if (resAlmacenes.data?.status === "success") {
           const listaAlmacenes = resAlmacenes.data.data || [];
           setAlmacenes(listaAlmacenes);
+          if (listaAlmacenes.length > 0) {
+            setAlmacenAperturaId(listaAlmacenes[0].id);
+          }
           // Si no hay sesión activa y hay almacenes, preselecciona el primero
           if (!activeAlmacenId && listaAlmacenes.length > 0) {
             setAlmacenSeleccionado(listaAlmacenes[0].id);
@@ -121,7 +142,7 @@ export default function PuntoVentaPage() {
     };
 
     verificarSesionYCargarDatos();
-  }, []);
+  }, [currentUser]);
 
   // ── CARGAR PRODUCTOS AL CAMBIAR DE ALMACÉN O BÚSQUEDA ──
   useEffect(() => {
@@ -176,33 +197,51 @@ export default function PuntoVentaPage() {
   // Abrir caja y registrar sesión
   const handleAbrirCaja = async (e) => {
     e.preventDefault();
-    if (!cajaSeleccionadaId) {
-      setErrorApertura("Por favor selecciona una caja.");
+    if (!almacenAperturaId) {
+      setErrorApertura("Por favor selecciona una sucursal.");
       return;
     }
 
     setLoadingApertura(true);
     setErrorApertura("");
+    setSuccessApertura("");
+
+    const payload = {
+      almacen_id: Number(almacenAperturaId),
+      fondo_inicial: Number(fondoInicial) || 0,
+    };
+
+    if (currentUser?.role === "admin" && usuarioSeleccionadoId) {
+      payload.user_id = Number(usuarioSeleccionadoId);
+    }
 
     try {
-      const res = await api.post("/caja/apertura", {
-        caja_id: Number(cajaSeleccionadaId),
-        fondo_inicial: Number(fondoInicial) || 0,
-      });
+      const res = await api.post("/caja/apertura", payload);
 
       if (res.data?.status === "success") {
         const nuevaSesion = res.data.data;
-        setSesionActiva(nuevaSesion);
-        setSesionActivaId(nuevaSesion.id); // Guardar ID en estado local para vinculación fluida
-        setShowAperturaModal(false);
 
-        // Fijar el almacén correspondiente a la caja abierta
-        if (nuevaSesion.caja?.almacen_id) {
-          setAlmacenSeleccionado(nuevaSesion.caja.almacen_id);
+        // Si es para mí, activar en el POS actual
+        if (nuevaSesion.user_id === currentUser?.id) {
+          setSesionActiva(nuevaSesion);
+          setSesionActivaId(nuevaSesion.id); // Guardar ID en estado local para vinculación fluida
+          setShowAperturaModal(false);
+
+          // Fijar el almacén correspondiente a la caja abierta
+          if (nuevaSesion.caja?.almacen_id) {
+            setAlmacenSeleccionado(nuevaSesion.caja.almacen_id);
+          }
+
+          // Cargar número de ticket sugerido
+          await actualizarSiguienteTicket();
+        } else {
+          // Si es para otro usuario (porque soy admin), mostrar éxito y redirigir
+          setSuccessApertura(`Sesión de caja abierta correctamente para el cajero asignado.`);
+          setTimeout(() => {
+            setShowAperturaModal(false);
+            window.location.href = "/dashboard";
+          }, 1500);
         }
-
-        // Cargar número de ticket sugerido
-        await actualizarSiguienteTicket();
       } else {
         setErrorApertura(
           res.data?.message || "Error al abrir la sesión de caja.",
@@ -430,23 +469,14 @@ export default function PuntoVentaPage() {
             </p>
           </div>
 
-          {/* Selector de Almacén */}
+          {/* Selector de Almacén (Deshabilitado/Lectura para evitar ventas cruzadas) */}
           <div className="flex items-center gap-2">
             <span className="text-xs font-black uppercase tracking-wider text-slate-700 select-none">
-              📍 Almacén:
+              📍 Sucursal:
             </span>
-            <select
-              id="select-almacen"
-              value={almacenSeleccionado}
-              onChange={(e) => setAlmacenSeleccionado(e.target.value)}
-              className="bg-white border border-slate-300 text-slate-900 text-xs font-bold rounded-lg px-3 py-1.5 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all cursor-pointer"
-            >
-              {almacenes.map((almacen) => (
-                <option key={almacen.id} value={almacen.id}>
-                  {almacen.nombre}
-                </option>
-              ))}
-            </select>
+            <span className="bg-indigo-150 text-indigo-850 border border-indigo-300 text-xs font-black px-3.5 py-2 rounded-xl select-none shadow-sm">
+              {almacenes.find((a) => a.id === Number(almacenSeleccionado))?.nombre || "Cargando..."}
+            </span>
           </div>
         </header>
 
@@ -1053,24 +1083,22 @@ export default function PuntoVentaPage() {
                 </svg>
               </div>
               <h2 className="text-slate-950 font-black text-xl tracking-tight">
-                Apertura de Turno / Caja
+                Se requiere apertura de caja
               </h2>
               <p className="text-slate-500 text-xs font-bold mt-1">
-                Por favor, selecciona tu caja de venta y el fondo inicial para
-                iniciar operaciones.
+                Primero debes abrir la caja para poder ingresar al Punto de Venta.
               </p>
             </div>
 
-            {/* Advertencia de Cajas Ocupadas */}
-            {cajasDisponibles.length === 0 ? (
-              <div className="py-6 flex flex-col items-center justify-center text-center">
-                <div className="h-12 w-12 bg-amber-50 border border-amber-100 rounded-full flex items-center justify-center text-amber-500 mb-3">
+            <form onSubmit={handleAbrirCaja} className="space-y-5 py-5">
+              {errorApertura && (
+                <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-2xl flex items-start gap-2.5 shadow-sm">
                   <svg
-                    className="h-6 w-6"
+                    className="h-5 w-5 mt-0.5 flex-shrink-0 text-red-500"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                    strokeWidth={2.5}
+                    strokeWidth={2}
                   >
                     <path
                       strokeLinecap="round"
@@ -1078,144 +1106,149 @@ export default function PuntoVentaPage() {
                       d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                     />
                   </svg>
+                  <span className="font-extrabold text-xs leading-relaxed">
+                    {errorApertura}
+                  </span>
                 </div>
-                <h3 className="text-slate-900 font-extrabold text-sm mb-1">
-                  Todas las cajas están ocupadas
-                </h3>
-                <p className="text-slate-500 text-xs px-4 max-w-sm leading-relaxed">
-                  No hay cajas disponibles en este momento. Solicita a otro
-                  cajero cerrar su turno o comunícate con el administrador para
-                  habilitar una caja.
-                </p>
-                <div className="w-full mt-6 pt-4 border-t border-slate-150 flex justify-center">
-                  <a
-                    href="/cierre-caja"
-                    className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-xs rounded-xl transition-all cursor-pointer select-none active:scale-95"
-                  >
-                    Ver Cierre de Caja
-                  </a>
-                </div>
-              </div>
-            ) : (
-              <form onSubmit={handleAbrirCaja} className="space-y-5 py-5">
-                {errorApertura && (
-                  <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-2xl flex items-start gap-2.5 shadow-sm">
-                    <svg
-                      className="h-5 w-5 mt-0.5 flex-shrink-0 text-red-500"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                      />
-                    </svg>
-                    <span className="font-extrabold text-xs leading-relaxed">
-                      {errorApertura}
-                    </span>
-                  </div>
-                )}
+              )}
 
-                {/* Selección de Caja */}
+              {successApertura && (
+                <div className="bg-emerald-50 border border-emerald-250 text-emerald-800 px-4 py-3 rounded-2xl flex items-start gap-2.5 shadow-sm animate-in fade-in zoom-in-95 duration-100">
+                  <svg
+                    className="h-5 w-5 mt-0.5 flex-shrink-0 text-emerald-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2.5}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="font-extrabold text-xs leading-relaxed">
+                    {successApertura}
+                  </span>
+                </div>
+              )}
+
+              {/* Selección de Cajero (Solo visible para Administradores) */}
+              {currentUser?.role === "admin" && usuariosCajeros.length > 0 && (
                 <div className="space-y-1.5">
                   <label
-                    htmlFor="modal-caja-select"
+                    htmlFor="modal-cajero-select"
                     className="text-xs font-black uppercase tracking-wider text-slate-700 block"
                   >
-                    Seleccionar Caja
+                    Asignar Cajero / Turno
                   </label>
                   <select
-                    id="modal-caja-select"
-                    value={cajaSeleccionadaId}
-                    onChange={(e) => setCajaSeleccionadaId(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-sm font-bold rounded-2xl px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all cursor-pointer"
+                    id="modal-cajero-select"
+                    value={usuarioSeleccionadoId}
+                    onChange={(e) => setUsuarioSeleccionadoId(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-sm font-bold rounded-2xl px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all cursor-pointer font-sans"
                   >
-                    {cajasDisponibles.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.nombre} {c.almacen ? `(${c.almacen.nombre})` : ""}
+                    {usuariosCajeros.map((u) => (
+                      <option key={u.id} value={u.id}>
+                        {u.name} ({u.role === "admin" ? "Admin" : "Empleado"}{u.sucursal ? ` · ${u.sucursal}` : ""})
                       </option>
                     ))}
                   </select>
                 </div>
+              )}
 
-                {/* Fondo Inicial */}
-                <div className="space-y-1.5">
-                  <label
-                    htmlFor="modal-fondo-input"
-                    className="text-xs font-black uppercase tracking-wider text-slate-700 block"
-                  >
-                    Fondo Inicial (Efectivo)
-                  </label>
-                  <div className="relative rounded-2xl shadow-sm">
-                    <span className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 font-extrabold text-sm">
-                      $
-                    </span>
-                    <input
-                      id="modal-fondo-input"
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={fondoInicial}
-                      onChange={(e) => setFondoInicial(e.target.value)}
-                      placeholder="5000.00"
-                      className="w-full bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-450 font-bold rounded-2xl pl-8 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm"
-                    />
-                  </div>
-                </div>
-
-                {/* Botón de Apertura */}
-                <button
-                  type="submit"
-                  disabled={loadingApertura}
-                  className="w-full py-4 px-6 rounded-2xl bg-indigo-600 border border-indigo-600 hover:bg-indigo-700 text-white font-black text-sm flex items-center justify-center gap-2 shadow-md transition-all active:scale-98 shadow-indigo-600/10 cursor-pointer"
+              {/* Selección de Sucursal/Almacén */}
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="modal-sucursal-select"
+                  className="text-xs font-black uppercase tracking-wider text-slate-700 block"
                 >
-                  {loadingApertura ? (
-                    <>
-                      <svg
-                        className="animate-spin h-4 w-4 text-white"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        />
-                      </svg>
-                      Abriendo Turno...
-                    </>
-                  ) : (
-                    <>
-                      <svg
-                        className="h-4.5 w-4.5"
-                        fill="none"
-                        viewBox="0 0 24 24"
+                  Seleccionar Sucursal / Almacén
+                </label>
+                <select
+                  id="modal-sucursal-select"
+                  value={almacenAperturaId}
+                  onChange={(e) => setAlmacenAperturaId(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-sm font-bold rounded-2xl px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all cursor-pointer font-sans"
+                >
+                  {almacenes.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {a.nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Fondo Inicial */}
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="modal-fondo-input"
+                  className="text-xs font-black uppercase tracking-wider text-slate-700 block"
+                >
+                  Fondo Inicial (Efectivo)
+                </label>
+                <div className="relative rounded-2xl shadow-sm">
+                  <span className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 font-extrabold text-sm">
+                    $
+                  </span>
+                  <input
+                    id="modal-fondo-input"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={fondoInicial}
+                    onChange={(e) => setFondoInicial(e.target.value)}
+                    placeholder="5000.00"
+                    className="w-full bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-450 font-bold rounded-2xl pl-8 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm font-sans"
+                  />
+                </div>
+              </div>
+
+              {/* Botón de Apertura */}
+              <button
+                type="submit"
+                disabled={loadingApertura}
+                className="w-full py-4 px-6 rounded-2xl bg-indigo-600 border border-indigo-600 hover:bg-indigo-700 text-white font-black text-sm flex items-center justify-center gap-2 shadow-md transition-all active:scale-98 shadow-indigo-600/10 cursor-pointer"
+              >
+                {loadingApertura ? (
+                  <>
+                    <svg
+                      className="animate-spin h-4 w-4 text-white"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
                         stroke="currentColor"
-                        strokeWidth={2.5}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M13 10V3L4 14h7v7l9-11h-7z"
-                        />
-                      </svg>
-                      Abrir Caja / Turno
-                    </>
-                  )}
-                </button>
-              </form>
-            )}
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                    Abriendo Turno...
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      className="h-4.5 w-4.5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M13 10V3L4 14h7v7l9-11h-7z"
+                      />
+                    </svg>
+                    Abrir Caja / Turno
+                  </>
+                )}
+              </button>
+            </form>
           </div>
         </div>
       )}

@@ -77,7 +77,7 @@ class VentaController extends Controller
     {
         // 1. Validar la petición
         $validator = Validator::make($request->all(), [
-            'almacen_id' => 'required|integer|exists:almacenes,id',
+            'almacen_id' => 'nullable|integer|exists:almacenes,id',
             'metodo_pago' => ['required', 'string', Rule::in(['efectivo', 'tarjeta'])],
             'productos' => 'required|array|min:1',
             'productos.*.producto_id' => 'required|integer|exists:productos,id',
@@ -93,12 +93,11 @@ class VentaController extends Controller
         }
 
         $userId = $request->user()->id;
-        $almacenId = $request->input('almacen_id');
         $metodoPago = $request->input('metodo_pago');
         $productosInput = $request->input('productos');
 
-        // Buscar sesión de caja abierta para el cajero
-        $sesion = \App\Models\SesionCaja::where('user_id', $userId)
+        // Buscar sesión de caja abierta para el cajero (con la caja cargada)
+        $sesion = \App\Models\SesionCaja::with('caja')->where('user_id', $userId)
             ->where('estado', 'abierta')
             ->first();
 
@@ -109,6 +108,8 @@ class VentaController extends Controller
                 'message' => 'No tienes una sesión de caja abierta. Por favor, inicia tu turno antes de registrar ventas.'
             ], 422);
         }
+
+        $almacenId = $sesion->caja->almacen_id;
 
         try {
             // 2. Procesar venta dentro de una transacción de BD

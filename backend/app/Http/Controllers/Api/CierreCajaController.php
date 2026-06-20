@@ -27,34 +27,11 @@ class CierreCajaController extends Controller
             ->orderBy('id', 'desc')
             ->first();
 
-        // Si no hay sesión de caja abierta, creamos una de prueba automáticamente para demostración
         if (!$sesion) {
-            $caja = Caja::where('activo', true)->first();
-            if (!$caja) {
-                $almacen = \App\Models\Almacen::first() ?: \App\Models\Almacen::create([
-                    'nombre' => 'Almacén Central',
-                    'direccion' => 'Av. Principal #100, Col. Centro',
-                    'responsable' => 'Ing. Juan Pérez'
-                ]);
-
-                $caja = Caja::create([
-                    'nombre' => 'Caja Principal 01',
-                    'almacen_id' => $almacen->id,
-                    'activo' => true
-                ]);
-            }
-
-            $user = $request->user() ?: User::first();
-
-            $sesion = SesionCaja::create([
-                'caja_id' => $caja->id,
-                'user_id' => $user->id,
-                'fondo_inicial' => 5000.00,
-                'estado' => 'abierta',
-                'fecha_apertura' => now(),
+            return response()->json([
+                'status' => 'success',
+                'data' => null
             ]);
-
-            $sesion->load(['caja.almacen']);
         }
 
         $sesionId = $sesion->id;
@@ -310,12 +287,18 @@ class CierreCajaController extends Controller
     public function apertura(Request $request): JsonResponse
     {
         $request->validate([
-            'caja_id' => 'required|integer|exists:cajas,id',
-            'fondo_inicial' => 'required|numeric|min:0'
+            'almacen_id' => 'required|integer|exists:almacenes,id',
+            'fondo_inicial' => 'required|numeric|min:0',
+            'user_id' => 'nullable|integer|exists:users,id'
         ]);
 
-        $userId = $request->user()->id;
-        $cajaId = $request->input('caja_id');
+        $loggedInUser = $request->user();
+        $userId = $loggedInUser->id;
+        if ($request->filled('user_id') && $loggedInUser->role === 'admin') {
+            $userId = $request->input('user_id');
+        }
+
+        $almacenId = $request->input('almacen_id');
         $fondoInicial = $request->input('fondo_inicial');
 
         // Verificar si el usuario ya tiene una sesión abierta
@@ -324,27 +307,45 @@ class CierreCajaController extends Controller
             ->first();
 
         if ($sesionUsuario) {
+            $nombreUsuario = \App\Models\User::find($userId)->name;
             return response()->json([
                 'status' => 'error',
-                'message' => 'Ya tienes una sesión de caja abierta.'
+                'message' => ($userId === $loggedInUser->id) 
+                    ? 'Ya tienes una sesión de caja abierta.'
+                    : "El cajero '{$nombreUsuario}' ya tiene una sesión de caja abierta."
             ], 422);
         }
 
+        // Buscar una caja activa asociada a este almacén
+        $caja = Caja::where('almacen_id', $almacenId)
+            ->where('activo', true)
+            ->first();
+
+        // Si no existe, crearla dinámicamente
+        if (!$caja) {
+            $almacen = \App\Models\Almacen::find($almacenId);
+            $caja = Caja::create([
+                'nombre' => 'Caja Principal ' . $almacen->nombre,
+                'almacen_id' => $almacenId,
+                'activo' => true
+            ]);
+        }
+
         // Verificar si la caja ya está ocupada por otra sesión abierta
-        $sesionCaja = SesionCaja::where('caja_id', $cajaId)
+        $sesionCaja = SesionCaja::where('caja_id', $caja->id)
             ->where('estado', 'abierta')
             ->first();
 
         if ($sesionCaja) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Esta caja ya está ocupada por otra sesión de turno.'
+                'message' => 'Esta sucursal ya tiene un turno/caja abierto.'
             ], 422);
         }
 
         // Crear la sesión
         $sesion = SesionCaja::create([
-            'caja_id' => $cajaId,
+            'caja_id' => $caja->id,
             'user_id' => $userId,
             'fondo_inicial' => $fondoInicial,
             'estado' => 'abierta',

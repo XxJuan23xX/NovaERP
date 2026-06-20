@@ -242,10 +242,28 @@ export default function CierreCajaPage() {
             </svg>
             <span className="font-bold text-slate-650">Cargando reporte de arqueo...</span>
           </div>
-        ) : !cajaData ? (
-          <div className="flex-1 flex flex-col items-center justify-center py-20 bg-white border border-dashed border-slate-200 rounded-3xl text-slate-400 font-medium shadow-inner">
-            <span className="text-slate-500 font-bold">No se encontró información del cierre de caja</span>
-            <button onClick={cargarResumenCierre} className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow hover:bg-indigo-700">Reintentar</button>
+        ) : !cajaData || !cajaData.sesion ? (
+          <div className="flex-1 flex flex-col items-center justify-center py-20 bg-white border border-slate-200 rounded-3xl text-slate-500 font-medium shadow-sm max-w-2xl mx-auto my-8 p-8 text-center select-none">
+            <div className="h-16 w-16 bg-amber-50 border border-amber-100 text-amber-500 rounded-full flex items-center justify-center mb-4 shadow-inner mx-auto">
+              <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <h3 className="text-slate-900 font-black text-lg mb-2">No hay una sesión de caja activa</h3>
+            <p className="text-slate-500 text-sm max-w-md leading-relaxed mb-6 mx-auto">
+              Para realizar arqueos y cierres de caja, primero debes abrir el turno y asociar una sucursal desde el Punto de Venta.
+            </p>
+            <div className="flex justify-center">
+              <a
+                href="/pos"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs px-6 py-3 rounded-xl shadow-md shadow-indigo-600/10 active:scale-95 transition-all flex items-center gap-2 select-none cursor-pointer"
+              >
+                <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                Ir al Punto de Venta para abrir caja
+              </a>
+            </div>
           </div>
         ) : (
           <div className="space-y-8 print:space-y-4">
