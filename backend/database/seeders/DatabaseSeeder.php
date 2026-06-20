@@ -8,9 +8,14 @@ use App\Models\KardexMovimiento;
 use App\Models\Marca;
 use App\Models\Producto;
 use App\Models\User;
+use App\Models\Caja;
+use App\Models\SesionCaja;
+use App\Models\Venta;
+use App\Models\VentaDetalle;
 use App\Services\InventarioService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -130,5 +135,22 @@ class DatabaseSeeder extends Seeder
                 costoUnitario:       850.00
             );
         }
+
+        // ─── 7. Módulo Cierre de Caja: Caja, Sesiones de caja y Ventas ─────────
+        // Limpiamos los registros de ventas de prueba para evitar duplicaciones
+        DB::table('venta_detalles')->delete();
+        DB::table('ventas')->delete();
+        DB::table('sesiones_caja')->delete();
+        DB::table('cajas')->delete();
+
+        // Crear Caja Principal
+        $caja = Caja::create([
+            'nombre'     => 'Caja Principal 01',
+            'almacen_id' => $almacenCentral->id,
+            'activo'     => true,
+        ]);
+
+        // Nota: No pre-creamos ninguna sesión de caja activa ni ventas asociadas
+        // para permitir el flujo limpio de apertura manual.
     }
 }

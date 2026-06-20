@@ -11,15 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::dropIfExists('tickets');
+        Schema::dropIfExists('pagos');
+        Schema::dropIfExists('venta_detalles');
+        Schema::dropIfExists('ventas');
+
         Schema::create('ventas', function (Blueprint $table) {
             $table->id();
             $table->string('numero_ticket', 50)->unique();
+            $table->foreignId('sesion_caja_id')->nullable()->constrained('sesiones_caja')->noActionOnDelete();
             $table->foreignId('user_id')->constrained('users')->noActionOnDelete();
             $table->foreignId('almacen_id')->constrained('almacenes')->noActionOnDelete();
             $table->decimal('subtotal', 18, 2);
             $table->decimal('iva', 18, 2);
             $table->decimal('total', 18, 2);
             $table->string('metodo_pago', 30); // efectivo, tarjeta
+            $table->string('estado', 20)->default('completada'); // completada, cancelada
             $table->timestamps();
         });
 
