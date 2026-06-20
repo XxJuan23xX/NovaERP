@@ -418,7 +418,10 @@ export default function PuntoVentaPage() {
               Punto de Venta
               {sesionActivaId && (
                 <span className="text-[10px] bg-indigo-50 border border-indigo-200 text-indigo-700 px-2 py-0.5 rounded-lg font-bold">
-                  Sesión #{sesionActivaId}
+                  Sesión #{sesionActivaId}{" "}
+                  {sesionActiva?.caja?.nombre
+                    ? `· ${sesionActiva.caja.nombre}`
+                    : ""}
                 </span>
               )}
             </div>
