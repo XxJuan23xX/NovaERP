@@ -13,6 +13,14 @@ export default function PuntoVentaPage() {
   const [cart, setCart] = useState([]);
   const [metodoPago, setMetodoPago] = useState("tarjeta"); // tarjeta, efectivo
 
+  // Clientes y Selección
+  const [clientes, setClientes] = useState([]);
+  const [clienteSeleccionadoId, setClienteSeleccionadoId] = useState("");
+
+  const clienteSeleccionado = useMemo(() => {
+    return clientes.find((c) => Number(c.id) === Number(clienteSeleccionadoId)) || null;
+  }, [clientes, clienteSeleccionadoId]);
+
   // UI States
   const [loading, setLoading] = useState(false);
   const [loadingProductos, setLoadingProductos] = useState(false);
@@ -130,6 +138,31 @@ export default function PuntoVentaPage() {
           if (!activeAlmacenId && listaAlmacenes.length > 0) {
             setAlmacenSeleccionado(listaAlmacenes[0].id);
           }
+        }
+
+        // 3. Cargar clientes
+        try {
+          const resClientes = await api.get("/clientes");
+          if (resClientes.data?.status === "success") {
+            const listClientes = resClientes.data.data || [];
+            setClientes(listClientes);
+
+            // Preselección de cliente desde localStorage
+            const preselected = localStorage.getItem("pos_preselected_cliente");
+            if (preselected) {
+              try {
+                const parsed = JSON.parse(preselected);
+                if (parsed && parsed.id) {
+                  setClienteSeleccionadoId(parsed.id);
+                }
+              } catch (e) {
+                console.error("Error parsing preselected cliente", e);
+              }
+              localStorage.removeItem("pos_preselected_cliente");
+            }
+          }
+        } catch (err) {
+          console.warn("Error al cargar clientes en POS:", err);
         }
       } catch (err) {
         console.error("Error al cargar datos iniciales del POS:", err);
@@ -361,6 +394,7 @@ export default function PuntoVentaPage() {
 
     const payload = {
       almacen_id: Number(almacenSeleccionado),
+      cliente_id: clienteSeleccionadoId ? Number(clienteSeleccionadoId) : null,
       metodo_pago: metodoPago,
       productos: cart.map((item) => ({
         producto_id: item.producto.id,
@@ -377,6 +411,7 @@ export default function PuntoVentaPage() {
 
         // Limpiar carrito y actualizar estados
         setCart([]);
+        setClienteSeleccionadoId("");
         await actualizarSiguienteTicket();
 
         // Recargar stock de productos de inmediato
@@ -669,6 +704,42 @@ export default function PuntoVentaPage() {
               Limpiar
             </button>
           )}
+        </div>
+
+        {/* Selector de Cliente */}
+        <div className="px-5 py-3.5 border-b border-slate-200 bg-slate-50 flex flex-col gap-2 flex-shrink-0 select-none">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+              👤 Cliente (Facturación)
+            </span>
+            {clienteSeleccionado ? (
+              <span
+                className={`text-[9px] font-black px-2 py-0.5 rounded-lg border ${
+                  clienteSeleccionado.perfil_completo
+                    ? "bg-emerald-50 text-emerald-700 border-emerald-250"
+                    : "bg-amber-50 text-amber-700 border-amber-250"
+                }`}
+              >
+                {clienteSeleccionado.perfil_completo ? "🟢 Facturación Lista" : "🟡 Perfil Incompleto"}
+              </span>
+            ) : (
+              <span className="text-[9px] font-black px-2 py-0.5 rounded-lg border bg-slate-100 text-slate-500 border-slate-250">
+                👥 Público General
+              </span>
+            )}
+          </div>
+          <select
+            value={clienteSeleccionadoId}
+            onChange={(e) => setClienteSeleccionadoId(e.target.value)}
+            className="w-full bg-white border border-slate-300 text-slate-900 text-xs font-bold rounded-xl px-3.5 py-2.5 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all cursor-pointer font-sans"
+          >
+            <option value="">Público General (Venta Mostrador)</option>
+            {clientes.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.nombre_razon_social} ({c.rfc})
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Listado de Productos en el Ticket */}
@@ -975,6 +1046,14 @@ export default function PuntoVentaPage() {
                     {successVenta.metodo_pago}
                   </span>
                 </div>
+                {successVenta.cliente && (
+                  <div className="flex justify-between">
+                    <span>Cliente</span>
+                    <span className="text-slate-850 font-extrabold truncate max-w-[150px]" title={successVenta.cliente.nombre_razon_social}>
+                      {successVenta.cliente.nombre_razon_social}
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Lista de productos vendidos */}
