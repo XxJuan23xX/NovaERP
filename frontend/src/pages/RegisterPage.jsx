@@ -125,7 +125,7 @@ export default function RegisterPage() {
       <Navigation />
 
       <div className="flex-1 min-w-0 flex items-center justify-center p-8">
-        <div className="w-full max-w-lg bg-slate-900 border border-slate-850 p-8 rounded-2xl shadow-2xl">
+        <div className="w-full max-w-lg bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-2xl">
           <div className="mb-6">
             <h1 className="text-3xl font-extrabold tracking-tight text-white flex items-center gap-3">
               <span className="p-2 bg-slate-950 rounded-xl border border-slate-800 text-indigo-400">
@@ -175,7 +175,7 @@ export default function RegisterPage() {
                   ${
                     fieldErrors.name
                       ? "border-red-500 ring-1 ring-red-500/30"
-                      : "border-slate-850 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                      : "border-slate-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                   }`}
               />
               {fieldErrors.name && (
@@ -205,7 +205,7 @@ export default function RegisterPage() {
                   ${
                     fieldErrors.email
                       ? "border-red-500 ring-1 ring-red-500/30"
-                      : "border-slate-850 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                      : "border-slate-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                   }`}
               />
               {fieldErrors.email && (
@@ -233,7 +233,7 @@ export default function RegisterPage() {
                   ${
                     fieldErrors.role
                       ? "border-red-500 ring-1 ring-red-500/30"
-                      : "border-slate-850 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                      : "border-slate-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                   }`}
               >
                 <option value="empleado" className="bg-slate-900">
@@ -268,7 +268,7 @@ export default function RegisterPage() {
                   ${
                     fieldErrors.sucursal
                       ? "border-red-500 ring-1 ring-red-500/30"
-                      : "border-slate-850 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                      : "border-slate-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                   }`}
               >
                 <option value="" className="bg-slate-900">
@@ -310,7 +310,7 @@ export default function RegisterPage() {
                     ${
                       fieldErrors.password
                         ? "border-red-500 ring-1 ring-red-500/30"
-                        : "border-slate-850 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                        : "border-slate-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                     }`}
                 />
                 <button
@@ -411,7 +411,7 @@ export default function RegisterPage() {
                     ${
                       fieldErrors.password_confirmation
                         ? "border-red-500 ring-1 ring-red-500/30"
-                        : "border-slate-850 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                        : "border-slate-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                     }`}
                 />
                 <button

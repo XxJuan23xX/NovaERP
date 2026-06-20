@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\CategoriaController;
 use App\Http\Controllers\Api\MarcaController;
 use App\Http\Controllers\Api\AlmacenController;
 use App\Http\Controllers\Api\KardexController;
+use App\Http\Controllers\Api\VentaController;
 
 // ─── Rutas públicas (sin autenticación) ─────────────────────────────────────
 Route::post('/login',    [AuthController::class, 'login']);
@@ -104,5 +105,11 @@ Route::middleware('auth:sanctum')->group(function () {
                 'message' => 'Acceso concedido al módulo POS de prueba.',
             ]);
         });
+
+        // Rutas reales del Punto de Venta (POS)
+        Route::get('/pos/ventas',           [VentaController::class, 'index']);
+        Route::post('/pos/ventas',          [VentaController::class, 'store']);
+        Route::get('/pos/siguiente-ticket', [VentaController::class, 'siguienteTicket']);
+        Route::get('/pos/ventas/{id}',      [VentaController::class, 'show']);
     });
 });

@@ -206,12 +206,12 @@ export default function Navigation() {
 
   return (
     <aside
-      className={`h-screen sticky top-0 flex flex-col justify-between bg-slate-900 border-r border-slate-850 z-50 transition-all duration-305 ${
+      className={`h-screen sticky top-0 flex flex-col justify-between bg-slate-900 border-r border-slate-800 z-50 transition-all duration-300 ${
         collapsed ? "w-16" : "w-64"
       }`}
     >
       {/* ── SECCIÓN SUPERIOR: LOGO Y TOGGLE ── */}
-      <div className={`flex border-b border-slate-850 overflow-hidden ${
+      <div className={`flex border-b border-slate-800 overflow-hidden ${
         collapsed 
           ? "flex-col items-center py-3 gap-2" 
           : "items-center justify-between p-4 h-16"
@@ -237,12 +237,12 @@ export default function Navigation() {
           className={
             collapsed
               ? "w-full flex justify-center py-2 text-slate-400 hover:text-white transition-colors cursor-pointer active:scale-95"
-              : "p-1 rounded-lg bg-slate-800 hover:bg-slate-750 text-slate-400 hover:text-white transition-colors cursor-pointer active:scale-95"
+              : "p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer active:scale-95"
           }
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className={`h-5 w-5 transform transition-transform duration-305 ${collapsed ? "rotate-180" : ""}`}
+            className={`h-5 w-5 transform transition-transform duration-300 ${collapsed ? "rotate-180" : ""}`}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -260,7 +260,7 @@ export default function Navigation() {
       {/* ── SECCIÓN DE PERFIL ACTIVO (BADGE) ── */}
       <div className="mt-4">
         {!collapsed ? (
-          <div className="mx-4 px-3 py-2 rounded-xl bg-slate-950 border border-slate-850/80 flex items-center gap-2.5 transition-all">
+          <div className="mx-4 px-3 py-2 rounded-xl bg-slate-950 border border-slate-800/80 flex items-center gap-2.5 transition-all">
             <span
               className={`h-2 w-2 rounded-full flex-shrink-0 ${user?.role === "admin" ? "bg-indigo-500 animate-pulse" : "bg-emerald-500"}`}
             />
@@ -277,7 +277,7 @@ export default function Navigation() {
                 ? "Panel de Administración"
                 : "Panel de Empleado"
             }
-            className="mx-auto w-8 h-8 rounded-xl bg-slate-950 border border-slate-850/80 flex items-center justify-center transition-all"
+            className="mx-auto w-8 h-8 rounded-xl bg-slate-950 border border-slate-800/80 flex items-center justify-center transition-all"
           >
             <span
               className={`h-2.5 w-2.5 rounded-full ${user?.role === "admin" ? "bg-indigo-500" : "bg-emerald-500"}`}
@@ -313,9 +313,9 @@ export default function Navigation() {
       </nav>
 
       {/* ── SECCIÓN INFERIOR: USUARIO Y CERRAR SESIÓN ── */}
-      <div className="p-3 border-t border-slate-850 bg-slate-900/50">
+      <div className="p-3 border-t border-slate-800 bg-slate-900/50">
         {!collapsed ? (
-          <div className="flex items-center justify-between gap-3 bg-slate-950 p-2.5 rounded-xl border border-slate-850/50">
+          <div className="flex items-center justify-between gap-3 bg-slate-950 p-2.5 rounded-xl border border-slate-800/50">
             <div className="flex items-center gap-2.5 min-w-0">
               {/* Avatar circular con gradiente e iniciales */}
               <div className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold text-sm flex items-center justify-center flex-shrink-0 select-none shadow-md shadow-indigo-600/10">
@@ -334,7 +334,7 @@ export default function Navigation() {
             <button
               onClick={handleLogout}
               title="Cerrar sesión"
-              className="p-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-slate-850 transition-all cursor-pointer active:scale-90"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-slate-800 transition-all cursor-pointer active:scale-90"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

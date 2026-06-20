@@ -42,11 +42,20 @@ class ProductoController extends Controller
                'categoria_id', 'marca_id', 'precio_venta',
                'stock_minimo', 'unidad_medida', 'activo', 'created_at', 'updated_at'];
 
+        $almacenId = $request->query('almacen_id');
+
         // ─── Query base ──────────────────────────────────────────────────────
         $query = Producto::select($columnas)
             ->with(['categoria:id,nombre', 'marca:id,nombre'])
-            ->withSum('almacenes as stock', 'producto_almacen.stock_actual')
             ->where('activo', true);
+
+        if ($almacenId) {
+            $query->withSum(['almacenes as stock' => function ($q) use ($almacenId) {
+                $q->where('producto_almacen.almacen_id', $almacenId);
+            }], 'producto_almacen.stock_actual');
+        } else {
+            $query->withSum('almacenes as stock', 'producto_almacen.stock_actual');
+        }
 
         // ─── Búsqueda por texto (nombre, SKU) ────────────────────────────────
         if ($busqueda = $request->query('busqueda')) {
