@@ -21,6 +21,9 @@ export default function PuntoVentaPage() {
     return clientes.find((c) => Number(c.id) === Number(clienteSeleccionadoId)) || null;
   }, [clientes, clienteSeleccionadoId]);
 
+  // Cotización de origen (si se convierte)
+  const [cotizacionId, setCotizacionId] = useState(null);
+
   // UI States
   const [loading, setLoading] = useState(false);
   const [loadingProductos, setLoadingProductos] = useState(false);
@@ -159,6 +162,38 @@ export default function PuntoVentaPage() {
                 console.error("Error parsing preselected cliente", e);
               }
               localStorage.removeItem("pos_preselected_cliente");
+            }
+
+            // Preselección de cotización desde localStorage
+            const preselectedCot = localStorage.getItem("pos_preselected_cotizacion");
+            if (preselectedCot) {
+              try {
+                const parsed = JSON.parse(preselectedCot);
+                if (parsed) {
+                  if (parsed.cliente_id) {
+                    setClienteSeleccionadoId(parsed.cliente_id);
+                  }
+                  if (parsed.cotizacion_id) {
+                    setCotizacionId(parsed.cotizacion_id);
+                  }
+                  if (parsed.productos && parsed.productos.length > 0) {
+                    const cartList = parsed.productos.map((pItem) => {
+                      const prodCopy = {
+                        ...pItem.producto,
+                        precio_venta: Number(pItem.precio_unitario)
+                      };
+                      return {
+                        producto: prodCopy,
+                        cantidad: pItem.cantidad
+                      };
+                    });
+                    setCart(cartList);
+                  }
+                }
+              } catch (e) {
+                console.error("Error parsing preselected cotizacion", e);
+              }
+              localStorage.removeItem("pos_preselected_cotizacion");
             }
           }
         } catch (err) {
@@ -395,10 +430,12 @@ export default function PuntoVentaPage() {
     const payload = {
       almacen_id: Number(almacenSeleccionado),
       cliente_id: clienteSeleccionadoId ? Number(clienteSeleccionadoId) : null,
+      cotizacion_id: cotizacionId,
       metodo_pago: metodoPago,
       productos: cart.map((item) => ({
         producto_id: item.producto.id,
         cantidad: item.cantidad,
+        precio_unitario: Number(item.producto.precio_venta),
       })),
     };
 
@@ -412,6 +449,7 @@ export default function PuntoVentaPage() {
         // Limpiar carrito y actualizar estados
         setCart([]);
         setClienteSeleccionadoId("");
+        setCotizacionId(null);
         await actualizarSiguienteTicket();
 
         // Recargar stock de productos de inmediato

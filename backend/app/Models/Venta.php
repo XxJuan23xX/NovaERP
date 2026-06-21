@@ -16,6 +16,7 @@ class Venta extends Model
         'user_id',
         'almacen_id',
         'cliente_id',
+        'cotizacion_id',
         'subtotal',
         'iva',
         'total',
@@ -61,5 +62,13 @@ class Venta extends Model
     public function detalles(): HasMany
     {
         return $this->hasMany(VentaDetalle::class, 'venta_id');
+    }
+
+    /**
+     * Una venta puede originarse de una cotización.
+     */
+    public function cotizacion(): BelongsTo
+    {
+        return $this->belongsTo(Cotizacion::class, 'cotizacion_id');
     }
 }

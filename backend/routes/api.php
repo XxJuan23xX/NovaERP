@@ -113,6 +113,10 @@ Route::middleware('auth:sanctum')->group(function () {
         // MÓDULO: CLIENTES (CRM)
         Route::apiResource('clientes', \App\Http\Controllers\Api\ClienteController::class);
 
+        // MÓDULO: COTIZACIONES
+        Route::patch('/cotizaciones/{id}/convertir', [\App\Http\Controllers\Api\CotizacionController::class, 'convertir']);
+        Route::apiResource('cotizaciones', \App\Http\Controllers\Api\CotizacionController::class);
+
         // MÓDULO: CIERRE DE CAJA
         Route::prefix('caja')->group(function () {
             Route::get('/cierre-resumen', [\App\Http\Controllers\Api\CierreCajaController::class, 'cierreResumen']);
