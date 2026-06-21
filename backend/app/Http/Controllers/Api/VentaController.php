@@ -79,10 +79,12 @@ class VentaController extends Controller
         $validator = Validator::make($request->all(), [
             'almacen_id' => 'nullable|integer|exists:almacenes,id',
             'cliente_id' => 'nullable|integer|exists:clientes,id',
+            'cotizacion_id' => 'nullable|integer|exists:cotizaciones,id',
             'metodo_pago' => ['required', 'string', Rule::in(['efectivo', 'tarjeta'])],
             'productos' => 'required|array|min:1',
             'productos.*.producto_id' => 'required|integer|exists:productos,id',
             'productos.*.cantidad' => 'required|integer|min:1',
+            'productos.*.precio_unitario' => 'nullable|numeric|min:0',
         ]);
 
         if ($validator->fails()) {
@@ -97,6 +99,7 @@ class VentaController extends Controller
         $metodoPago = $request->input('metodo_pago');
         $productosInput = $request->input('productos');
         $clienteId = $request->input('cliente_id');
+        $cotizacionId = $request->input('cotizacion_id');
 
         // Buscar sesión de caja abierta para el cajero (con la caja cargada)
         $sesion = \App\Models\SesionCaja::with('caja')->where('user_id', $userId)
@@ -115,7 +118,7 @@ class VentaController extends Controller
 
         try {
             // 2. Procesar venta dentro de una transacción de BD
-            $venta = DB::transaction(function () use ($userId, $almacenId, $metodoPago, $productosInput, $sesion, $clienteId) {
+            $venta = DB::transaction(function () use ($userId, $almacenId, $metodoPago, $productosInput, $sesion, $clienteId, $cotizacionId) {
 
                 // Generar número de ticket único: V-2000 en adelante
                 $ultimoId = Venta::max('id') ?? 2000;
@@ -151,7 +154,7 @@ class VentaController extends Controller
                         );
                     }
 
-                    $precioUnitario = $producto->precio_venta;
+                    $precioUnitario = $item['precio_unitario'] ?? $producto->precio_venta;
                     $subtotalItem = $precioUnitario * $cantidad;
                     $subtotalGeneral += $subtotalItem;
 
@@ -174,11 +177,19 @@ class VentaController extends Controller
                     'user_id' => $userId,
                     'almacen_id' => $almacenId,
                     'cliente_id' => $clienteId,
+                    'cotizacion_id' => $cotizacionId,
                     'subtotal' => $subtotalGeneral,
                     'iva' => $iva,
                     'total' => $total,
                     'metodo_pago' => $metodoPago,
                 ]);
+
+                // Si viene de una cotización, actualizar su estado
+                if ($cotizacionId) {
+                    DB::table('cotizaciones')
+                        ->where('id', $cotizacionId)
+                        ->update(['estado' => 'convertida']);
+                }
 
                 // Crear detalles y registrar movimientos en el Kardex (descontar stock)
                 foreach ($detallesPreparados as $detalle) {
