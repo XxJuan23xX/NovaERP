@@ -15,12 +15,21 @@ class Venta extends Model
         'sesion_caja_id',
         'user_id',
         'almacen_id',
+        'cliente_id',
         'subtotal',
         'iva',
         'total',
         'metodo_pago',
         'estado',
     ];
+
+    /**
+     * Una venta puede pertenecer a un cliente.
+     */
+    public function cliente(): BelongsTo
+    {
+        return $this->belongsTo(Cliente::class, 'cliente_id');
+    }
 
     protected $casts = [
         'subtotal' => 'decimal:2',

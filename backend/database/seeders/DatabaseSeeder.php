@@ -142,6 +142,7 @@ class DatabaseSeeder extends Seeder
         DB::table('ventas')->delete();
         DB::table('sesiones_caja')->delete();
         DB::table('cajas')->delete();
+        DB::table('clientes')->delete();
 
         // Crear Caja Principal
         $caja = Caja::create([
@@ -152,5 +153,83 @@ class DatabaseSeeder extends Seeder
 
         // Nota: No pre-creamos ninguna sesión de caja activa ni ventas asociadas
         // para permitir el flujo limpio de apertura manual.
+
+        // ─── 8. Módulo Clientes (CRM) ─────────────────────────────────────────
+        $c1 = \App\Models\Cliente::create([
+            'nombre_razon_social' => 'Empresa Acme S.A.',
+            'telefono' => '5512345678',
+            'email' => 'jhdz@acme.mx',
+            'rfc' => 'EAC980101XYZ',
+            'regimen_fiscal' => '601',
+            'uso_cfdi' => 'G03',
+            'codigo_postal_fiscal' => '06000',
+            'direccion_fiscal_calle' => 'Av. Juárez',
+            'direccion_fiscal_num_ext' => '100',
+            'direccion_fiscal_num_int' => null,
+            'direccion_fiscal_colonia' => 'Centro',
+            'direccion_fiscal_municipio' => 'Cuauhtémoc',
+            'direccion_fiscal_estado' => 'CDMX',
+            'tipo_cliente' => 'Mayorista',
+            'limite_credito' => 50000.00,
+            'vendedor_id' => $admin->id,
+        ]);
+
+        $c2 = \App\Models\Cliente::create([
+            'nombre_razon_social' => 'Tecnosoluciones MX',
+            'telefono' => '8112345678',
+            'email' => 'marta@tecno.mx',
+            'rfc' => 'TMX120305ABC',
+            'regimen_fiscal' => '601',
+            'uso_cfdi' => 'G01',
+            'codigo_postal_fiscal' => '64000',
+            'direccion_fiscal_calle' => 'Av. Constitución',
+            'direccion_fiscal_num_ext' => '450',
+            'direccion_fiscal_num_int' => 'Piso 3',
+            'direccion_fiscal_colonia' => 'Obrera',
+            'direccion_fiscal_municipio' => 'Monterrey',
+            'direccion_fiscal_estado' => 'Nuevo León',
+            'tipo_cliente' => 'Mayorista',
+            'limite_credito' => 30000.00,
+            'vendedor_id' => $empleado->id,
+        ]);
+
+        $c3 = \App\Models\Cliente::create([
+            'nombre_razon_social' => 'Distribuidora Norte',
+            'telefono' => '6641234567',
+            'email' => 'pablo@disnorte.mx',
+            'rfc' => 'DNO150610JKL',
+            'regimen_fiscal' => '612',
+            'uso_cfdi' => 'I01',
+            'codigo_postal_fiscal' => '22000',
+            'direccion_fiscal_calle' => 'Blvd. Agua Caliente',
+            'direccion_fiscal_num_ext' => '800',
+            'direccion_fiscal_num_int' => null,
+            'direccion_fiscal_colonia' => 'Madero',
+            'direccion_fiscal_municipio' => 'Tijuana',
+            'direccion_fiscal_estado' => 'Baja California',
+            'tipo_cliente' => 'Minorista',
+            'limite_credito' => 20000.00,
+            'vendedor_id' => $empleado->id,
+        ]);
+
+        // Este cliente se creará PENDIENTE (🟡) porque le faltarán algunos datos fiscales obligatorios
+        $c4 = \App\Models\Cliente::create([
+            'nombre_razon_social' => 'Servicios Globales',
+            'telefono' => '3312345678',
+            'email' => 'elena@globales.mx',
+            'rfc' => 'SGL200820MNP',
+            'regimen_fiscal' => '', // Faltante
+            'uso_cfdi' => '',       // Faltante
+            'codigo_postal_fiscal' => '44100',
+            'direccion_fiscal_calle' => 'Av. Chapultepec',
+            'direccion_fiscal_num_ext' => '220',
+            'direccion_fiscal_num_int' => null,
+            'direccion_fiscal_colonia' => 'Americana',
+            'direccion_fiscal_municipio' => 'Guadalajara',
+            'direccion_fiscal_estado' => 'Jalisco',
+            'tipo_cliente' => 'Público General',
+            'limite_credito' => 10000.00,
+            'vendedor_id' => $admin->id,
+        ]);
     }
 }

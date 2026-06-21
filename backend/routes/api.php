@@ -110,7 +110,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/pos/ventas',           [VentaController::class, 'index']);
         Route::post('/pos/ventas',          [VentaController::class, 'store']);
         Route::get('/pos/siguiente-ticket', [VentaController::class, 'siguienteTicket']);
-        Route::get('/pos/ventas/{id}',      [VentaController::class, 'show']);
+        // MÓDULO: CLIENTES (CRM)
+        Route::apiResource('clientes', \App\Http\Controllers\Api\ClienteController::class);
 
         // MÓDULO: CIERRE DE CAJA
         Route::prefix('caja')->group(function () {

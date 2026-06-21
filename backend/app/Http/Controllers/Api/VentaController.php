@@ -78,6 +78,7 @@ class VentaController extends Controller
         // 1. Validar la petición
         $validator = Validator::make($request->all(), [
             'almacen_id' => 'nullable|integer|exists:almacenes,id',
+            'cliente_id' => 'nullable|integer|exists:clientes,id',
             'metodo_pago' => ['required', 'string', Rule::in(['efectivo', 'tarjeta'])],
             'productos' => 'required|array|min:1',
             'productos.*.producto_id' => 'required|integer|exists:productos,id',
@@ -95,6 +96,7 @@ class VentaController extends Controller
         $userId = $request->user()->id;
         $metodoPago = $request->input('metodo_pago');
         $productosInput = $request->input('productos');
+        $clienteId = $request->input('cliente_id');
 
         // Buscar sesión de caja abierta para el cajero (con la caja cargada)
         $sesion = \App\Models\SesionCaja::with('caja')->where('user_id', $userId)
@@ -113,7 +115,7 @@ class VentaController extends Controller
 
         try {
             // 2. Procesar venta dentro de una transacción de BD
-            $venta = DB::transaction(function () use ($userId, $almacenId, $metodoPago, $productosInput, $sesion) {
+            $venta = DB::transaction(function () use ($userId, $almacenId, $metodoPago, $productosInput, $sesion, $clienteId) {
 
                 // Generar número de ticket único: V-2000 en adelante
                 $ultimoId = Venta::max('id') ?? 2000;
@@ -171,6 +173,7 @@ class VentaController extends Controller
                     'sesion_caja_id' => $sesion->id,
                     'user_id' => $userId,
                     'almacen_id' => $almacenId,
+                    'cliente_id' => $clienteId,
                     'subtotal' => $subtotalGeneral,
                     'iva' => $iva,
                     'total' => $total,
@@ -211,7 +214,7 @@ class VentaController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Venta registrada correctamente.',
-                'data' => Venta::with(['detalles.producto:id,nombre,sku', 'almacen:id,nombre'])->find($venta->id),
+                'data' => Venta::with(['detalles.producto:id,nombre,sku', 'almacen:id,nombre', 'cliente:id,nombre_razon_social,rfc'])->find($venta->id),
             ], 201);
 
         } catch (\RuntimeException $e) {
