@@ -183,7 +183,7 @@ export default function CierreCajaPage() {
         <header className="flex flex-row items-center justify-between mb-8 pb-4 border-b border-slate-350 gap-4 print:mb-4 print:pb-2 print:border-b-2">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-black text-slate-900 tracking-tight m-0 select-none">
+              <h1 className="text-2xl font-black text-black! tracking-tight m-0 select-none">
                 Cierre de Caja
               </h1>
               {esCerrada ? (
@@ -339,7 +339,7 @@ export default function CierreCajaPage() {
                 />
               </svg>
             </div>
-            <h3 className="text-slate-900 font-black text-lg mb-2">
+            <h3 className="text-black! font-black text-lg mb-2">
               No hay una sesión de caja activa
             </h3>
             <p className="text-slate-500 text-sm max-w-md leading-relaxed mb-6 mx-auto">
@@ -486,7 +486,7 @@ export default function CierreCajaPage() {
               {/* Tabla de Ventas por Cajero (Ocupa 2/3 columnas en XL screens) */}
               <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm xl:col-span-2 print:border-0 print:shadow-none print:p-0">
                 <div className="flex items-center justify-between mb-6 pb-3 border-b border-slate-200">
-                  <h2 className="text-base font-black text-slate-900 select-none">
+                  <h2 className="text-base font-black text-black! select-none">
                     Ventas y Operaciones por Cajero
                   </h2>
                   <span className="text-[11px] font-black bg-slate-100 border border-slate-350 text-slate-800 px-3 py-1 rounded-lg select-none">
@@ -591,7 +591,7 @@ export default function CierreCajaPage() {
               {/* Información y Datos de Arqueo Físico (1/3 columna en XL screens) */}
               <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col space-y-6 print:border print:shadow-none">
                 <div className="pb-3 border-b border-slate-200">
-                  <h2 className="text-base font-black text-slate-900 select-none">
+                  <h2 className="text-base font-black text-black! select-none">
                     Sesión e Inventario
                   </h2>
                 </div>

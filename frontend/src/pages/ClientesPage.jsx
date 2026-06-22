@@ -623,7 +623,7 @@ export default function ClientesPage() {
                           C-{String(cliente.id).padStart(3, "0")}
                         </span>
                         <h2
-                          className="text-sm font-black text-slate-900 truncate mt-0.5"
+                          className="text-sm font-black text-black! truncate mt-0.5"
                           title={cliente.nombre_razon_social}
                         >
                           {cliente.nombre_razon_social}
@@ -876,7 +876,7 @@ export default function ClientesPage() {
                         formErrors.nombre_razon_social
                           ? "border-red-500 ring-2 ring-red-500/10"
                           : "border-slate-300 focus:border-indigo-500"
-                      } text-slate-900 text-xs font-bold rounded-xl px-4 py-2.5 focus:outline-none transition-all`}
+                      } text-black! text-xs font-bold rounded-xl px-4 py-2.5 focus:outline-none transition-all`}
                     />
                     {formErrors.nombre_razon_social && (
                       <p className="text-[10px] font-bold text-red-650 mt-1">
