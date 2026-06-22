@@ -19,10 +19,12 @@ class KardexMovimiento extends Model
     // Tipos de movimiento disponibles (constantes de dominio)
     const TIPO_ENTRADA_COMPRA = 'ENTRADA_COMPRA';
     const TIPO_ENTRADA_AJUSTE = 'ENTRADA_AJUSTE';
+    const TIPO_ENTRADA_TRASPASO = 'ENTRADA_TRASPASO';
     const TIPO_SALIDA_MERMA   = 'SALIDA_MERMA';
     const TIPO_SALIDA_ROBO    = 'SALIDA_ROBO';
     const TIPO_SALIDA_AJUSTE  = 'SALIDA_AJUSTE';
     const TIPO_SALIDA_VENTA   = 'SALIDA_VENTA';
+    const TIPO_SALIDA_TRASPASO = 'SALIDA_TRASPASO';
 
     protected $fillable = [
         'producto_id',
@@ -78,10 +80,12 @@ class KardexMovimiento extends Model
         return [
             self::TIPO_ENTRADA_COMPRA,
             self::TIPO_ENTRADA_AJUSTE,
+            self::TIPO_ENTRADA_TRASPASO,
             self::TIPO_SALIDA_MERMA,
             self::TIPO_SALIDA_ROBO,
             self::TIPO_SALIDA_AJUSTE,
             self::TIPO_SALIDA_VENTA,
+            self::TIPO_SALIDA_TRASPASO,
         ];
     }
 
