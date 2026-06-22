@@ -42,7 +42,7 @@ export default function Navigation() {
       path: "/dashboard",
       icon: (
         <svg
-          className="w-5 h-5 flex-shrink-0"
+          className="w-4 h-4 flex-shrink-0"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -61,7 +61,7 @@ export default function Navigation() {
       path: "/pos",
       icon: (
         <svg
-          className="w-5 h-5 flex-shrink-0"
+          className="w-4 h-4 flex-shrink-0"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -80,7 +80,7 @@ export default function Navigation() {
       path: "/inventario/productos",
       icon: (
         <svg
-          className="w-5 h-5 flex-shrink-0"
+          className="w-4 h-4 flex-shrink-0"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -95,11 +95,30 @@ export default function Navigation() {
       ),
     },
     {
+      name: "Traspasos",
+      path: "/inventario/traspasos",
+      icon: (
+        <svg
+          className="w-4 h-4 flex-shrink-0"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+          />
+        </svg>
+      ),
+    },
+    {
       name: "Cotizaciones",
       path: "/cotizaciones",
       icon: (
         <svg
-          className="w-5 h-5 flex-shrink-0"
+          className="w-4 h-4 flex-shrink-0"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -118,7 +137,7 @@ export default function Navigation() {
       path: "/usuarios",
       icon: (
         <svg
-          className="w-5 h-5 flex-shrink-0"
+          className="w-4 h-4 flex-shrink-0"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -137,7 +156,7 @@ export default function Navigation() {
       path: "/auditoria",
       icon: (
         <svg
-          className="w-5 h-5 flex-shrink-0"
+          className="w-4 h-4 flex-shrink-0"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -156,7 +175,7 @@ export default function Navigation() {
       path: "/clientes",
       icon: (
         <svg
-          className="w-5 h-5 flex-shrink-0"
+          className="w-4 h-4 flex-shrink-0"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -175,7 +194,7 @@ export default function Navigation() {
       path: "/cierre-caja",
       icon: (
         <svg
-          className="w-5 h-5 flex-shrink-0"
+          className="w-4 h-4 flex-shrink-0"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -192,17 +211,24 @@ export default function Navigation() {
   ];
 
   // ── FILTRAR MENÚ SEGÚN EL ROL DE USUARIO ──
-  const filteredMenuItems = menuItems.filter((item) => {
-    if (user?.role === "empleado") {
-      return ["/pos", "/inventario/productos", "/cotizaciones"].includes(item.path);
-    }
-    return true;
-  }).map((item) => {
-    if (user?.role === "empleado" && item.path === "/inventario/productos") {
-      return { ...item, name: "Consulta Productos" };
-    }
-    return item;
-  });
+  const filteredMenuItems = menuItems
+    .filter((item) => {
+      if (user?.role === "empleado") {
+        return [
+          "/pos",
+          "/inventario/productos",
+          "/cotizaciones",
+          "/inventario/traspasos",
+        ].includes(item.path);
+      }
+      return true;
+    })
+    .map((item) => {
+      if (user?.role === "empleado" && item.path === "/inventario/productos") {
+        return { ...item, name: "Consulta Productos" };
+      }
+      return item;
+    });
 
   return (
     <aside
@@ -211,11 +237,13 @@ export default function Navigation() {
       }`}
     >
       {/* ── SECCIÓN SUPERIOR: LOGO Y TOGGLE ── */}
-      <div className={`flex border-b border-slate-800 overflow-hidden ${
-        collapsed 
-          ? "flex-col items-center py-3 gap-2" 
-          : "items-center justify-between p-4 h-16"
-      }`}>
+      <div
+        className={`flex border-b border-slate-800 overflow-hidden ${
+          collapsed
+            ? "flex-col items-center py-3 gap-2"
+            : "items-center justify-between p-4 h-16"
+        }`}
+      >
         <div className={`flex items-center ${collapsed ? "" : "gap-3"}`}>
           <div className="flex-shrink-0 h-8 w-8 rounded-lg overflow-hidden flex items-center justify-center bg-indigo-600/10 border border-indigo-500/20">
             <img
@@ -295,7 +323,7 @@ export default function Navigation() {
               key={item.path}
               to={item.path}
               title={collapsed ? item.name : undefined}
-              className={`flex items-center gap-3.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 ${
+              className={`flex items-center gap-3.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 ${
                 active
                   ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/10"
                   : "text-slate-400 hover:bg-slate-800 hover:text-slate-100"

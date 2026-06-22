@@ -13,6 +13,7 @@ import AuditoriaPage from "./pages/AuditoriaPage";
 import ClientesPage from "./pages/ClientesPage";
 import CierreCajaPage from "./pages/CierreCajaPage";
 import UsuariosPage from "./pages/UsuariosPage";
+import AuditoriaTraspasosPage from "./pages/AuditoriaTraspasosPage";
 
 // 🔒 Ruta protegida — Si no existe el token físico en el navegador, se expulsa inmediatamente
 function PrivateRoute({ children }) {
@@ -169,6 +170,14 @@ export default function App() {
           element={
             <PrivateRoute>
               <ProductosPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/inventario/traspasos"
+          element={
+            <PrivateRoute>
+              <AuditoriaTraspasosPage />
             </PrivateRoute>
           }
         />

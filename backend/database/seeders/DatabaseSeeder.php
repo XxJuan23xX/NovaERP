@@ -227,9 +227,58 @@ class DatabaseSeeder extends Seeder
             'direccion_fiscal_colonia' => 'Americana',
             'direccion_fiscal_municipio' => 'Guadalajara',
             'direccion_fiscal_estado' => 'Jalisco',
-            'tipo_cliente' => 'Público General',
-            'limite_credito' => 10000.00,
-            'vendedor_id' => $admin->id,
+        ]);
+
+        // ─── 9. Módulo Traspasos (Seeders) ───────────────────────────────────
+        DB::table('traspaso_detalles')->delete();
+        DB::table('traspasos')->delete();
+
+        $t1 = \App\Models\Traspaso::create([
+            'codigo_traspaso' => 'TR-10001',
+            'almacen_origen_id' => $almacenCentral->id,
+            'almacen_destino_id' => $almacenSucursal->id,
+            'user_id' => $admin->id,
+            'estado' => 'recibido',
+            'fecha_envio' => now()->subDays(5),
+            'fecha_recepcion' => now()->subDays(4),
+        ]);
+
+        \App\Models\TraspasoDetalle::create([
+            'traspaso_id' => $t1->id,
+            'producto_id' => $producto1->id,
+            'cantidad' => 5,
+        ]);
+
+        $t2 = \App\Models\Traspaso::create([
+            'codigo_traspaso' => 'TR-10002',
+            'almacen_origen_id' => $almacenCentral->id,
+            'almacen_destino_id' => $almacenSucursal->id,
+            'user_id' => $admin->id,
+            'estado' => 'en_transito',
+            'fecha_envio' => now()->subHours(2),
+            'fecha_recepcion' => null,
+        ]);
+
+        \App\Models\TraspasoDetalle::create([
+            'traspaso_id' => $t2->id,
+            'producto_id' => $producto2->id,
+            'cantidad' => 2,
+        ]);
+
+        $t3 = \App\Models\Traspaso::create([
+            'codigo_traspaso' => 'TR-10003',
+            'almacen_origen_id' => $almacenSucursal->id,
+            'almacen_destino_id' => $almacenCentral->id,
+            'user_id' => $empleado->id,
+            'estado' => 'rechazado',
+            'fecha_envio' => now()->subDays(2),
+            'fecha_recepcion' => now()->subDays(2),
+        ]);
+
+        \App\Models\TraspasoDetalle::create([
+            'traspaso_id' => $t3->id,
+            'producto_id' => $producto1->id,
+            'cantidad' => 3,
         ]);
     }
 }

@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\MarcaController;
 use App\Http\Controllers\Api\AlmacenController;
 use App\Http\Controllers\Api\KardexController;
 use App\Http\Controllers\Api\VentaController;
+use App\Http\Controllers\Api\TraspasoController;
 
 // ─── Rutas públicas (sin autenticación) ─────────────────────────────────────
 Route::post('/login',    [AuthController::class, 'login']);
@@ -53,6 +54,11 @@ Route::middleware('auth:sanctum')->group(function () {
             // La lógica de ocultamiento de precio_compra está en ProductoController + ProductoResource
             Route::get('/productos',         [ProductoController::class, 'index']);
             Route::get('/productos/{id}',    [ProductoController::class, 'show']);
+
+            // Traspasos de Inventario (Fase 1: Historial & Fase 2: Creación/Confirmación)
+            Route::get('/traspasos',         [TraspasoController::class, 'index']);
+            Route::post('/traspasos',        [TraspasoController::class, 'store']);
+            Route::post('/traspasos/{id}/confirmar', [TraspasoController::class, 'confirmar']);
         });
 
         // ─── Rutas exclusivas: SOLO admin ─────────────────────────────────────
