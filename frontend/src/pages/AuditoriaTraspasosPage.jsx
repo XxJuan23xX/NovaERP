@@ -525,7 +525,7 @@ export default function AuditoriaTraspasosPage() {
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3.5 rounded-2xl mb-6 flex items-start gap-3 shadow-sm">
             <svg
-              className="h-5 w-5 mt-0.5 flex-shrink-0 text-red-500"
+              className="h-5 w-5 mt-0.5 shrink-0 text-red-500"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -750,7 +750,7 @@ export default function AuditoriaTraspasosPage() {
                                         retornar las unidades al origen.
                                       </p>
                                     </div>
-                                    <div className="flex items-center gap-2 flex-shrink-0">
+                                    <div className="flex items-center gap-2 shrink-0">
                                       <button
                                         onClick={() =>
                                           triggerConfirmAction(

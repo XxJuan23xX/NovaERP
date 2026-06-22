@@ -484,7 +484,7 @@ export default function CotizacionesPage() {
             {error && (
               <div className="mb-6 bg-red-50 border border-red-200 p-4 rounded-xl text-red-800 text-xs font-bold flex items-center gap-2">
                 <svg
-                  className="h-5 w-5 text-red-500 flex-shrink-0"
+                  className="h-5 w-5 text-red-500 shrink-0"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -721,7 +721,7 @@ export default function CotizacionesPage() {
             {selectedCliente && !selectedCliente.perfil_completo && (
               <div className="mb-6 bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-2xl flex items-start gap-2.5 shadow-sm animate-in slide-in-from-top-2 duration-150">
                 <svg
-                  className="h-5 w-5 mt-0.5 flex-shrink-0 text-amber-500"
+                  className="h-5 w-5 mt-0.5 shrink-0 text-amber-500"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -1249,7 +1249,7 @@ export default function CotizacionesPage() {
 
           <div className="relative w-full max-w-lg bg-white h-full shadow-2xl flex flex-col z-10 border-l border-slate-200 animate-in slide-in-from-right duration-250 print-modal-content">
             {/* Cabecera Drawer */}
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between flex-shrink-0">
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between shrink-0">
               <div className="min-w-0">
                 <span className="text-[10px] font-black text-slate-400 tracking-wider block uppercase">
                   FICHA DE COTIZACIÓN
@@ -1426,7 +1426,7 @@ export default function CotizacionesPage() {
 
             {/* Acciones Drawer Footer */}
             {detailData && (
-              <div className="p-6 border-t border-slate-100 flex gap-3 select-none flex-shrink-0 print:hidden">
+              <div className="p-6 border-t border-slate-100 flex gap-3 select-none shrink-0 print:hidden">
                 <button
                   onClick={() => window.print()}
                   className="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
