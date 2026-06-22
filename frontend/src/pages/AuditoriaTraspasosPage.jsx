@@ -429,7 +429,7 @@ export default function AuditoriaTraspasosPage() {
         {/* Cabecera de la Página */}
         <header className="flex flex-row items-center justify-between mb-8 pb-4 border-b border-slate-200 gap-4">
           <div>
-            <h1 className="text-xl font-black text-slate-900 tracking-tight m-0 select-none">
+            <h1 className="text-xl font-black text-black! tracking-tight m-0 select-none">
               Auditoría de Traspasos
             </h1>
             <p className="text-slate-500 text-xs font-bold mt-1 select-none">
