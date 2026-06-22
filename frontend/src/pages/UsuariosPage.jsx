@@ -248,7 +248,7 @@ export default function UsuariosPage() {
         {/* Cabecera del Módulo */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-black!">
+            <h1 className="text-[28px]! font-extrabold tracking-tight text-black!">
               Usuarios
             </h1>
             <p className="mt-1 text-slate-400 text-xs font-medium">
@@ -269,7 +269,7 @@ export default function UsuariosPage() {
               setFieldErrors({});
               setIsModalOpen(true);
             }}
-            className="inline-flex items-center gap-2 bg-[#4f46e5] hover:bg-indigo-700 text-white font-semibold px-4 py-2.5 rounded-xl shadow-sm hover:shadow transition-all duration-150 active:scale-98 cursor-pointer"
+            className="inline-flex items-center gap-2 bg-[#4f46e5] hover:bg-indigo-700 text-white font-semibold px-4 py-2.5 rounded-xl text-xs shadow-sm hover:shadow transition-all duration-150 active:scale-98 cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -331,26 +331,26 @@ export default function UsuariosPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-100">
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
+                  <tr className="bg-slate-50 border-b border-slate-100 select-none">
+                    <th className="px-4 py-3 text-[10px] font-black uppercase tracking-wider text-slate-700">
                       ID
                     </th>
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
+                    <th className="px-4 py-3 text-[10px] font-black uppercase tracking-wider text-slate-700">
                       Nombre
                     </th>
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
+                    <th className="px-4 py-3 text-[10px] font-black uppercase tracking-wider text-slate-700">
                       Correo
                     </th>
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
+                    <th className="px-4 py-3 text-[10px] font-black uppercase tracking-wider text-slate-700">
                       Rol
                     </th>
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
+                    <th className="px-4 py-3 text-[10px] font-black uppercase tracking-wider text-slate-700">
                       Sucursal
                     </th>
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
+                    <th className="px-4 py-3 text-[10px] font-black uppercase tracking-wider text-slate-700">
                       Estado
                     </th>
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-center">
+                    <th className="px-4 py-3 text-[10px] font-black uppercase tracking-wider text-slate-700 text-center">
                       Acciones
                     </th>
                   </tr>
@@ -361,37 +361,46 @@ export default function UsuariosPage() {
                       key={item.id}
                       className="hover:bg-slate-50/50 transition-colors"
                     >
-                      <td className="px-6 py-4 text-sm text-slate-500 font-mono">
+                      <td className="px-4 py-3 text-[11px] text-slate-500 font-mono whitespace-nowrap">
                         #{item.id}
                       </td>
-                      <td className="px-6 py-4 text-sm font-bold text-slate-900">
-                        {item.name}
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2.5">
+                          <div className="h-7 w-7 rounded-full bg-linear-to-br from-indigo-500 to-purple-600 text-white font-bold text-[10px] flex items-center justify-center shrink-0 select-none shadow-sm">
+                            {item.name ? item.name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase() : "??"}
+                          </div>
+                          <div>
+                            <p className="text-[11.5px] font-bold text-slate-900 leading-tight">
+                              {item.name}
+                            </p>
+                          </div>
+                        </div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-slate-600">
+                      <td className="px-4 py-3 text-[11px] text-slate-600 font-semibold">
                         {item.email}
                       </td>
-                      <td className="px-6 py-4 text-sm">
+                      <td className="px-4 py-3">
                         {item.role === "admin" ? (
-                          <span className="px-2.5 py-1 inline-flex text-[11px] leading-5 font-bold rounded-full bg-purple-50 text-purple-600 border border-purple-100">
+                          <span className="px-2 py-0.5 inline-flex text-[10px] leading-5 font-extrabold uppercase rounded-md bg-purple-50 text-purple-600 border border-purple-200">
                             Administrador
                           </span>
                         ) : (
-                          <span className="px-2.5 py-1 inline-flex text-[11px] leading-5 font-bold rounded-full bg-blue-50 text-blue-600 border border-blue-100">
+                          <span className="px-2 py-0.5 inline-flex text-[10px] leading-5 font-extrabold uppercase rounded-md bg-blue-50 text-blue-600 border border-blue-200">
                             Empleado
                           </span>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-sm text-slate-600">
+                      <td className="px-4 py-3 text-[11px] text-slate-650 font-semibold">
                         {item.sucursal || "No asignada"}
                       </td>
-                      <td className="px-6 py-4 text-sm">
+                      <td className="px-4 py-3">
                         {item.activo ? (
                           <button
                             onClick={() =>
                               handleToggleStatus(item.id, item.name)
                             }
                             title="Haga click para desactivar usuario"
-                            className="px-2.5 py-1 inline-flex text-[11px] leading-5 font-bold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 hover:bg-emerald-100/50 transition-all cursor-pointer"
+                            className="px-2 py-0.5 inline-flex text-[10px] leading-5 font-extrabold uppercase rounded-md bg-emerald-50 text-emerald-600 border border-emerald-250 hover:bg-emerald-100/50 transition-all cursor-pointer"
                           >
                             Activo
                           </button>
@@ -401,17 +410,19 @@ export default function UsuariosPage() {
                               handleToggleStatus(item.id, item.name)
                             }
                             title="Haga click para activar usuario"
-                            className="px-2.5 py-1 inline-flex text-[11px] leading-5 font-bold rounded-full bg-slate-100 text-slate-500 border border-slate-200 hover:bg-slate-200/50 transition-all cursor-pointer"
+                            className="px-2 py-0.5 inline-flex text-[10px] leading-5 font-extrabold uppercase rounded-md bg-slate-50 text-slate-500 border border-slate-200 hover:bg-slate-100 transition-all cursor-pointer"
                           >
                             Inactivo
                           </button>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-sm text-center relative">
+                      <td className="px-4 py-3 text-sm text-center relative">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            setUsuarioMenuAbierto(usuarioMenuAbierto === item.id ? null : item.id);
+                            setUsuarioMenuAbierto(
+                              usuarioMenuAbierto === item.id ? null : item.id,
+                            );
                           }}
                           title="Acciones de usuario"
                           className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all cursor-pointer font-bold select-none active:scale-95"
@@ -423,30 +434,39 @@ export default function UsuariosPage() {
                           <div className="absolute right-6 mt-1 w-48 rounded-xl bg-white shadow-lg ring-1 ring-black/5 z-50 py-1 overflow-hidden animate-in fade-in slide-in-from-top-1 duration-100 text-left">
                             <button
                               onClick={() => {
-                                console.log("Editar datos del usuario ID:", item.id);
+                                console.log(
+                                  "Editar datos del usuario ID:",
+                                  item.id,
+                                );
                                 setUsuarioMenuAbierto(null);
                               }}
                               className="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 font-medium transition-colors flex items-center gap-2 cursor-pointer"
                             >
-                              <span>✏️</span> Editar datos
+                              Editar datos
                             </button>
                             <button
                               onClick={() => {
-                                console.log("Cambiar contraseña del usuario ID:", item.id);
+                                console.log(
+                                  "Cambiar contraseña del usuario ID:",
+                                  item.id,
+                                );
                                 setUsuarioMenuAbierto(null);
                               }}
                               className="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 font-medium transition-colors flex items-center gap-2 cursor-pointer"
                             >
-                              <span>🔑</span> Cambiar contraseña
+                              Cambiar contraseña
                             </button>
                             <button
                               onClick={() => {
-                                console.log("Desactivar cuenta del usuario ID:", item.id);
+                                console.log(
+                                  "Desactivar cuenta del usuario ID:",
+                                  item.id,
+                                );
                                 setUsuarioMenuAbierto(null);
                               }}
                               className="w-full text-left px-4 py-2 text-xs text-rose-600 hover:bg-rose-50 font-medium transition-colors flex items-center gap-2 cursor-pointer"
                             >
-                              <span>🚫</span> Desactivar cuenta
+                              Desactivar cuenta
                             </button>
                             <button
                               onClick={() => {
@@ -455,7 +475,7 @@ export default function UsuariosPage() {
                               }}
                               className="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 font-medium transition-colors flex items-center gap-2 cursor-pointer border-t border-slate-100"
                             >
-                              <span>👁️</span> Ver historial
+                              Ver historial
                             </button>
                           </div>
                         )}
