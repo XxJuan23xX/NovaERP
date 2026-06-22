@@ -383,23 +383,8 @@ export default function ClientesPage() {
           {/* ENCABEZADO */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
             <div>
-              <h1 className="text-2xl font-extrabold tracking-tight text-black! flex items-center gap-3">
-                <span className="p-2 bg-white rounded-xl border border-slate-200 text-indigo-600 shadow-sm">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-7 w-7"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                    />
-                  </svg>
-                </span>
+              <h1 className="text-[25px]! font-extrabold tracking-tight text-black! gap-3">
+                <span className="text-indigo-600 shadow-sm"></span>
                 Clientes (CRM)
               </h1>
               <p className="mt-1 text-slate-500 text-xs font-semibold">
@@ -427,95 +412,8 @@ export default function ClientesPage() {
             </button>
           </div>
 
-          {/* METRICAS KPI */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 select-none">
-            <div className="bg-white border border-slate-200/80 p-5 rounded-2xl flex items-center gap-4 shadow-sm">
-              <div className="p-3.5 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100">
-                <svg
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857"
-                  />
-                </svg>
-              </div>
-              <div>
-                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                  Total Clientes
-                </span>
-                <h3 className="text-xl font-black text-slate-900 mt-0.5">
-                  {kpis.total}
-                </h3>
-              </div>
-            </div>
-
-            <div className="bg-white border border-slate-200/80 p-5 rounded-2xl flex items-center gap-4 shadow-sm">
-              <div className="p-3.5 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100">
-                <svg
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                  Perfiles Completos (Sat 4.0)
-                </span>
-                <h3 className="text-xl font-black text-slate-900 mt-0.5 flex items-center gap-2">
-                  {kpis.completos}
-                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded-md">
-                    🟢 Listos
-                  </span>
-                </h3>
-              </div>
-            </div>
-
-            <div className="bg-white border border-slate-200/80 p-5 rounded-2xl flex items-center gap-4 shadow-sm">
-              <div className="p-3.5 rounded-xl bg-amber-50 text-amber-600 border border-amber-100">
-                <svg
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                  Perfiles Incompletos
-                </span>
-                <h3 className="text-xl font-black text-slate-900 mt-0.5 flex items-center gap-2">
-                  {kpis.pendientes}
-                  <span className="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-100 px-1.5 py-0.5 rounded-md">
-                    🟡 Pendientes
-                  </span>
-                </h3>
-              </div>
-            </div>
-          </div>
-
           {/* FILTROS Y BUSCADOR */}
-          <div className="bg-transparent rounded-2xl mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="bg-transparent rounded-2xl mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3 w-full sm:w-auto flex-1">
               <div className="relative flex-1 max-w-md">
                 <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -557,6 +455,45 @@ export default function ClientesPage() {
             </div>
           </div>
 
+          {/* METRICAS KPI */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 select-none">
+            {/* Card 1: Total Clientes */}
+            <div className="bg-blue-100 border border-blue-400/20 rounded-sm p-5 shadow-sm">
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-wider text-gray-500 block">
+                  Total Clientes
+                </span>
+                <h3 className="text-xl font-black text-blue-900 mt-0.5">
+                  {kpis.total}
+                </h3>
+              </div>
+            </div>
+
+            {/* Card 2: Completos */}
+            <div className="bg-green-200 border border-emerald-400/20 rounded-sm p-5 shadow-sm">
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-wider text-gray-500 block">
+                  Perfiles Completos (Sat 4.0)
+                </span>
+                <h3 className="text-xl font-black text-green-800 mt-0.5 flex items-center gap-2">
+                  {kpis.completos}
+                </h3>
+              </div>
+            </div>
+
+            {/* Card 3: Pendientes */}
+            <div className="bg-amber-100 border border-amber-400/20 rounded-sm p-5 shadow-sm">
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-wider text-gray-500 block">
+                  Perfiles Incompletos
+                </span>
+                <h3 className="text-xl font-black text-amber-800 mt-0.5 flex items-center gap-2">
+                  {kpis.pendientes}
+                </h3>
+              </div>
+            </div>
+          </div>
+
           {/* LISTADO DE CLIENTES */}
           {error && (
             <div className="mb-6 bg-red-50 border border-red-200 p-4 rounded-xl text-red-800 text-xs font-bold flex items-center gap-2">
@@ -585,7 +522,7 @@ export default function ClientesPage() {
               </span>
             </div>
           ) : clientes.length === 0 ? (
-            <div className="text-center py-20 bg-white border border-slate-200 rounded-2xl shadow-sm text-slate-500">
+            <div className="text-center py-20 bg-white border border-slate-200 rounded-sm shadow-sm text-slate-500">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-14 w-14 mx-auto mb-4 text-slate-350"
@@ -613,7 +550,7 @@ export default function ClientesPage() {
               {clientes.map((cliente) => (
                 <div
                   key={cliente.id}
-                  className="bg-white border border-slate-200 hover:border-slate-300 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between"
+                  className="bg-white border border-slate-200 hover:border-slate-300 rounded-sm p-5 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between"
                 >
                   <div>
                     {/* Tarjeta Header */}
