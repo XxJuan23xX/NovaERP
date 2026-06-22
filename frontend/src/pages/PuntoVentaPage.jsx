@@ -34,8 +34,6 @@ export default function PuntoVentaPage() {
   // Estados de Sesión de Caja
   const [sesionActiva, setSesionActiva] = useState(null);
   const [sesionActivaId, setSesionActivaId] = useState(null); // ID de la sesión activa en estado local
-  const [cajasDisponibles, setCajasDisponibles] = useState([]);
-  const [cajaSeleccionadaId, setCajaSeleccionadaId] = useState("");
   const [almacenAperturaId, setAlmacenAperturaId] = useState("");
   const [usuariosCajeros, setUsuariosCajeros] = useState([]);
   const [usuarioSeleccionadoId, setUsuarioSeleccionadoId] = useState("");
@@ -68,24 +66,7 @@ export default function PuntoVentaPage() {
     return `${fechaStr.replace(".", "")} · ${horaStr}`;
   }, [fechaActual]);
 
-  // Cargar las cajas que no tienen sesión abierta actualmente
-  const cargarCajasDisponibles = async () => {
-    try {
-      const res = await api.get("/caja/cajas-disponibles");
-      if (res.data?.status === "success") {
-        const cajas = res.data.data || [];
-        setCajasDisponibles(cajas);
-        if (cajas.length > 0) {
-          setCajaSeleccionadaId(cajas[0].id);
-        } else {
-          setCajaSeleccionadaId("");
-        }
-      }
-    } catch (err) {
-      console.error("Error al cargar cajas disponibles:", err);
-      setErrorApertura("Error al cargar las cajas disponibles del sistema.");
-    }
-  };
+
 
   // ── CARGAR ALMACENES E INICIAR POS ──
   useEffect(() => {
