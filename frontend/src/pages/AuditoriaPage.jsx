@@ -450,7 +450,7 @@ export default function AuditoriaPage() {
                       {/* Usuario */}
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2.5">
-                          <div className="h-7 w-7 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold text-[10px] flex items-center justify-center flex-shrink-0 select-none shadow-sm">
+                          <div className="h-7 w-7 rounded-full bg-linear-to-br from-indigo-500 to-purple-600 text-white font-bold text-[10px] flex items-center justify-center shrink-0 select-none shadow-sm">
                             {item.user ? getInitials(item.user.name) : "S"}
                           </div>
                           <div>

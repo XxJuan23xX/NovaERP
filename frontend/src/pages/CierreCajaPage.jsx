@@ -183,20 +183,20 @@ export default function CierreCajaPage() {
         <header className="flex flex-row items-center justify-between mb-8 pb-4 border-b border-slate-350 gap-4 print:mb-4 print:pb-2 print:border-b-2">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-black text-black! tracking-tight m-0 select-none">
+              <h1 className="text-[25px]! font-black text-black! tracking-tight m-0 select-none">
                 Cierre de Caja
               </h1>
               {esCerrada ? (
-                <span className="bg-emerald-100 text-emerald-800 border border-emerald-300 text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full select-none print:bg-white print:text-black">
+                <span className="bg-emerald-100 text-emerald-800 border border-emerald-300 text-[9px] font-black uppercase tracking-wider px-3 py-1 rounded-full select-none print:bg-white print:text-black">
                   ✔ Cerrada
                 </span>
               ) : (
-                <span className="bg-amber-100 text-amber-800 border border-amber-300 text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full select-none print:bg-white print:text-black animate-pulse">
+                <span className="bg-amber-100 text-amber-800 border border-amber-300 text-[9px] font-black uppercase tracking-wider px-3 py-1 rounded-full select-none print:bg-white print:text-black animate-pulse">
                   ● Pendiente
                 </span>
               )}
             </div>
-            <p className="text-slate-600 font-bold text-xs mt-1.5 select-none print:text-black">
+            <p className="text-slate-600 font-bold text-[12px]! mt-1.5 select-none print:text-black">
               {fechaFormateada} · Turno Matutino (09:00 - 17:00)
             </p>
           </div>
@@ -250,7 +250,7 @@ export default function CierreCajaPage() {
         {errorMensaje && (
           <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-2xl mb-6 flex items-start gap-3 shadow-sm print:hidden">
             <svg
-              className="h-5 w-5 mt-0.5 flex-shrink-0 text-red-500"
+              className="h-5 w-5 mt-0.5 shrink-0 text-red-500"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -275,7 +275,7 @@ export default function CierreCajaPage() {
         {successMensaje && (
           <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-2xl mb-6 flex items-start gap-3 shadow-sm print:hidden animate-in fade-in zoom-in-95 duration-200">
             <svg
-              className="h-5 w-5 mt-0.5 flex-shrink-0 text-emerald-500"
+              className="h-5 w-5 mt-0.5 shrink-0 text-emerald-500"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -373,456 +373,342 @@ export default function CierreCajaPage() {
             {/* Tarjetas del Dashboard */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 print:grid-cols-4 print:gap-3">
               {/* Card 1: Total vendido */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex items-center gap-4 hover:shadow transition-all print:border print:shadow-none">
-                <div className="h-12 w-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-inner">
-                  <svg
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M12 16v1M10 11h4"
-                    />
-                  </svg>
-                </div>
+              <div className="bg-blue-100 border border-blue-400/20 rounded-sm p-5 shadow-sm text-white hover:shadow-md transition-all print:border print:shadow-none">
                 <div>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-gray-500 block">
                     Total Vendido
                   </span>
-                  <div className="text-slate-900 font-black text-xl mt-1 tracking-tight">
+                  <div className="font-black text-xl mt-1 tracking-tight text-blue-900">
                     {formatPrice(cajaData.resumen.total_vendido)}
                   </div>
                 </div>
               </div>
 
               {/* Card 2: Efectivo recibido */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex items-center gap-4 hover:shadow transition-all print:border print:shadow-none">
-                <div className="h-12 w-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-inner">
-                  <svg
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
-                    />
-                  </svg>
-                </div>
+              <div className="bg-green-200 border border-emerald-400/20 rounded-sm p-5 shadow-sm text-white hover:shadow-md transition-all print:border print:shadow-none">
                 <div>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-gray-500 block">
                     Efectivo Recibido
                   </span>
-                  <div className="text-emerald-700 font-black text-xl mt-1 tracking-tight">
+                  <div className="font-black text-xl mt-1 tracking-tight text-green-800">
                     {formatPrice(cajaData.resumen.efectivo_recibido)}
                   </div>
                 </div>
               </div>
 
               {/* Card 3: Tarjeta */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex items-center gap-4 hover:shadow transition-all print:border print:shadow-none">
-                <div className="h-12 w-12 bg-blue-50 text-blue-650 rounded-xl flex items-center justify-center flex-shrink-0 shadow-inner">
-                  <svg
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-                    />
-                  </svg>
-                </div>
+              <div className="bg-purple-200 border border-purple-400/20 rounded-sm p-5 shadow-sm text-white hover:shadow-md transition-all print:border print:shadow-none">
                 <div>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-gray-500 block">
                     Ventas Tarjeta
                   </span>
-                  <div className="text-blue-700 font-black text-xl mt-1 tracking-tight">
+                  <div className="font-black text-xl mt-1 tracking-tight text-purple-800">
                     {formatPrice(cajaData.resumen.tarjeta_recibido)}
                   </div>
                 </div>
               </div>
 
               {/* Card 4: Cancelaciones */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex items-center gap-4 hover:shadow transition-all print:border print:shadow-none">
-                <div className="h-12 w-12 bg-red-50 text-red-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-inner">
-                  <svg
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </div>
+              <div className="bg-red-100 border border-red-400/20 rounded-sm p-5 shadow-sm text-white hover:shadow-md transition-all print:border print:shadow-none">
                 <div>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-gray-500 block">
                     Cancelaciones
                   </span>
-                  <div className="text-red-650 font-black text-xl mt-1 tracking-tight">
+                  <div className="font-black text-xl mt-1 tracking-tight text-red-800">
                     - {formatPrice(cajaData.resumen.cancelaciones)}
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Fila Central: Tabla de Empleados y Panel de Caja */}
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start print:grid-cols-1 print:gap-4">
-              {/* Tabla de Ventas por Cajero (Ocupa 2/3 columnas en XL screens) */}
-              <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm xl:col-span-2 print:border-0 print:shadow-none print:p-0">
-                <div className="flex items-center justify-between mb-6 pb-3 border-b border-slate-200">
-                  <h2 className="text-base font-black text-black! select-none">
-                    Ventas y Operaciones por Cajero
-                  </h2>
-                  <span className="text-[11px] font-black bg-slate-100 border border-slate-350 text-slate-800 px-3 py-1 rounded-lg select-none">
-                    {cajaData.empleados?.length || 0} cajeros activos
-                  </span>
-                </div>
-
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="border-b border-slate-200 text-[10px] font-black uppercase tracking-wider text-slate-500">
-                        <th className="pb-3 pr-2">Empleado</th>
-                        <th className="pb-3 text-center">Tickets</th>
-                        <th className="pb-3 text-right">Efectivo</th>
-                        <th className="pb-3 text-right">Tarjeta</th>
-                        <th className="pb-3 text-right">Cancelado</th>
-                        <th className="pb-3 text-right">Total Vendido</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-150 text-[12px] font-bold text-slate-800">
-                      {cajaData.empleados?.length === 0 ? (
-                        <tr>
-                          <td
-                            colSpan="6"
-                            className="text-center py-6 text-slate-400"
-                          >
-                            Ninguna venta realizada en la sesión activa.
-                          </td>
-                        </tr>
-                      ) : (
-                        cajaData.empleados?.map((emp) => (
-                          <tr
-                            key={emp.user_id}
-                            className="hover:bg-slate-50/50 transition-colors"
-                          >
-                            {/* Avatar + Nombre */}
-                            <td className="py-3.5 pr-2 flex items-center gap-3">
-                              <div className="h-8 w-8 bg-indigo-100 border border-indigo-200 text-indigo-700 font-black rounded-full flex items-center justify-center shadow-inner text-xs">
-                                {emp.nombre
-                                  .split(" ")
-                                  .map((n) => n[0])
-                                  .slice(0, 2)
-                                  .join("")}
-                              </div>
-                              <div>
-                                <div className="text-[13px] font-bold text-slate-900">
-                                  {emp.nombre}
-                                </div>
-                                <span className="text-[10px] text-slate-500 font-semibold">
-                                  Cajero ID: #{emp.user_id}
-                                </span>
-                              </div>
-                            </td>
-                            {/* Tickets */}
-                            <td className="py-3.5 text-center font-extrabold text-slate-900 text-[13px]">
-                              {emp.tickets}
-                            </td>
-                            {/* Efectivo */}
-                            <td className="py-3.5 text-right font-medium">
-                              <span className="block text-slate-900 font-bold">
-                                {formatPrice(emp.efectivo_monto)}
-                              </span>
-                              <span className="text-[10px] text-slate-500 font-semibold">
-                                {emp.efectivo_ventas}{" "}
-                                {emp.efectivo_ventas === 1 ? "vta." : "vtas."}
-                              </span>
-                            </td>
-                            {/* Tarjeta */}
-                            <td className="py-3.5 text-right font-medium">
-                              <span className="block text-slate-900 font-bold">
-                                {formatPrice(emp.tarjeta_monto)}
-                              </span>
-                              <span className="text-[10px] text-slate-500 font-semibold">
-                                {emp.tarjeta_ventas}{" "}
-                                {emp.tarjeta_ventas === 1 ? "vta." : "vtas."}
-                              </span>
-                            </td>
-                            {/* Cancelaciones */}
-                            <td className="py-3.5 text-right text-red-600 font-medium">
-                              <span className="block font-bold">
-                                -{formatPrice(emp.cancelaciones_monto)}
-                              </span>
-                              <span className="text-[10px] font-semibold">
-                                {emp.cancelaciones_ventas}{" "}
-                                {emp.cancelaciones_ventas === 1
-                                  ? "vta."
-                                  : "vtas."}
-                              </span>
-                            </td>
-                            {/* Total Neto */}
-                            <td className="py-3.5 text-right font-black text-[13.5px] text-slate-950">
-                              {formatPrice(emp.total_neto)}
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+            {/* Fila Central: Tabla de Empleados */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm print:border-0 print:shadow-none print:p-0">
+              <div className="flex items-center justify-between mb-6 pb-3 border-b border-slate-200">
+                <h2 className="text-[20px]! font-black text-black! select-none">
+                  Ventas y Operaciones por Cajero
+                </h2>
+                <span className="text-[11px] font-black bg-slate-100 border border-slate-350 text-slate-800 px-3 py-1 rounded-lg select-none">
+                  {cajaData.empleados?.length || 0} cajeros activos
+                </span>
               </div>
 
-              {/* Información y Datos de Arqueo Físico (1/3 columna en XL screens) */}
-              <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col space-y-6 print:border print:shadow-none">
-                <div className="pb-3 border-b border-slate-200">
-                  <h2 className="text-base font-black text-black! select-none">
-                    Sesión e Inventario
-                  </h2>
-                </div>
-
-                {/* Resumen de Sesión */}
-                <div className="space-y-3.5 text-xs font-semibold text-slate-650 bg-slate-50 border border-slate-200/60 p-4 rounded-2xl shadow-inner select-none print:bg-white">
-                  <div className="flex justify-between">
-                    <span>Caja activa</span>
-                    <span className="text-slate-900 font-black">
-                      {cajaData.sesion?.caja_nombre}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Almacén sucursal</span>
-                    <span className="text-slate-900 font-bold">
-                      {cajaData.sesion?.almacen_nombre}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Cajero de apertura</span>
-                    <span className="text-slate-900 font-bold">
-                      {cajaData.sesion?.cajero_nombre}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Fecha Apertura</span>
-                    <span className="text-slate-800 font-medium">
-                      {cajaData.sesion?.fecha_apertura
-                        ? new Date(
-                            cajaData.sesion.fecha_apertura,
-                          ).toLocaleString("es-MX", {
-                            dateStyle: "short",
-                            timeStyle: "short",
-                          })
-                        : "-"}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Cruce Inventario */}
-                <div className="space-y-4">
-                  <h3 className="text-xs font-black uppercase tracking-wider text-slate-700 select-none">
-                    Valoración de Inventario
-                  </h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-xl text-center print:bg-white">
-                      <span className="text-[10px] font-black uppercase text-slate-500">
-                        Stock Actual
-                      </span>
-                      <div className="text-slate-950 font-black text-lg mt-1">
-                        {cajaData.inventario.stock_total} uds.
-                      </div>
-                    </div>
-                    <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-xl text-center print:bg-white">
-                      <span className="text-[10px] font-black uppercase text-slate-500">
-                        Valor Ventas
-                      </span>
-                      <div className="text-indigo-650 font-black text-lg mt-1">
-                        {formatPrice(cajaData.inventario.valor_venta_total)}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              <div className="overflow-x-auto border border-slate-100 rounded-2xl">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200 text-[10.5px] font-bold uppercase tracking-wider text-slate-700">
+                      <th className="px-4 py-3.5">Empleado</th>
+                      <th className="px-4 py-3.5 text-center">Tickets</th>
+                      <th className="px-4 py-3.5 text-right">Efectivo</th>
+                      <th className="px-4 py-3.5 text-right">Tarjeta</th>
+                      <th className="px-4 py-3.5 text-right">Cancelado</th>
+                      <th className="px-4 py-3.5 text-right">Total Neto</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-[11px] font-semibold text-slate-650">
+                    {cajaData.empleados?.length === 0 ? (
+                      <tr>
+                        <td
+                          colSpan="6"
+                          className="text-center py-6 text-slate-400"
+                        >
+                          Ninguna venta realizada en la sesión activa.
+                        </td>
+                      </tr>
+                    ) : (
+                      cajaData.empleados?.map((emp) => (
+                        <tr
+                          key={emp.user_id}
+                          className="hover:bg-slate-50/50 transition-colors"
+                        >
+                          {/* Avatar + Nombre */}
+                          <td className="px-4 py-3 flex items-center gap-3">
+                            <div className="h-7 w-7 bg-indigo-50 border border-indigo-100 text-indigo-700 font-black rounded-full flex items-center justify-center shadow-sm text-[10px]">
+                              {emp.nombre
+                                .split(" ")
+                                .map((n) => n[0])
+                                .slice(0, 2)
+                                .join("")}
+                            </div>
+                            <div>
+                              <div className="text-[11.5px] font-bold text-slate-900">
+                                {emp.nombre}
+                              </div>
+                              <span className="text-[10px] text-slate-400 font-medium">
+                                Cajero ID: #{emp.user_id}
+                              </span>
+                            </div>
+                          </td>
+                          {/* Tickets */}
+                          <td className="px-4 py-3 text-center font-bold text-slate-800 text-[11.5px]">
+                            {emp.tickets}
+                          </td>
+                          {/* Efectivo */}
+                          <td className="px-4 py-3 text-right">
+                            <span className="block text-slate-900 font-bold text-[11.5px]">
+                              {formatPrice(emp.efectivo_monto)}
+                            </span>
+                            <span className="text-[10px] text-slate-400 font-medium">
+                              {emp.efectivo_ventas}{" "}
+                              {emp.efectivo_ventas === 1 ? "vta." : "vtas."}
+                            </span>
+                          </td>
+                          {/* Tarjeta */}
+                          <td className="px-4 py-3 text-right">
+                            <span className="block text-slate-900 font-bold text-[11.5px]">
+                              {formatPrice(emp.tarjeta_monto)}
+                            </span>
+                            <span className="text-[10px] text-slate-400 font-medium">
+                              {emp.tarjeta_ventas}{" "}
+                              {emp.tarjeta_ventas === 1 ? "vta." : "vtas."}
+                            </span>
+                          </td>
+                          {/* Cancelaciones */}
+                          <td className="px-4 py-3 text-right text-red-650">
+                            <span className="block font-bold text-[11.5px]">
+                              -{formatPrice(emp.cancelaciones_monto)}
+                            </span>
+                            <span className="text-[10px] font-medium text-red-400">
+                              {emp.cancelaciones_ventas}{" "}
+                              {emp.cancelaciones_ventas === 1
+                                ? "vta."
+                                : "vtas."}
+                            </span>
+                          </td>
+                          {/* Total Neto */}
+                          <td className="px-4 py-3 text-right font-black text-[12.5px] text-slate-950">
+                            {formatPrice(emp.total_neto)}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
 
             {/* Arqueo de Caja y Confirmación (Footer del Módulo) */}
-            <div className="bg-white border border-slate-250 rounded-3xl p-8 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 print:border print:shadow-none print:p-4">
-              {/* Sección de desglose de efectivo esperado */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 flex-1 w-full max-w-2xl select-none print:gap-3">
-                {/* Fondo Inicial */}
-                <div>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 block mb-1">
-                    Fondo Inicial
-                  </span>
-                  <div className="text-slate-900 font-extrabold text-lg">
-                    {formatPrice(fondoInicial)}
-                  </div>
-                  <span className="text-[10px] text-slate-500 font-medium">
-                    Establecido al abrir caja
-                  </span>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch print:grid-cols-1 print:gap-4">
+              {/* Bloque 1: Resumen de Balance Esperado (Ocupa 2 columnas en LG screens) */}
+              <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col justify-between lg:col-span-2 print:border print:shadow-none">
+                <div className="mb-4 pb-3 border-b border-slate-100">
+                  <h3 className="text-xs font-black uppercase tracking-wider text-slate-700 select-none">
+                    Balance Esperado por el Sistema
+                  </h3>
                 </div>
 
-                {/* Efectivo Recibido en POS */}
-                <div>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 block mb-1">
-                    Efectivo en Ventas
-                  </span>
-                  <div className="text-emerald-700 font-extrabold text-lg">
-                    + {formatPrice(efectivoRecibido)}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 flex-1 items-center select-none print:gap-3">
+                  {/* Fondo Inicial */}
+                  <div className="p-4 rounded-sm bg-slate-200 border border-slate-200/60">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 block mb-1">
+                      Fondo Inicial
+                    </span>
+                    <div className="text-slate-900 font-extrabold text-lg">
+                      {formatPrice(fondoInicial)}
+                    </div>
+                    <span className="text-[9px] text-slate-600 font-medium block mt-0.5">
+                      Establecido al abrir caja
+                    </span>
                   </div>
-                  <span className="text-[10px] text-slate-500 font-medium">
-                    Registrado por el sistema
-                  </span>
-                </div>
 
-                {/* Total Efectivo Esperado */}
-                <div>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 block mb-1">
-                    Total Esperado en Caja
-                  </span>
-                  <div className="text-indigo-600 font-black text-lg">
-                    {formatPrice(efectivoEsperado)}
+                  {/* Efectivo Recibido en POS */}
+                  <div className="p-4 rounded-sm bg-green-200 border border-slate-200/60">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-gray-500 block mb-1">
+                      Efectivo en Ventas
+                    </span>
+                    <div className="text-emerald-700 font-extrabold text-lg">
+                      + {formatPrice(efectivoRecibido)}
+                    </div>
+                    <span className="text-[9px] text-slate-600 font-medium block mt-0.5">
+                      Registrado por el sistema
+                    </span>
                   </div>
-                  <span className="text-[10px] text-indigo-500 font-semibold">
-                    Fondo + Efectivo de ventas
-                  </span>
+
+                  {/* Total Efectivo Esperado */}
+                  <div className="p-4 rounded-sm bg-blue-100 border border-indigo-100/80">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-gray-500 block mb-1">
+                      Total Esperado
+                    </span>
+                    <div className="text-indigo-600 font-black text-lg">
+                      {formatPrice(efectivoEsperado)}
+                    </div>
+                    <span className="text-[9px] text-indigo-500 font-semibold block mt-0.5">
+                      Fondo + Ventas
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              {/* Formulario de Arqueo y Cierre */}
-              <form
-                onSubmit={handleConfirmarCierre}
-                className="flex flex-col sm:flex-row items-end sm:items-center gap-4 w-full md:w-auto border-t md:border-t-0 md:border-l border-slate-200 pt-6 md:pt-0 md:pl-6 print:border-0 print:pt-0 print:pl-0"
-              >
-                {/* Entrada de Efectivo Real */}
-                <div className="w-full sm:w-auto">
-                  <label
-                    htmlFor="efectivo_real"
-                    className="text-[10px] font-black uppercase tracking-wider text-slate-700 block mb-1.5 select-none"
-                  >
-                    Efectivo Físico en Caja
-                  </label>
-                  <div className="relative rounded-xl shadow-sm">
-                    <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 font-bold text-sm">
-                      $
-                    </span>
-                    <input
-                      type="number"
-                      id="efectivo_real"
-                      step="0.01"
-                      min="0"
-                      value={efectivoFisico}
-                      onChange={(e) => setEfectivoFisico(e.target.value)}
-                      disabled={esCerrada || loadingCierre}
-                      placeholder="0.00"
-                      className={`w-full sm:w-44 bg-white border border-slate-350 text-slate-900 placeholder-slate-400 font-bold rounded-xl pl-8 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm ${
-                        esCerrada
-                          ? "bg-slate-50 text-slate-500 cursor-not-allowed border-slate-200"
-                          : ""
-                      }`}
-                      required
-                    />
-                  </div>
+              {/* Bloque 2: Formulario de Arqueo y Cierre (Ocupa 1 columna) */}
+              <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm print:border print:shadow-none">
+                <div className="mb-4 pb-3 border-b border-slate-100">
+                  <h3 className="text-xs font-black uppercase tracking-wider text-slate-700 select-none">
+                    Arqueo de Efectivo Físico
+                  </h3>
                 </div>
 
-                {/* Descuadre/Diferencia badge */}
-                {efectivoFisico !== "" && (
-                  <div className="text-right sm:text-left select-none">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 block mb-1">
-                      Diferencia (Descuadre)
-                    </span>
-                    <span
-                      className={`inline-block text-xs font-black px-3 py-1.5 rounded-lg border ${
-                        descuadre === 0
-                          ? "bg-slate-50 text-slate-650 border-slate-200"
+                <form
+                  onSubmit={handleConfirmarCierre}
+                  className="flex flex-col gap-1"
+                >
+                  {/* Entrada de Efectivo Real */}
+                  <div className="w-full">
+                    <label
+                      htmlFor="efectivo_real"
+                      className="text-[10px] font-black uppercase tracking-wider text-slate-700 block mb-1.5 select-none"
+                    >
+                      Efectivo Físico en Caja
+                    </label>
+                    <div className="relative rounded-xl shadow-sm">
+                      <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500 font-bold text-sm">
+                        $
+                      </span>
+                      <input
+                        type="number"
+                        id="efectivo_real"
+                        step="0.01"
+                        min="0"
+                        value={efectivoFisico}
+                        onChange={(e) => setEfectivoFisico(e.target.value)}
+                        disabled={esCerrada || loadingCierre}
+                        placeholder="0.00"
+                        className={`w-full bg-white border border-slate-350 text-slate-900 placeholder-slate-400 font-bold rounded-xl pl-8 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm ${
+                          esCerrada
+                            ? "bg-slate-50 text-slate-500 cursor-not-allowed border-slate-200"
+                            : ""
+                        }`}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  {/* Descuadre/Diferencia badge */}
+                  {efectivoFisico !== "" ? (
+                    <div className="select-none">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 block mb-1">
+                        Diferencia (Descuadre)
+                      </span>
+                      <span
+                        className={`inline-block text-xs font-black px-3 py-1.5 rounded-lg border w-full text-center ${
+                          descuadre === 0
+                            ? "bg-slate-50 text-slate-650 border-slate-200"
+                            : descuadre > 0
+                              ? "bg-emerald-50 text-emerald-800 border-emerald-250"
+                              : "bg-red-50 text-red-800 border-red-250"
+                        }`}
+                      >
+                        {descuadre === 0
+                          ? "Sin descuadre (Exacto)"
                           : descuadre > 0
-                            ? "bg-emerald-50 text-emerald-800 border-emerald-250"
-                            : "bg-red-50 text-red-800 border-red-250"
-                      }`}
-                    >
-                      {descuadre === 0
-                        ? "Sin descuadre (Exacto)"
-                        : descuadre > 0
-                          ? `Sobrante: +${formatPrice(descuadre)}`
-                          : `Faltante: ${formatPrice(descuadre)}`}
-                    </span>
-                  </div>
-                )}
-
-                {/* Botón de Confirmar Cierre */}
-                <div className="w-full sm:w-auto flex-shrink-0 pt-2 sm:pt-0 print:hidden">
-                  {esCerrada ? (
-                    <button
-                      type="button"
-                      disabled
-                      className="w-full sm:w-auto bg-slate-100 text-slate-400 border border-slate-200 rounded-xl px-5 py-3 font-bold text-xs cursor-not-allowed shadow-none"
-                    >
-                      Corte Finalizado
-                    </button>
+                            ? `Sobrante: +${formatPrice(descuadre)}`
+                            : `Faltante: ${formatPrice(descuadre)}`}
+                      </span>
+                    </div>
                   ) : (
-                    <button
-                      type="submit"
-                      disabled={loadingCierre}
-                      className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-5 py-3 font-black text-xs shadow-md shadow-indigo-600/10 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
-                    >
-                      {loadingCierre ? (
-                        <>
-                          <svg
-                            className="animate-spin h-3.5 w-3.5 text-white"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                          >
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                            />
-                            <path
-                              className="opacity-75"
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                            />
-                          </svg>
-                          Procesando Cierre...
-                        </>
-                      ) : (
-                        <>
-                          <svg
-                            className="h-3.5 w-3.5 text-white"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth={3}
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
-                          Confirmar Cierre de Caja
-                        </>
-                      )}
-                    </button>
+                    <div className="h-[43px] select-none invisible" />
                   )}
-                </div>
-              </form>
+
+                  {/* Botón de Confirmar Cierre */}
+                  <div className="w-full shrink-0 print:hidden">
+                    {esCerrada ? (
+                      <button
+                        type="button"
+                        disabled
+                        className="w-full bg-slate-100 text-slate-400 border border-slate-200 rounded-xl py-3.5 font-bold text-xs cursor-not-allowed shadow-none"
+                      >
+                        Corte Finalizado
+                      </button>
+                    ) : (
+                      <button
+                        type="submit"
+                        disabled={loadingCierre}
+                        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl py-3.5 font-black text-xs shadow-md shadow-indigo-600/10 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      >
+                        {loadingCierre ? (
+                          <>
+                            <svg
+                              className="animate-spin h-3.5 w-3.5 text-white"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                              />
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                              />
+                            </svg>
+                            Procesando Cierre...
+                          </>
+                        ) : (
+                          <>
+                            <svg
+                              className="h-3.5 w-3.5 text-white"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={3}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M5 13l4 4L19 7"
+                              />
+                            </svg>
+                            Confirmar Cierre de Caja
+                          </>
+                        )}
+                      </button>
+                    )}
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
         )}

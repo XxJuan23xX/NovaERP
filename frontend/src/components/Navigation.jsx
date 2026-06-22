@@ -42,7 +42,7 @@ export default function Navigation() {
       path: "/dashboard",
       icon: (
         <svg
-          className="w-4 h-4 flex-shrink-0"
+          className="w-4 h-4 shrink-0"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -61,7 +61,7 @@ export default function Navigation() {
       path: "/pos",
       icon: (
         <svg
-          className="w-4 h-4 flex-shrink-0"
+          className="w-4 h-4 shrink-0"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -80,7 +80,7 @@ export default function Navigation() {
       path: "/inventario/productos",
       icon: (
         <svg
-          className="w-4 h-4 flex-shrink-0"
+          className="w-4 h-4 shrink-0"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -99,7 +99,7 @@ export default function Navigation() {
       path: "/inventario/traspasos",
       icon: (
         <svg
-          className="w-4 h-4 flex-shrink-0"
+          className="w-4 h-4 shrink-0"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -118,7 +118,7 @@ export default function Navigation() {
       path: "/cotizaciones",
       icon: (
         <svg
-          className="w-4 h-4 flex-shrink-0"
+          className="w-4 h-4 shrink-0"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -137,7 +137,7 @@ export default function Navigation() {
       path: "/usuarios",
       icon: (
         <svg
-          className="w-4 h-4 flex-shrink-0"
+          className="w-4 h-4 shrink-0"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -156,7 +156,7 @@ export default function Navigation() {
       path: "/auditoria",
       icon: (
         <svg
-          className="w-4 h-4 flex-shrink-0"
+          className="w-4 h-4 shrink-0"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -175,7 +175,7 @@ export default function Navigation() {
       path: "/clientes",
       icon: (
         <svg
-          className="w-4 h-4 flex-shrink-0"
+          className="w-4 h-4 shrink-0"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -194,7 +194,7 @@ export default function Navigation() {
       path: "/cierre-caja",
       icon: (
         <svg
-          className="w-4 h-4 flex-shrink-0"
+          className="w-4 h-4 shrink-0"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -203,7 +203,7 @@ export default function Navigation() {
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M12 16v1M10 11h4"
+            d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
           />
         </svg>
       ),
@@ -245,7 +245,7 @@ export default function Navigation() {
         }`}
       >
         <div className={`flex items-center ${collapsed ? "" : "gap-3"}`}>
-          <div className="flex-shrink-0 h-8 w-8 rounded-lg overflow-hidden flex items-center justify-center bg-indigo-600/10 border border-indigo-500/20">
+          <div className="shrink-0 h-8 w-8 rounded-lg overflow-hidden flex items-center justify-center bg-indigo-600/10 border border-indigo-500/20">
             <img
               src={logo}
               alt="NovaERP Logo"
@@ -290,7 +290,7 @@ export default function Navigation() {
         {!collapsed ? (
           <div className="mx-4 px-3 py-2 rounded-xl bg-slate-950 border border-slate-800/80 flex items-center gap-2.5 transition-all">
             <span
-              className={`h-2 w-2 rounded-full flex-shrink-0 ${user?.role === "admin" ? "bg-indigo-500 animate-pulse" : "bg-emerald-500"}`}
+              className={`h-2 w-2 rounded-full shrink-0 ${user?.role === "admin" ? "bg-indigo-500 animate-pulse" : "bg-emerald-500"}`}
             />
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 whitespace-nowrap overflow-hidden text-ellipsis">
               {user?.role === "admin"
@@ -346,7 +346,7 @@ export default function Navigation() {
           <div className="flex items-center justify-between gap-3 bg-slate-950 p-2.5 rounded-xl border border-slate-800/50">
             <div className="flex items-center gap-2.5 min-w-0">
               {/* Avatar circular con gradiente e iniciales */}
-              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold text-sm flex items-center justify-center flex-shrink-0 select-none shadow-md shadow-indigo-600/10">
+              <div className="h-10 w-10 rounded-full bg-linear-to-br from-indigo-500 to-purple-600 text-white font-bold text-sm flex items-center justify-center shrink-0 select-none shadow-md shadow-indigo-600/10">
                 {getInitials(user?.name)}
               </div>
               <div className="min-w-0">
@@ -386,7 +386,7 @@ export default function Navigation() {
             <div
               onClick={handleLogout}
               title="Cerrar Sesión (Click)"
-              className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold text-sm flex items-center justify-center cursor-pointer hover:opacity-85 hover:scale-95 active:scale-90 transition-all select-none shadow-md shadow-indigo-600/10"
+              className="h-10 w-10 rounded-full bg-linear-to-br from-indigo-500 to-purple-600 text-white font-bold text-sm flex items-center justify-center cursor-pointer hover:opacity-85 hover:scale-95 active:scale-90 transition-all select-none shadow-md shadow-indigo-600/10"
             >
               {getInitials(user?.name)}
             </div>
