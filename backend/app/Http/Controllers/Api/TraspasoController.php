@@ -13,6 +13,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Services\AuditoriaService;
 
 class TraspasoController extends Controller
 {
@@ -148,6 +149,17 @@ class TraspasoController extends Controller
                 return $traspaso;
             });
 
+            // Registrar auditoría
+            AuditoriaService::registrar(
+                $user->id,
+                'inventario',
+                'CREAR',
+                'info',
+                "Solicitud de traspaso creada: {$traspaso->codigo_traspaso} desde {$almacenOrigen->nombre} hacia {$almacenDestino->nombre}",
+                null,
+                $traspaso->toArray()
+            );
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Traspaso creado exitosamente.',
@@ -232,6 +244,17 @@ class TraspasoController extends Controller
                     }
                 }
             });
+
+            // Registrar auditoría
+            AuditoriaService::registrar(
+                $user->id,
+                'inventario',
+                'CONFIRMAR',
+                $accion === 'recibir' ? 'info' : 'warning',
+                "Traspaso {$traspaso->codigo_traspaso} confirmado como: " . ($accion === 'recibir' ? 'Recibido' : 'Rechazado'),
+                ['estado' => 'en_transito'],
+                ['estado' => $traspaso->estado]
+            );
 
             $mensaje = $accion === 'recibir'
                 ? 'El traspaso ha sido recibido y el stock ha sido sumado en el almacén de destino.'

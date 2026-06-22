@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Services\AuditoriaService;
 
 class ClienteController extends Controller
 {
@@ -97,6 +98,17 @@ class ClienteController extends Controller
 
         $cliente = Cliente::create($data);
 
+        // Registrar auditoría
+        AuditoriaService::registrar(
+            $request->user()->id,
+            'clientes',
+            'CREAR',
+            'info',
+            "Cliente creado: {$cliente->nombre_razon_social} (RFC: {$cliente->rfc})",
+            null,
+            $cliente->toArray()
+        );
+
         return response()->json([
             'status' => 'success',
             'message' => 'Cliente registrado correctamente.',
@@ -178,7 +190,22 @@ class ClienteController extends Controller
         $data = $request->all();
         $data['rfc'] = strtoupper($data['rfc']);
 
+        $valoresAnteriores = $cliente->only(['nombre_razon_social', 'telefono', 'email', 'rfc', 'tipo_cliente', 'limite_credito']);
+        
         $cliente->update($data);
+
+        $valoresNuevos = $cliente->only(['nombre_razon_social', 'telefono', 'email', 'rfc', 'tipo_cliente', 'limite_credito']);
+
+        // Registrar auditoría
+        AuditoriaService::registrar(
+            $request->user()->id,
+            'clientes',
+            'EDITAR',
+            'info',
+            "Cliente actualizado: {$cliente->nombre_razon_social} (RFC: {$cliente->rfc})",
+            $valoresAnteriores,
+            $valoresNuevos
+        );
 
         return response()->json([
             'status' => 'success',
@@ -204,7 +231,20 @@ class ClienteController extends Controller
             ], 422);
         }
 
+        $valoresAnteriores = $cliente->toArray();
+
         $cliente->delete();
+
+        // Registrar auditoría
+        AuditoriaService::registrar(
+            request()->user()->id,
+            'clientes',
+            'ELIMINAR',
+            'danger',
+            "Cliente eliminado: {$cliente->nombre_razon_social} (RFC: {$cliente->rfc})",
+            $valoresAnteriores,
+            null
+        );
 
         return response()->json([
             'status' => 'success',

@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Services\AuditoriaService;
 
 class CierreCajaController extends Controller
 {
@@ -212,6 +213,19 @@ class CierreCajaController extends Controller
                 'descuadre'      => $descuadre
             ]);
 
+            // Registrar auditoría
+            $severidad = abs($descuadre) > 0 ? 'danger' : 'info';
+            $descripcion = "Cierre de caja (Sesión #{$sesion->id}) confirmado. Esperado: \${$efectivoEsperado}, Declarado: \${$efectivoReal}. Descuadre: \${$descuadre}.";
+            AuditoriaService::registrar(
+                $request->user()->id,
+                'caja',
+                'CIERRE',
+                $severidad,
+                $descripcion,
+                ['estado' => 'abierta'],
+                $sesion->toArray()
+            );
+
             DB::commit();
 
             return response()->json([
@@ -353,6 +367,18 @@ class CierreCajaController extends Controller
         ]);
 
         $sesion->load(['caja.almacen']);
+
+        // Registrar auditoría
+        $nombreCajero = \App\Models\User::find($userId)->name;
+        AuditoriaService::registrar(
+            $request->user()->id,
+            'caja',
+            'APERTURA',
+            'info',
+            "Apertura de caja (Sesión #{$sesion->id}) en {$sesion->caja->almacen->nombre} con Fondo Inicial: \${$sesion->fondo_inicial} para el cajero {$nombreCajero}.",
+            null,
+            $sesion->toArray()
+        );
 
         return response()->json([
             'status' => 'success',
