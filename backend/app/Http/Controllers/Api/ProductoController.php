@@ -10,6 +10,7 @@ use App\Models\Producto;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use App\Services\AuditoriaService;
 
 class ProductoController extends Controller
 {
@@ -188,6 +189,17 @@ class ProductoController extends Controller
                 );
             }
 
+            // Registrar auditoría
+            AuditoriaService::registrar(
+                $request->user()->id,
+                'inventario',
+                'CREAR',
+                'info',
+                "Producto creado: {$producto->nombre} (SKU: {$producto->sku})",
+                null,
+                $producto->toArray()
+            );
+
             \Illuminate\Support\Facades\DB::commit();
 
             return response()->json([
@@ -234,9 +246,24 @@ class ProductoController extends Controller
             'precio_venta.numeric' => 'El precio de venta debe ser un número.',
         ]);
 
+        $valoresAnteriores = $producto->only(['sku', 'nombre', 'descripcion', 'categoria_id', 'marca_id', 'precio_compra', 'precio_venta', 'stock_minimo', 'unidad_medida', 'activo']);
+
         \Illuminate\Support\Facades\DB::beginTransaction();
         try {
             $producto->update($validated);
+
+            $valoresNuevos = $producto->only(['sku', 'nombre', 'descripcion', 'categoria_id', 'marca_id', 'precio_compra', 'precio_venta', 'stock_minimo', 'unidad_medida', 'activo']);
+
+            // Registrar auditoría
+            AuditoriaService::registrar(
+                $request->user()->id,
+                'inventario',
+                'EDITAR',
+                'info',
+                "Producto actualizado: {$producto->nombre} (SKU: {$producto->sku})",
+                $valoresAnteriores,
+                $valoresNuevos
+            );
 
             $almacenId = $request->input('almacen_id');
             $stockNuevo = $request->has('stock') ? $request->integer('stock') : null;
@@ -301,7 +328,19 @@ class ProductoController extends Controller
             ], 422);
         }
 
+        $valoresAnteriores = $producto->toArray();
+
         $producto->delete(); // SoftDelete: marca deleted_at, no borra físicamente
+
+        AuditoriaService::registrar(
+            $request->user()->id,
+            'inventario',
+            'ELIMINAR',
+            'danger',
+            "Producto desactivado / eliminado: {$producto->nombre} (SKU: {$producto->sku})",
+            $valoresAnteriores,
+            null
+        );
 
         return response()->json([
             'status'  => 'success',

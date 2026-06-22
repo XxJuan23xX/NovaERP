@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Services\AuditoriaService;
 
 class VentaController extends Controller
 {
@@ -220,6 +221,17 @@ class VentaController extends Controller
 
                 return $venta;
             });
+
+            // Registrar auditoría
+            AuditoriaService::registrar(
+                $userId,
+                'ventas',
+                'CREAR',
+                'info',
+                "Venta cobrada con éxito. Ticket: {$venta->numero_ticket}. Total: \${$venta->total} M.N. Pago vía: {$venta->metodo_pago}",
+                null,
+                $venta->toArray()
+            );
 
             // Retornar venta con sus relaciones
             return response()->json([

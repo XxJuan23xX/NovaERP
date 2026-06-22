@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Services\AuditoriaService;
 
 class CotizacionController extends Controller
 {
@@ -133,6 +134,17 @@ class CotizacionController extends Controller
                 return $cotizacion;
             });
 
+            // Registrar auditoría
+            AuditoriaService::registrar(
+                $request->user()->id,
+                'cotizaciones',
+                'CREAR',
+                'info',
+                "Cotización creada: Folio {$cotizacion->folio}. Total: \${$cotizacion->total} M.N.",
+                null,
+                $cotizacion->toArray()
+            );
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Cotización creada correctamente.',
@@ -161,6 +173,7 @@ class CotizacionController extends Controller
     public function update(Request $request, int $id): JsonResponse
     {
         $cotizacion = Cotizacion::findOrFail($id);
+        $valoresAnteriores = $cotizacion->only(['cliente_id', 'subtotal', 'iva', 'total', 'estado', 'observaciones']);
 
         $validator = Validator::make($request->all(), [
             'cliente_id' => 'nullable|integer|exists:clientes,id',
@@ -215,6 +228,19 @@ class CotizacionController extends Controller
                 }
             });
 
+            $valoresNuevos = $cotizacion->only(['cliente_id', 'subtotal', 'iva', 'total', 'estado', 'observaciones']);
+
+            // Registrar auditoría
+            AuditoriaService::registrar(
+                $request->user()->id,
+                'cotizaciones',
+                'EDITAR',
+                'info',
+                "Cotización actualizada: Folio {$cotizacion->folio}.",
+                $valoresAnteriores,
+                $valoresNuevos
+            );
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Cotización actualizada correctamente.',
@@ -251,7 +277,22 @@ class CotizacionController extends Controller
             ], 422);
         }
 
+        $valoresAnteriores = ['estado' => $cotizacion->estado];
+        
         $cotizacion->update(['estado' => 'convertida']);
+
+        $valoresNuevos = ['estado' => $cotizacion->estado];
+
+        // Registrar auditoría
+        AuditoriaService::registrar(
+            request()->user()->id,
+            'cotizaciones',
+            'CONFIRMAR',
+            'info',
+            "Cotización Folio {$cotizacion->folio} convertida a venta en el POS.",
+            $valoresAnteriores,
+            $valoresNuevos
+        );
 
         return response()->json([
             'status' => 'success',

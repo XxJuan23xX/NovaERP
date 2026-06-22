@@ -7,6 +7,7 @@ use App\Http\Requests\StoreAjusteInventarioRequest;
 use App\Http\Resources\KardexMovimientoResource;
 use App\Models\KardexMovimiento;
 use App\Services\InventarioService;
+use App\Services\AuditoriaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -43,6 +44,17 @@ class KardexController extends Controller
 
             // Cargar relaciones antes de pasar al resource
             $movimiento->load(['producto', 'almacen', 'usuario']);
+
+            // Registrar auditoría
+            AuditoriaService::registrar(
+                $request->user()->id,
+                'inventario',
+                'AJUSTE',
+                'warning',
+                "Ajuste manual de stock ({$movimiento->tipo_movimiento}): {$movimiento->cantidad} uds. para {$movimiento->producto->nombre} (SKU: {$movimiento->producto->sku}) en sucursal {$movimiento->almacen->nombre}. Motivo: {$movimiento->motivo}",
+                null,
+                $movimiento->toArray()
+            );
 
             return response()->json([
                 'status'  => 'success',

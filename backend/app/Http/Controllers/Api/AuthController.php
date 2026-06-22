@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use App\Services\AuditoriaService;
 
 class AuthController extends Controller
 {
@@ -34,6 +35,23 @@ class AuthController extends Controller
             'role' => $request->role,
             'sucursal' => $request->sucursal,
         ]);
+
+        // Registrar auditoría
+        AuditoriaService::registrar(
+            Auth::id(),
+            'usuarios',
+            'CREAR',
+            'info',
+            "Empleado registrado: {$user->name} ({$user->email}) con rol {$user->role}",
+            null,
+            [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+                'sucursal' => $user->sucursal
+            ]
+        );
 
         return response()->json([
             'status' => 'success',
@@ -64,6 +82,15 @@ class AuthController extends Controller
         ]);
 
         if (!Auth::attempt($request->only('email', 'password'))) {
+            // Registrar intento fallido
+            AuditoriaService::registrar(
+                null,
+                'seguridad',
+                'LOGIN',
+                'danger',
+                "Intento de inicio de sesión fallido para el correo: {$request->email}"
+            );
+
             return response()->json([
                 'status' => 'error',
                 'message' => 'Credenciales inválidas'
@@ -71,11 +98,37 @@ class AuthController extends Controller
         }
 
         $user = User::where('email', $request->email)->firstOrFail();
+
+        // Verificar si está activo
+        if (isset($user->activo) && !$user->activo) {
+            Auth::logout();
+            AuditoriaService::registrar(
+                $user->id,
+                'seguridad',
+                'LOGIN',
+                'danger',
+                "Intento de inicio de sesión bloqueado para usuario desactivado: {$user->email}"
+            );
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Tu cuenta ha sido desactivada. Contacta al administrador.'
+            ], 403);
+        }
         
         // Revoke previous tokens to avoid clutter (optional, but recommended for single-device-active logins)
         $user->tokens()->delete();
 
         $token = $user->createToken('auth_token')->plainTextToken;
+
+        // Registrar login exitoso
+        AuditoriaService::registrar(
+            $user->id,
+            'seguridad',
+            'LOGIN',
+            'info',
+            "Usuario {$user->name} inició sesión correctamente"
+        );
 
         return response()->json([
             'status' => 'success',
@@ -101,8 +154,19 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
+        $user = $request->user();
+        
+        // Registrar auditoría antes de destruir el token
+        AuditoriaService::registrar(
+            $user->id,
+            'seguridad',
+            'LOGOUT',
+            'info',
+            "Usuario {$user->name} cerró sesión"
+        );
+
         // Revoke the token that was used to authenticate the current request
-        $request->user()->currentAccessToken()->delete();
+        $user->currentAccessToken()->delete();
 
         return response()->json([
             'status' => 'success',
@@ -142,8 +206,23 @@ class AuthController extends Controller
             ], 400);
         }
 
+        $valoresAnteriores = ['activo' => $user->activo];
+        
         $user->activo = !$user->activo;
         $user->save();
+
+        $valoresNuevos = ['activo' => $user->activo];
+
+        // Registrar auditoría
+        AuditoriaService::registrar(
+            Auth::id(),
+            'usuarios',
+            'EDITAR',
+            $user->activo ? 'info' : 'warning',
+            "Estado del usuario {$user->name} cambiado a " . ($user->activo ? 'Activo' : 'Inactivo'),
+            $valoresAnteriores,
+            $valoresNuevos
+        );
 
         return response()->json([
             'status' => 'success',

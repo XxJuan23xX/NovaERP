@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\AlmacenController;
 use App\Http\Controllers\Api\KardexController;
 use App\Http\Controllers\Api\VentaController;
 use App\Http\Controllers\Api\TraspasoController;
+use App\Http\Controllers\Api\AuditoriaController;
 
 // ─── Rutas públicas (sin autenticación) ─────────────────────────────────────
 Route::post('/login',    [AuthController::class, 'login']);
@@ -23,6 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/register', [AuthController::class, 'register']);
         Route::get('/users', [AuthController::class, 'index']);
         Route::patch('/users/{id}/toggle-status', [AuthController::class, 'toggleStatus']);
+        Route::get('/auditoria', [AuditoriaController::class, 'index']);
     });
 
     // Usuario autenticado
