@@ -228,7 +228,7 @@ export default function AuditoriaPage() {
         {/* Cabecera */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
+            <h1 className="text-3xl font-extrabold tracking-tight text-black!">
               Auditoría y Seguridad
             </h1>
             <p className="mt-1 text-slate-400 text-xs font-semibold">

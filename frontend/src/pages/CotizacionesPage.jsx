@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Navigation from "../components/Navigation";
@@ -41,7 +41,9 @@ export default function CotizacionesPage() {
   const [selectedCliente, setSelectedCliente] = useState(null);
   const [showClientDropdown, setShowClientDropdown] = useState(false);
 
-  const [fechaEmision, setFechaEmision] = useState(() => new Date().toISOString().split("T")[0]);
+  const [fechaEmision, setFechaEmision] = useState(
+    () => new Date().toISOString().split("T")[0],
+  );
   const [fechaVigencia, setFechaVigencia] = useState(() => {
     const d = new Date();
     d.setDate(d.getDate() + 7);
@@ -92,7 +94,10 @@ export default function CotizacionesPage() {
   };
 
   useEffect(() => {
-    fetchData();
+    const timer = setTimeout(() => {
+      fetchData();
+    }, 100);
+    return () => clearTimeout(timer);
   }, []);
 
   // Clientes y productos filtrados para autocompletes
@@ -100,8 +105,10 @@ export default function CotizacionesPage() {
     if (!clienteSearch.trim()) return [];
     return clientes.filter(
       (c) =>
-        c.nombre_razon_social.toLowerCase().includes(clienteSearch.toLowerCase()) ||
-        c.rfc.toLowerCase().includes(clienteSearch.toLowerCase())
+        c.nombre_razon_social
+          .toLowerCase()
+          .includes(clienteSearch.toLowerCase()) ||
+        c.rfc.toLowerCase().includes(clienteSearch.toLowerCase()),
     );
   }, [clientes, clienteSearch]);
 
@@ -110,7 +117,7 @@ export default function CotizacionesPage() {
     return productos.filter(
       (p) =>
         p.nombre.toLowerCase().includes(productSearch.toLowerCase()) ||
-        p.sku.toLowerCase().includes(productSearch.toLowerCase())
+        p.sku.toLowerCase().includes(productSearch.toLowerCase()),
     );
   }, [productos, productSearch]);
 
@@ -120,10 +127,13 @@ export default function CotizacionesPage() {
       const matchSearch =
         cot.folio.toLowerCase().includes(busqueda.toLowerCase()) ||
         (cot.cliente
-          ? cot.cliente.nombre_razon_social.toLowerCase().includes(busqueda.toLowerCase())
+          ? cot.cliente.nombre_razon_social
+              .toLowerCase()
+              .includes(busqueda.toLowerCase())
           : "mostrador".includes(busqueda.toLowerCase()));
 
-      const matchEstado = estadoFiltro === "Todos" || cot.estado === estadoFiltro;
+      const matchEstado =
+        estadoFiltro === "Todos" || cot.estado === estadoFiltro;
 
       return matchSearch && matchEstado;
     });
@@ -146,15 +156,22 @@ export default function CotizacionesPage() {
 
   // Manejo de carrito
   const handleAddProduct = (prod) => {
-    const itemExistente = cartItems.find((item) => item.producto.id === prod.id);
+    const itemExistente = cartItems.find(
+      (item) => item.producto.id === prod.id,
+    );
     if (itemExistente) {
       setCartItems(
         cartItems.map((item) =>
-          item.producto.id === prod.id ? { ...item, cantidad: item.cantidad + 1 } : item
-        )
+          item.producto.id === prod.id
+            ? { ...item, cantidad: item.cantidad + 1 }
+            : item,
+        ),
       );
     } else {
-      setCartItems([...cartItems, { producto: prod, cantidad: 1, descuento_porcentaje: 0 }]);
+      setCartItems([
+        ...cartItems,
+        { producto: prod, cantidad: 1, descuento_porcentaje: 0 },
+      ]);
     }
     setProductSearch("");
     setShowProductDropdown(false);
@@ -164,8 +181,10 @@ export default function CotizacionesPage() {
     const qty = parseInt(val, 10) || 1;
     setCartItems(
       cartItems.map((item) =>
-        item.producto.id === prodId ? { ...item, cantidad: qty < 1 ? 1 : qty } : item
-      )
+        item.producto.id === prodId
+          ? { ...item, cantidad: qty < 1 ? 1 : qty }
+          : item,
+      ),
     );
   };
 
@@ -173,8 +192,13 @@ export default function CotizacionesPage() {
     const disc = parseFloat(val) || 0;
     setCartItems(
       cartItems.map((item) =>
-        item.producto.id === prodId ? { ...item, descuento_porcentaje: disc < 0 ? 0 : disc > 100 ? 100 : disc } : item
-      )
+        item.producto.id === prodId
+          ? {
+              ...item,
+              descuento_porcentaje: disc < 0 ? 0 : disc > 100 ? 100 : disc,
+            }
+          : item,
+      ),
     );
   };
 
@@ -187,7 +211,9 @@ export default function CotizacionesPage() {
     e.preventDefault();
     setQuickClientErrors({});
     if (!quickClientForm.nombre_razon_social.trim()) {
-      setQuickClientErrors({ nombre_razon_social: "El nombre es obligatorio." });
+      setQuickClientErrors({
+        nombre_razon_social: "El nombre es obligatorio.",
+      });
       return;
     }
     if (!quickClientForm.rfc.trim()) {
@@ -220,7 +246,12 @@ export default function CotizacionesPage() {
         setSelectedCliente(newClient);
         setClienteSearch(newClient.nombre_razon_social);
         setQuickClientModal(false);
-        setQuickClientForm({ nombre_razon_social: "", rfc: "", email: "", telefono: "" });
+        setQuickClientForm({
+          nombre_razon_social: "",
+          rfc: "",
+          email: "",
+          telefono: "",
+        });
       }
     } catch (err) {
       console.error("Error al crear cliente rápido:", err);
@@ -308,10 +339,12 @@ export default function CotizacionesPage() {
             productos: fullCot.detalles.map((det) => ({
               producto_id: det.producto_id,
               cantidad: det.cantidad,
-              precio_unitario: Number(det.precio_unitario) * (1 - (Number(det.descuento_porcentaje) || 0) / 100),
+              precio_unitario:
+                Number(det.precio_unitario) *
+                (1 - (Number(det.descuento_porcentaje) || 0) / 100),
               producto: det.producto,
             })),
-          })
+          }),
         );
 
         // 3. Redirigir al POS
@@ -397,7 +430,7 @@ export default function CotizacionesPage() {
             {/* Cabecera */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
               <div>
-                <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 flex items-center gap-3">
+                <h1 className="text-2xl font-extrabold tracking-tight text-black! flex items-center gap-3">
                   <span className="p-2 bg-white rounded-xl border border-slate-200 text-indigo-600 shadow-sm">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -447,6 +480,26 @@ export default function CotizacionesPage() {
                 Nueva cotización
               </button>
             </div>
+
+            {error && (
+              <div className="mb-6 bg-red-50 border border-red-200 p-4 rounded-xl text-red-800 text-xs font-bold flex items-center gap-2">
+                <svg
+                  className="h-5 w-5 text-red-500 flex-shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
+                <span>{error}</span>
+              </div>
+            )}
 
             {/* Contadores */}
             <div className="text-xs text-slate-500 font-bold mb-6 select-none bg-slate-100/80 border border-slate-200 px-4 py-3 rounded-2xl w-fit">
@@ -501,7 +554,9 @@ export default function CotizacionesPage() {
               {loading ? (
                 <div className="flex flex-col items-center justify-center py-20 text-slate-500 gap-3">
                   <div className="h-10 w-10 border-4 border-slate-200 border-t-indigo-600 rounded-full animate-spin" />
-                  <span className="text-xs font-semibold">Cargando cotizaciones...</span>
+                  <span className="text-xs font-semibold">
+                    Cargando cotizaciones...
+                  </span>
                 </div>
               ) : filteredCotizaciones.length === 0 ? (
                 <div className="text-center py-20 text-slate-500">
@@ -519,9 +574,12 @@ export default function CotizacionesPage() {
                       d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                     />
                   </svg>
-                  <h3 className="text-sm font-bold text-slate-800">No se encontraron cotizaciones</h3>
+                  <h3 className="text-sm font-bold text-slate-800">
+                    No se encontraron cotizaciones
+                  </h3>
                   <p className="text-xs text-slate-500 mt-1">
-                    Crea un presupuesto formal presionando el botón "Nueva cotización".
+                    Crea un presupuesto formal presionando el botón "Nueva
+                    cotización".
                   </p>
                 </div>
               ) : (
@@ -538,12 +596,17 @@ export default function CotizacionesPage() {
                     </thead>
                     <tbody className="divide-y divide-slate-100 text-xs text-slate-600 font-bold">
                       {filteredCotizaciones.map((cot) => (
-                        <tr key={cot.id} className="hover:bg-slate-50/50 transition-colors">
+                        <tr
+                          key={cot.id}
+                          className="hover:bg-slate-50/50 transition-colors"
+                        >
                           <td className="px-5 py-4 whitespace-nowrap text-indigo-600 font-mono">
                             {cot.folio}
                           </td>
                           <td className="px-5 py-4 text-slate-900">
-                            {cot.cliente ? cot.cliente.nombre_razon_social : "Mostrador"}
+                            {cot.cliente
+                              ? cot.cliente.nombre_razon_social
+                              : "Mostrador"}
                           </td>
                           <td className="px-5 py-4 text-right text-slate-950 font-mono">
                             {formatCurrency(cot.total)}
@@ -570,9 +633,23 @@ export default function CotizacionesPage() {
                                 className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors cursor-pointer"
                                 title="Ver Ficha"
                               >
-                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                <svg
+                                  className="h-4 w-4"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                  strokeWidth={2.5}
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                  />
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                  />
                                 </svg>
                               </button>
                               <button
@@ -580,8 +657,18 @@ export default function CotizacionesPage() {
                                 className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
                                 title="Imprimir / PDF"
                               >
-                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                <svg
+                                  className="h-4 w-4"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                  strokeWidth={2.5}
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                                  />
                                 </svg>
                               </button>
                               {["borrador", "vigente"].includes(cot.estado) && (
@@ -611,7 +698,9 @@ export default function CotizacionesPage() {
             <div className="flex items-center justify-between pb-5 border-b border-slate-200 mb-6">
               <div>
                 <h1 className="text-xl font-extrabold text-slate-900">
-                  {selectedCotizacion ? `Editar Cotización ${selectedCotizacion.folio}` : "Nueva Cotización"}
+                  {selectedCotizacion
+                    ? `Editar Cotización ${selectedCotizacion.folio}`
+                    : "Nueva Cotización"}
                 </h1>
                 <p className="text-xs text-slate-500 font-semibold mt-0.5">
                   Registra un presupuesto formal para tus clientes.
@@ -631,11 +720,22 @@ export default function CotizacionesPage() {
             {/* Alerta de Perfil Incompleto */}
             {selectedCliente && !selectedCliente.perfil_completo && (
               <div className="mb-6 bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-2xl flex items-start gap-2.5 shadow-sm animate-in slide-in-from-top-2 duration-150">
-                <svg className="h-5 w-5 mt-0.5 flex-shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                <svg
+                  className="h-5 w-5 mt-0.5 flex-shrink-0 text-amber-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
                 </svg>
                 <span className="font-extrabold text-xs leading-relaxed">
-                  ⚠️ Se requerirán datos fiscales adicionales para facturar esta cotización en el futuro.
+                  ⚠️ Se requerirán datos fiscales adicionales para facturar esta
+                  cotización en el futuro.
                 </span>
               </div>
             )}
@@ -656,7 +756,10 @@ export default function CotizacionesPage() {
                       </label>
                       <button
                         type="button"
-                        onClick={() => setQuickClientModal(true)}
+                        onClick={() => {
+                          setQuickClientErrors({});
+                          setQuickClientModal(true);
+                        }}
                         className="text-[9px] font-black text-indigo-600 hover:underline"
                       >
                         + Nuevo Cliente Rápido
@@ -735,7 +838,9 @@ export default function CotizacionesPage() {
                     <input
                       type="text"
                       readOnly
-                      value={currentUser ? currentUser.name : "Usuario del Sistema"}
+                      value={
+                        currentUser ? currentUser.name : "Usuario del Sistema"
+                      }
                       className="w-full bg-slate-100 border border-slate-200 text-slate-500 text-xs font-bold rounded-xl px-4 py-2.5 cursor-not-allowed outline-none"
                     />
                   </div>
@@ -781,7 +886,11 @@ export default function CotizacionesPage() {
                               className="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-xs font-semibold text-slate-800 border-b border-slate-100 last:border-0 flex justify-between items-center"
                             >
                               <span>
-                                {p.nombre} (<span className="font-mono text-[10px] text-slate-500">{p.sku}</span>)
+                                {p.nombre} (
+                                <span className="font-mono text-[10px] text-slate-500">
+                                  {p.sku}
+                                </span>
+                                )
                               </span>
                               <span className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-black">
                                 Stock: {p.stock ?? 0}
@@ -796,7 +905,8 @@ export default function CotizacionesPage() {
                   {/* Tabla de Productos del Carrito */}
                   {cartItems.length === 0 ? (
                     <div className="text-center py-8 text-slate-400 italic text-xs">
-                      Agrega productos a la cotización desde el buscador de arriba.
+                      Agrega productos a la cotización desde el buscador de
+                      arriba.
                     </div>
                   ) : (
                     <div className="border border-slate-150 rounded-xl overflow-hidden">
@@ -805,25 +915,37 @@ export default function CotizacionesPage() {
                           <tr className="bg-slate-50 border-b border-slate-150 text-[10px] font-bold uppercase text-slate-500">
                             <th className="px-4 py-3">Descripción</th>
                             <th className="px-4 py-3 text-center w-20">Cant</th>
-                            <th className="px-4 py-3 text-right w-24">Precio</th>
-                            <th className="px-4 py-3 text-center w-24">Desc (%)</th>
+                            <th className="px-4 py-3 text-right w-24">
+                              Precio
+                            </th>
+                            <th className="px-4 py-3 text-center w-24">
+                              Desc (%)
+                            </th>
                             <th className="px-4 py-3 text-right w-28">Total</th>
                             <th className="px-2 py-3 text-center w-10"></th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 font-bold">
                           {cartItems.map((item) => {
-                            const price = Number(item.producto.precio_venta) || 0;
-                            const discount = Number(item.descuento_porcentaje) || 0;
+                            const price =
+                              Number(item.producto.precio_venta) || 0;
+                            const discount =
+                              Number(item.descuento_porcentaje) || 0;
                             const finalPrice = price * (1 - discount / 100);
                             const lineTotal = finalPrice * item.cantidad;
 
                             return (
-                              <tr key={item.producto.id} className="align-middle hover:bg-slate-50/20">
+                              <tr
+                                key={item.producto.id}
+                                className="align-middle hover:bg-slate-50/20"
+                              >
                                 <td className="px-4 py-3.5">
-                                  <p className="text-slate-900 leading-snug">{item.producto.nombre}</p>
+                                  <p className="text-slate-900 leading-snug">
+                                    {item.producto.nombre}
+                                  </p>
                                   <span className="text-[10px] text-slate-400 font-bold block mt-0.5">
-                                    SKU: {item.producto.sku} · Stock: {item.producto.stock ?? 0}
+                                    SKU: {item.producto.sku} · Stock:{" "}
+                                    {item.producto.stock ?? 0}
                                   </span>
                                 </td>
                                 <td className="px-4 py-3.5 text-center">
@@ -831,7 +953,12 @@ export default function CotizacionesPage() {
                                     type="number"
                                     min="1"
                                     value={item.cantidad}
-                                    onChange={(e) => handleQtyChange(item.producto.id, e.target.value)}
+                                    onChange={(e) =>
+                                      handleQtyChange(
+                                        item.producto.id,
+                                        e.target.value,
+                                      )
+                                    }
                                     className="w-14 bg-slate-50 border border-slate-300 text-slate-900 text-center text-xs font-bold rounded-lg py-1 px-1 focus:outline-none focus:border-indigo-500"
                                   />
                                 </td>
@@ -845,7 +972,12 @@ export default function CotizacionesPage() {
                                     max="100"
                                     step="0.5"
                                     value={item.descuento_porcentaje}
-                                    onChange={(e) => handleDiscountChange(item.producto.id, e.target.value)}
+                                    onChange={(e) =>
+                                      handleDiscountChange(
+                                        item.producto.id,
+                                        e.target.value,
+                                      )
+                                    }
                                     className="w-16 bg-slate-50 border border-slate-300 text-slate-900 text-center text-xs font-bold rounded-lg py-1 px-1 focus:outline-none focus:border-indigo-500"
                                   />
                                 </td>
@@ -854,11 +986,23 @@ export default function CotizacionesPage() {
                                 </td>
                                 <td className="px-2 py-3.5 text-center select-none">
                                   <button
-                                    onClick={() => handleRemoveItem(item.producto.id)}
+                                    onClick={() =>
+                                      handleRemoveItem(item.producto.id)
+                                    }
                                     className="text-slate-300 hover:text-red-500 transition-colors p-0.5 cursor-pointer"
                                   >
-                                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    <svg
+                                      className="h-4 w-4"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      stroke="currentColor"
+                                      strokeWidth={2.5}
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M6 18L18 6M6 6l12 12"
+                                      />
                                     </svg>
                                   </button>
                                 </td>
@@ -883,15 +1027,21 @@ export default function CotizacionesPage() {
                     <div className="space-y-3 font-semibold text-xs text-slate-600">
                       <div className="flex justify-between">
                         <span>Subtotal</span>
-                        <span className="text-slate-950 font-mono">{formatCurrency(totals.subtotal)}</span>
+                        <span className="text-slate-950 font-mono">
+                          {formatCurrency(totals.subtotal)}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span>IVA (16%)</span>
-                        <span className="text-slate-950 font-mono">{formatCurrency(totals.iva)}</span>
+                        <span className="text-slate-950 font-mono">
+                          {formatCurrency(totals.iva)}
+                        </span>
                       </div>
                       <div className="flex justify-between text-base font-black text-slate-900 pt-3 border-t border-slate-200">
                         <span>Total</span>
-                        <span className="text-indigo-600 font-mono">{formatCurrency(totals.total)}</span>
+                        <span className="text-indigo-600 font-mono">
+                          {formatCurrency(totals.total)}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -937,13 +1087,25 @@ export default function CotizacionesPage() {
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-all select-none">
           <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 flex flex-col relative overflow-hidden animate-in fade-in zoom-in-95 duration-150">
             <div className="pb-3 border-b border-slate-150 flex items-center justify-between">
-              <h2 className="text-slate-950 font-black text-base tracking-tight">Nuevo Cliente Rápido</h2>
+              <h2 className="text-slate-950 font-black text-base tracking-tight">
+                Nuevo Cliente Rápido
+              </h2>
               <button
                 onClick={() => setQuickClientModal(false)}
                 className="text-slate-400 hover:text-slate-600 transition-colors p-1 cursor-pointer"
               >
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -956,10 +1118,24 @@ export default function CotizacionesPage() {
                 <input
                   type="text"
                   value={quickClientForm.nombre_razon_social}
-                  onChange={(e) => setQuickClientForm({ ...quickClientForm, nombre_razon_social: e.target.value })}
+                  onChange={(e) =>
+                    setQuickClientForm({
+                      ...quickClientForm,
+                      nombre_razon_social: e.target.value,
+                    })
+                  }
                   placeholder="Ej. Juan Pérez"
-                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs font-bold rounded-xl px-3.5 py-2 focus:outline-none focus:border-indigo-500"
+                  className={`w-full bg-slate-50 border ${
+                    quickClientErrors.nombre_razon_social
+                      ? "border-red-500 ring-2 ring-red-500/10"
+                      : "border-slate-300 focus:border-indigo-500"
+                  } text-slate-900 text-xs font-bold rounded-xl px-3.5 py-2 focus:outline-none`}
                 />
+                {quickClientErrors.nombre_razon_social && (
+                  <p className="text-[10px] font-bold text-red-650 mt-1 animate-in fade-in duration-100">
+                    {quickClientErrors.nombre_razon_social}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-1">
@@ -969,32 +1145,78 @@ export default function CotizacionesPage() {
                 <input
                   type="text"
                   value={quickClientForm.rfc}
-                  onChange={(e) => setQuickClientForm({ ...quickClientForm, rfc: e.target.value.toUpperCase() })}
+                  onChange={(e) =>
+                    setQuickClientForm({
+                      ...quickClientForm,
+                      rfc: e.target.value.toUpperCase(),
+                    })
+                  }
                   placeholder="XAXX010101000"
-                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs font-mono font-bold rounded-xl px-3.5 py-2 focus:outline-none focus:border-indigo-500"
+                  className={`w-full bg-slate-50 border ${
+                    quickClientErrors.rfc
+                      ? "border-red-500 ring-2 ring-red-500/10"
+                      : "border-slate-300 focus:border-indigo-500"
+                  } text-slate-900 text-xs font-mono font-bold rounded-xl px-3.5 py-2 focus:outline-none`}
                 />
+                {quickClientErrors.rfc && (
+                  <p className="text-[10px] font-bold text-red-650 mt-1 animate-in fade-in duration-100">
+                    {quickClientErrors.rfc}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase text-slate-700 block">Correo</label>
+                <label className="text-[10px] font-black uppercase text-slate-700 block">
+                  Correo
+                </label>
                 <input
                   type="email"
                   value={quickClientForm.email}
-                  onChange={(e) => setQuickClientForm({ ...quickClientForm, email: e.target.value })}
+                  onChange={(e) =>
+                    setQuickClientForm({
+                      ...quickClientForm,
+                      email: e.target.value,
+                    })
+                  }
                   placeholder="cliente@ejemplo.com"
-                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs font-bold rounded-xl px-3.5 py-2 focus:outline-none focus:border-indigo-500"
+                  className={`w-full bg-slate-50 border ${
+                    quickClientErrors.email
+                      ? "border-red-500 ring-2 ring-red-500/10"
+                      : "border-slate-300 focus:border-indigo-500"
+                  } text-slate-900 text-xs font-bold rounded-xl px-3.5 py-2 focus:outline-none`}
                 />
+                {quickClientErrors.email && (
+                  <p className="text-[10px] font-bold text-red-650 mt-1 animate-in fade-in duration-100">
+                    {quickClientErrors.email}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase text-slate-700 block">Teléfono</label>
+                <label className="text-[10px] font-black uppercase text-slate-700 block">
+                  Teléfono
+                </label>
                 <input
                   type="tel"
                   value={quickClientForm.telefono}
-                  onChange={(e) => setQuickClientForm({ ...quickClientForm, telefono: e.target.value })}
+                  onChange={(e) =>
+                    setQuickClientForm({
+                      ...quickClientForm,
+                      telefono: e.target.value,
+                    })
+                  }
                   placeholder="10 dígitos"
-                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs font-bold rounded-xl px-3.5 py-2 focus:outline-none focus:border-indigo-500"
+                  className={`w-full bg-slate-50 border ${
+                    quickClientErrors.telefono
+                      ? "border-red-500 ring-2 ring-red-500/10"
+                      : "border-slate-300 focus:border-indigo-500"
+                  } text-slate-900 text-xs font-bold rounded-xl px-3.5 py-2 focus:outline-none`}
                 />
+                {quickClientErrors.telefono && (
+                  <p className="text-[10px] font-bold text-red-650 mt-1 animate-in fade-in duration-100">
+                    {quickClientErrors.telefono}
+                  </p>
+                )}
               </div>
 
               <div className="pt-2 border-t border-slate-100 flex gap-2.5 select-none">
@@ -1020,7 +1242,10 @@ export default function CotizacionesPage() {
       {/* ── DRAWER DETALLE DE COTIZACIÓN (RIGHT SLIDE-OVER) ── */}
       {detailOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex justify-end animate-in fade-in duration-200 print-modal-container">
-          <div className="absolute inset-0 cursor-default print:hidden" onClick={() => setDetailOpen(false)} />
+          <div
+            className="absolute inset-0 cursor-default print:hidden"
+            onClick={() => setDetailOpen(false)}
+          />
 
           <div className="relative w-full max-w-lg bg-white h-full shadow-2xl flex flex-col z-10 border-l border-slate-200 animate-in slide-in-from-right duration-250 print-modal-content">
             {/* Cabecera Drawer */}
@@ -1037,8 +1262,18 @@ export default function CotizacionesPage() {
                 onClick={() => setDetailOpen(false)}
                 className="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 cursor-pointer"
               >
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -1084,28 +1319,46 @@ export default function CotizacionesPage() {
                     </h4>
                     <div className="grid grid-cols-2 gap-y-3 gap-x-4 text-xs">
                       <div>
-                        <span className="text-slate-400 block font-semibold">Cliente</span>
+                        <span className="text-slate-400 block font-semibold">
+                          Cliente
+                        </span>
                         <span className="font-bold text-slate-850">
-                          {detailData.cliente ? detailData.cliente.nombre_razon_social : "Mostrador"}
+                          {detailData.cliente
+                            ? detailData.cliente.nombre_razon_social
+                            : "Mostrador"}
                         </span>
                       </div>
                       <div>
-                        <span className="text-slate-400 block font-semibold">RFC</span>
+                        <span className="text-slate-400 block font-semibold">
+                          RFC
+                        </span>
                         <span className="font-bold text-slate-850 font-mono">
                           {detailData.cliente ? detailData.cliente.rfc : "N/A"}
                         </span>
                       </div>
                       <div>
-                        <span className="text-slate-400 block font-semibold">Vendedor</span>
-                        <span className="font-bold text-slate-850">{detailData.vendedor?.name || "N/A"}</span>
+                        <span className="text-slate-400 block font-semibold">
+                          Vendedor
+                        </span>
+                        <span className="font-bold text-slate-850">
+                          {detailData.vendedor?.name || "N/A"}
+                        </span>
                       </div>
                       <div>
-                        <span className="text-slate-400 block font-semibold">Fecha Emisión</span>
-                        <span className="font-bold text-slate-850">{detailData.fecha_emision}</span>
+                        <span className="text-slate-400 block font-semibold">
+                          Fecha Emisión
+                        </span>
+                        <span className="font-bold text-slate-850">
+                          {detailData.fecha_emision}
+                        </span>
                       </div>
                       <div>
-                        <span className="text-slate-400 block font-semibold">Vence el</span>
-                        <span className="font-bold text-slate-850">{detailData.fecha_vigencia}</span>
+                        <span className="text-slate-400 block font-semibold">
+                          Vence el
+                        </span>
+                        <span className="font-bold text-slate-850">
+                          {detailData.fecha_vigencia}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -1122,21 +1375,33 @@ export default function CotizacionesPage() {
                             <th className="px-3 py-2">Producto</th>
                             <th className="px-3 py-2 text-center w-12">Cant</th>
                             <th className="px-3 py-2 text-center w-16">Desc</th>
-                            <th className="px-3 py-2 text-right w-24">Importe</th>
+                            <th className="px-3 py-2 text-right w-24">
+                              Importe
+                            </th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 font-bold">
                           {detailData.detalles?.map((det) => (
                             <tr key={det.id}>
                               <td className="px-3 py-2">
-                                <p className="text-slate-900 leading-tight">{det.producto?.nombre}</p>
-                                <span className="text-[9px] text-slate-400">SKU: {det.producto?.sku}</span>
+                                <p className="text-slate-900 leading-tight">
+                                  {det.producto?.nombre}
+                                </p>
+                                <span className="text-[9px] text-slate-400">
+                                  SKU: {det.producto?.sku}
+                                </span>
                               </td>
-                              <td className="px-3 py-2 text-center text-slate-700">{det.cantidad}</td>
+                              <td className="px-3 py-2 text-center text-slate-700">
+                                {det.cantidad}
+                              </td>
                               <td className="px-3 py-2 text-center text-slate-500">
-                                {Number(det.descuento_porcentaje) > 0 ? `${Number(det.descuento_porcentaje)}%` : "-"}
+                                {Number(det.descuento_porcentaje) > 0
+                                  ? `${Number(det.descuento_porcentaje)}%`
+                                  : "-"}
                               </td>
-                              <td className="px-3 py-2 text-right text-slate-900 font-mono">{formatCurrency(det.total)}</td>
+                              <td className="px-3 py-2 text-right text-slate-900 font-mono">
+                                {formatCurrency(det.total)}
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -1150,7 +1415,9 @@ export default function CotizacionesPage() {
                       <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
                         Observaciones
                       </span>
-                      <p className="text-slate-700 font-medium leading-relaxed">{detailData.observaciones}</p>
+                      <p className="text-slate-700 font-medium leading-relaxed">
+                        {detailData.observaciones}
+                      </p>
                     </div>
                   )}
                 </>
@@ -1164,8 +1431,18 @@ export default function CotizacionesPage() {
                   onClick={() => window.print()}
                   className="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
                 >
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2.5}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                    />
                   </svg>
                   Imprimir / PDF
                 </button>
