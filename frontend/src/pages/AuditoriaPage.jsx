@@ -26,6 +26,7 @@ export default function AuditoriaPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
+  const itemsPerPage = 10;
 
   // ── ESTADO DEL LOG SELECCIONADO PARA DETALLE (MODAL) ──
   const [selectedLog, setSelectedLog] = useState(null);
@@ -68,6 +69,7 @@ export default function AuditoriaPage() {
 
     const params = {
       page: page,
+      per_page: itemsPerPage,
       busqueda: busqueda || undefined,
       modulo: modulo || undefined,
       severidad: severidad || undefined,
@@ -114,15 +116,6 @@ export default function AuditoriaPage() {
     if (page >= 1 && page <= lastPage) {
       fetchLogs(page);
     }
-  };
-
-  // Limpiar filtros
-  const handleClearFilters = () => {
-    setBusqueda("");
-    setModulo("");
-    setSeveridad("");
-    setFechaDesde("");
-    setFechaHasta("");
   };
 
   // ── AUXILIARES DE RENDERIZADO ──
@@ -226,9 +219,9 @@ export default function AuditoriaPage() {
       {/* Espacio principal de la página */}
       <div className="flex-1 min-w-0 p-8 flex flex-col">
         {/* Cabecera */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-2">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-black!">
+            <h1 className="text-[28px]! font-extrabold tracking-tight text-black!">
               Auditoría y Seguridad
             </h1>
             <p className="mt-1 text-slate-400 text-xs font-semibold">
@@ -239,73 +232,10 @@ export default function AuditoriaPage() {
               tiempo real.
             </p>
           </div>
-          {/* Botón para limpiar filtros */}
-          <button
-            onClick={handleClearFilters}
-            className="px-4 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 text-slate-700 text-xs font-bold rounded-xl shadow-sm transition-all duration-150 active:scale-95 cursor-pointer"
-          >
-            Limpiar Filtros
-          </button>
-        </div>
-
-        {/* MÉTRIQUES CARD SUPERIORES */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 select-none">
-          <div className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm flex items-center justify-between">
-            <div>
-              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
-                Total Acciones
-              </span>
-              <p className="text-2xl font-black text-slate-900 mt-1">
-                {stats.total_logs}
-              </p>
-            </div>
-            <div className="h-10 w-10 bg-indigo-50 border border-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center font-bold">
-              📊
-            </div>
-          </div>
-          <div className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm flex items-center justify-between">
-            <div>
-              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
-                Eventos Críticos
-              </span>
-              <p className="text-2xl font-black text-red-600 mt-1">
-                {stats.criticos}
-              </p>
-            </div>
-            <div className="h-10 w-10 bg-red-50 border border-red-100 text-red-600 rounded-xl flex items-center justify-center font-bold">
-              🚨
-            </div>
-          </div>
-          <div className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm flex items-center justify-between">
-            <div>
-              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
-                Advertencias
-              </span>
-              <p className="text-2xl font-black text-amber-600 mt-1">
-                {stats.warnings}
-              </p>
-            </div>
-            <div className="h-10 w-10 bg-amber-50 border border-amber-100 text-amber-600 rounded-xl flex items-center justify-center font-bold">
-              ⚠️
-            </div>
-          </div>
-          <div className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm flex items-center justify-between">
-            <div>
-              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
-                Información
-              </span>
-              <p className="text-2xl font-black text-emerald-600 mt-1">
-                {stats.info}
-              </p>
-            </div>
-            <div className="h-10 w-10 bg-emerald-50 border border-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center font-bold">
-              ℹ️
-            </div>
-          </div>
         </div>
 
         {/* BARRA DE FILTROS */}
-        <div className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm mb-6 grid grid-cols-1 sm:grid-cols-5 gap-4 items-end">
+        <div className="bg-transparent p-5 mb-6 grid grid-cols-1 sm:grid-cols-5 gap-4 items-end">
           {/* Buscar */}
           <div className="flex flex-col gap-1.5">
             <label className="text-[10px] font-black uppercase tracking-wider text-slate-500">
@@ -316,7 +246,7 @@ export default function AuditoriaPage() {
               placeholder="Cajero, SKU, palabra..."
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
-              className="bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 font-bold rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-[#4f46e5] focus:bg-white transition-all outline-none"
+              className="bg-white border border-slate-200 text-slate-900 placeholder-slate-400 font-bold rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-[#4f46e5] focus:bg-white transition-all outline-none"
             />
           </div>
           {/* Módulo */}
@@ -327,7 +257,7 @@ export default function AuditoriaPage() {
             <select
               value={modulo}
               onChange={(e) => setModulo(e.target.value)}
-              className="bg-slate-50 border border-slate-200 text-slate-900 font-bold rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-[#4f46e5] focus:bg-white transition-all outline-none cursor-pointer"
+              className="bg-white border border-slate-200 text-slate-900 font-bold rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-[#4f46e5] focus:bg-white transition-all outline-none cursor-pointer"
             >
               <option value="">Todos los módulos</option>
               <option value="seguridad">Seguridad</option>
@@ -347,7 +277,7 @@ export default function AuditoriaPage() {
             <select
               value={severidad}
               onChange={(e) => setSeveridad(e.target.value)}
-              className="bg-slate-50 border border-slate-200 text-slate-900 font-bold rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-[#4f46e5] focus:bg-white transition-all outline-none cursor-pointer"
+              className="bg-white border border-slate-200 text-slate-900 font-bold rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-[#4f46e5] focus:bg-white transition-all outline-none cursor-pointer"
             >
               <option value="">Todas las gravedades</option>
               <option value="info">Información (Info)</option>
@@ -364,7 +294,7 @@ export default function AuditoriaPage() {
               type="date"
               value={fechaDesde}
               onChange={(e) => setFechaDesde(e.target.value)}
-              className="bg-slate-50 border border-slate-200 text-slate-900 font-bold rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-[#4f46e5] focus:bg-white transition-all outline-none cursor-pointer"
+              className="bg-white border border-slate-200 text-slate-900 font-bold rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-[#4f46e5] focus:bg-white transition-all outline-none cursor-pointer"
             />
           </div>
           {/* Fecha Hasta */}
@@ -376,8 +306,59 @@ export default function AuditoriaPage() {
               type="date"
               value={fechaHasta}
               onChange={(e) => setFechaHasta(e.target.value)}
-              className="bg-slate-50 border border-slate-200 text-slate-900 font-bold rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-[#4f46e5] focus:bg-white transition-all outline-none cursor-pointer"
+              className="bg-white border border-slate-200 text-slate-900 font-bold rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-[#4f46e5] focus:bg-white transition-all outline-none cursor-pointer"
             />
+          </div>
+        </div>
+
+        {/* MÉTRIQUES CARD SUPERIORES */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 select-none">
+          {/* Card 1: Total Acciones */}
+          <div className="bg-blue-100 border border-blue-400/20 rounded-sm p-5 shadow-sm hover:shadow-md transition-all">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-wider text-gray-500 block">
+                Total Acciones
+              </span>
+              <p className="text-2xl font-black text-blue-900 mt-1">
+                {stats.total_logs}
+              </p>
+            </div>
+          </div>
+
+          {/* Card 2: Eventos Críticos */}
+          <div className="bg-red-100 border border-red-400/20 rounded-sm p-5 shadow-sm hover:shadow-md transition-all">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-wider text-gray-500 block">
+                Eventos Críticos
+              </span>
+              <p className="text-2xl font-black text-red-800 mt-1">
+                {stats.criticos}
+              </p>
+            </div>
+          </div>
+
+          {/* Card 3: Advertencias */}
+          <div className="bg-amber-100 border border-amber-400/20 rounded-sm p-5 shadow-sm hover:shadow-md transition-all">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-wider text-gray-500 block">
+                Advertencias
+              </span>
+              <p className="text-2xl font-black text-amber-800 mt-1">
+                {stats.warnings}
+              </p>
+            </div>
+          </div>
+
+          {/* Card 4: Información */}
+          <div className="bg-green-100 border border-green-400/20 rounded-sm p-5 shadow-sm hover:shadow-md transition-all">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-wider text-gray-500 block">
+                Información
+              </span>
+              <p className="text-2xl font-black text-green-800 mt-1">
+                {stats.info}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -502,8 +483,8 @@ export default function AuditoriaPage() {
               {lastPage > 1 && (
                 <div className="flex items-center justify-between px-6 py-4 bg-slate-50 border-t border-slate-100 select-none mt-auto">
                   <div className="text-xs text-slate-500 font-semibold">
-                    Registros del {currentPage * 20 - 19} al{" "}
-                    {Math.min(currentPage * 20, totalRecords)} de {totalRecords}{" "}
+                    Registros del {currentPage * itemsPerPage - (itemsPerPage - 1)} al{" "}
+                    {Math.min(currentPage * itemsPerPage, totalRecords)} de {totalRecords}{" "}
                     logs
                   </div>
                   <div className="flex gap-2">
