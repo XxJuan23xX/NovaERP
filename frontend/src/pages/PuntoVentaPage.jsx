@@ -18,7 +18,10 @@ export default function PuntoVentaPage() {
   const [clienteSeleccionadoId, setClienteSeleccionadoId] = useState("");
 
   const clienteSeleccionado = useMemo(() => {
-    return clientes.find((c) => Number(c.id) === Number(clienteSeleccionadoId)) || null;
+    return (
+      clientes.find((c) => Number(c.id) === Number(clienteSeleccionadoId)) ||
+      null
+    );
   }, [clientes, clienteSeleccionadoId]);
 
   // Cotización de origen (si se convierte)
@@ -66,8 +69,6 @@ export default function PuntoVentaPage() {
     return `${fechaStr.replace(".", "")} · ${horaStr}`;
   }, [fechaActual]);
 
-
-
   // ── CARGAR ALMACENES E INICIAR POS ──
   useEffect(() => {
     const verificarSesionYCargarDatos = async () => {
@@ -94,7 +95,7 @@ export default function PuntoVentaPage() {
         } else {
           // No hay sesión activa: mostrar modal de apertura
           setShowAperturaModal(true);
-          
+
           // Cargar usuarios si es administrador para permitir elegir cajero
           if (currentUser && currentUser.role === "admin") {
             try {
@@ -146,7 +147,9 @@ export default function PuntoVentaPage() {
             }
 
             // Preselección de cotización desde localStorage
-            const preselectedCot = localStorage.getItem("pos_preselected_cotizacion");
+            const preselectedCot = localStorage.getItem(
+              "pos_preselected_cotizacion",
+            );
             if (preselectedCot) {
               try {
                 const parsed = JSON.parse(preselectedCot);
@@ -161,11 +164,11 @@ export default function PuntoVentaPage() {
                     const cartList = parsed.productos.map((pItem) => {
                       const prodCopy = {
                         ...pItem.producto,
-                        precio_venta: Number(pItem.precio_unitario)
+                        precio_venta: Number(pItem.precio_unitario),
                       };
                       return {
                         producto: prodCopy,
-                        cantidad: pItem.cantidad
+                        cantidad: pItem.cantidad,
                       };
                     });
                     setCart(cartList);
@@ -285,7 +288,9 @@ export default function PuntoVentaPage() {
           await actualizarSiguienteTicket();
         } else {
           // Si es para otro usuario (porque soy admin), mostrar éxito y redirigir
-          setSuccessApertura(`Sesión de caja abierta correctamente para el cajero asignado.`);
+          setSuccessApertura(
+            `Sesión de caja abierta correctamente para el cajero asignado.`,
+          );
           setTimeout(() => {
             setShowAperturaModal(false);
             window.location.href = "/dashboard";
@@ -526,10 +531,11 @@ export default function PuntoVentaPage() {
           {/* Selector de Almacén (Deshabilitado/Lectura para evitar ventas cruzadas) */}
           <div className="flex items-center gap-2">
             <span className="text-xs font-black uppercase tracking-wider text-slate-700 select-none">
-              📍 Sucursal:
+              Sucursal Actual:
             </span>
-            <span className="bg-indigo-150 text-indigo-850 border border-indigo-300 text-xs font-black px-3.5 py-2 rounded-xl select-none shadow-sm">
-              {almacenes.find((a) => a.id === Number(almacenSeleccionado))?.nombre || "Cargando..."}
+            <span className="bg-indigo-100 text-indigo-850 border border-indigo-300 text-xs font-black px-3.5 py-2 rounded-xl select-none shadow-sm">
+              {almacenes.find((a) => a.id === Number(almacenSeleccionado))
+                ?.nombre || "Cargando..."}
             </span>
           </div>
         </header>
@@ -556,7 +562,7 @@ export default function PuntoVentaPage() {
             placeholder="Buscar producto o SKU..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
-            className="w-full bg-white border border-slate-300 text-slate-900 placeholder-slate-500 font-bold rounded-2xl pl-12 pr-4 py-4 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-base"
+            className="w-full bg-white border border-slate-300 text-slate-900 placeholder-slate-500 font-bold rounded-2xl pl-12 pr-4 py-4 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-xs"
           />
         </div>
 
@@ -564,7 +570,7 @@ export default function PuntoVentaPage() {
         {errorMensaje && (
           <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-2xl mb-6 flex items-start gap-3 shadow-sm">
             <svg
-              className="h-5 w-5 mt-0.5 flex-shrink-0 text-red-500"
+              className="h-5 w-5 mt-0.5 shrink-0 text-red-500"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -591,7 +597,7 @@ export default function PuntoVentaPage() {
           <div className="text-sm font-black text-slate-800 tracking-tight m-0 select-none">
             Seleccionar Productos del Inventario
           </div>
-          <span className="text-xs text-slate-800 font-black bg-slate-200 border border-slate-300 px-3 py-1.5 rounded-lg select-none">
+          <span className="text-xs text-slate-800 font-black bg-green-200 border border-slate-300 px-3 py-1.5 rounded-lg select-none">
             {productos.length}{" "}
             {productos.length === 1 ? "disponible" : "disponibles"}
           </span>
@@ -653,7 +659,7 @@ export default function PuntoVentaPage() {
                   onClick={() => !sinStock && agregarAlCarrito(prod)}
                   className={`bg-white border border-slate-300 rounded-2xl p-5 shadow-sm select-none transition-all ${
                     sinStock
-                      ? "opacity-60 cursor-not-allowed filter grayscale-[20%]"
+                      ? "opacity-60 cursor-not-allowed filter grayscale-20"
                       : "hover:shadow-md hover:border-slate-400 active:scale-98 hover:-translate-y-0.5 cursor-pointer"
                   }`}
                 >
@@ -698,7 +704,7 @@ export default function PuntoVentaPage() {
         style={{ color: "#0f172a" }}
       >
         {/* Encabezado del Ticket */}
-        <div className="p-5 border-b border-slate-200 flex items-center justify-between flex-shrink-0 select-none">
+        <div className="p-5 border-b border-slate-200 flex items-center justify-between shrink-0 select-none">
           <div className="text-sm font-black text-slate-950">
             Ticket #{ticketNo || "N/A"}
           </div>
@@ -726,7 +732,7 @@ export default function PuntoVentaPage() {
         </div>
 
         {/* Selector de Cliente */}
-        <div className="px-5 py-3.5 border-b border-slate-200 bg-slate-50 flex flex-col gap-2 flex-shrink-0 select-none">
+        <div className="px-5 py-3.5 border-b border-slate-200 bg-slate-50 flex flex-col gap-2 shrink-0 select-none">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
               👤 Cliente (Facturación)
@@ -739,7 +745,9 @@ export default function PuntoVentaPage() {
                     : "bg-amber-50 text-amber-700 border-amber-250"
                 }`}
               >
-                {clienteSeleccionado.perfil_completo ? "🟢 Facturación Lista" : "🟡 Perfil Incompleto"}
+                {clienteSeleccionado.perfil_completo
+                  ? "🟢 Facturación Lista"
+                  : "🟡 Perfil Incompleto"}
               </span>
             ) : (
               <span className="text-[9px] font-black px-2 py-0.5 rounded-lg border bg-slate-100 text-slate-500 border-slate-250">
@@ -805,7 +813,7 @@ export default function PuntoVentaPage() {
                 {/* Controles de cantidad y precio */}
                 <div className="flex items-center gap-3">
                   {/* Selector +/- */}
-                  <div className="flex items-center bg-slate-50 border border-slate-200 rounded-lg overflow-hidden flex-shrink-0">
+                  <div className="flex items-center bg-slate-50 border border-slate-200 rounded-lg overflow-hidden shrink-0">
                     <button
                       onClick={() =>
                         cambiarCantidad(
@@ -867,7 +875,7 @@ export default function PuntoVentaPage() {
         </div>
 
         {/* Resumen Financiero y Acciones */}
-        <div className="p-5 border-t border-slate-100 bg-slate-50/50 flex-shrink-0 select-none">
+        <div className="p-5 border-t border-slate-100 bg-slate-50/50 shrink-0 select-none">
           {/* Subtotal, IVA y Total */}
           <div className="space-y-2 mb-6">
             <div className="flex justify-between text-slate-700 font-bold text-xs">
@@ -1008,7 +1016,7 @@ export default function PuntoVentaPage() {
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-all select-none">
           <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 flex flex-col max-h-[90vh] relative overflow-hidden animate-in fade-in zoom-in duration-200">
             {/* Cabecera del recibo */}
-            <div className="text-center pb-5 border-b border-dashed border-slate-200 flex-shrink-0">
+            <div className="text-center pb-5 border-b border-dashed border-slate-200 shrink-0">
               <div className="h-12 w-12 bg-emerald-50 border border-emerald-100 rounded-full flex items-center justify-center mx-auto text-emerald-500 mb-3 shadow-inner">
                 <svg
                   className="h-6 w-6"
@@ -1068,7 +1076,10 @@ export default function PuntoVentaPage() {
                 {successVenta.cliente && (
                   <div className="flex justify-between">
                     <span>Cliente</span>
-                    <span className="text-slate-850 font-extrabold truncate max-w-[150px]" title={successVenta.cliente.nombre_razon_social}>
+                    <span
+                      className="text-slate-850 font-extrabold truncate max-w-[150px]"
+                      title={successVenta.cliente.nombre_razon_social}
+                    >
                       {successVenta.cliente.nombre_razon_social}
                     </span>
                   </div>
@@ -1094,7 +1105,7 @@ export default function PuntoVentaPage() {
                         {formatPrice(det.precio_unitario)} x {det.cantidad}
                       </p>
                     </div>
-                    <span className="text-slate-800 font-extrabold flex-shrink-0">
+                    <span className="text-slate-800 font-extrabold shrink-0">
                       {formatPrice(det.subtotal)}
                     </span>
                   </div>
@@ -1125,7 +1136,7 @@ export default function PuntoVentaPage() {
             </div>
 
             {/* Acciones del recibo */}
-            <div className="pt-4 border-t border-slate-100 flex gap-3 flex-shrink-0 print:hidden">
+            <div className="pt-4 border-t border-slate-100 flex gap-3 shrink-0 print:hidden">
               <button
                 type="button"
                 onClick={handleImprimir}
@@ -1184,7 +1195,8 @@ export default function PuntoVentaPage() {
                 Se requiere apertura de caja
               </h2>
               <p className="text-slate-500 text-xs font-bold mt-1">
-                Primero debes abrir la caja para poder ingresar al Punto de Venta.
+                Primero debes abrir la caja para poder ingresar al Punto de
+                Venta.
               </p>
             </div>
 
@@ -1192,7 +1204,7 @@ export default function PuntoVentaPage() {
               {errorApertura && (
                 <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-2xl flex items-start gap-2.5 shadow-sm">
                   <svg
-                    className="h-5 w-5 mt-0.5 flex-shrink-0 text-red-500"
+                    className="h-5 w-5 mt-0.5 shrink-0 text-red-500"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -1213,13 +1225,17 @@ export default function PuntoVentaPage() {
               {successApertura && (
                 <div className="bg-emerald-50 border border-emerald-250 text-emerald-800 px-4 py-3 rounded-2xl flex items-start gap-2.5 shadow-sm animate-in fade-in zoom-in-95 duration-100">
                   <svg
-                    className="h-5 w-5 mt-0.5 flex-shrink-0 text-emerald-500"
+                    className="h-5 w-5 mt-0.5 shrink-0 text-emerald-500"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                     strokeWidth={2.5}
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
                   </svg>
                   <span className="font-extrabold text-xs leading-relaxed">
                     {successApertura}
@@ -1244,7 +1260,8 @@ export default function PuntoVentaPage() {
                   >
                     {usuariosCajeros.map((u) => (
                       <option key={u.id} value={u.id}>
-                        {u.name} ({u.role === "admin" ? "Admin" : "Empleado"}{u.sucursal ? ` · ${u.sucursal}` : ""})
+                        {u.name} ({u.role === "admin" ? "Admin" : "Empleado"}
+                        {u.sucursal ? ` · ${u.sucursal}` : ""})
                       </option>
                     ))}
                   </select>
