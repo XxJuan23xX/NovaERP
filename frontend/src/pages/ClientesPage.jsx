@@ -726,7 +726,7 @@ export default function ClientesPage() {
             {/* Cabecera */}
             <div className="pb-4 border-b border-slate-150 flex items-center justify-between">
               <div>
-                <h2 className="text-slate-950 font-black text-lg tracking-tight">
+                <h2 className="text-black! font-black text-lg tracking-tight">
                   {selectedCliente ? "Editar Cliente" : "Nuevo Cliente"}
                 </h2>
                 <p className="text-slate-500 text-xs font-semibold mt-0.5">
@@ -1151,7 +1151,7 @@ export default function ClientesPage() {
               <button
                 type="button"
                 onClick={() => setFormModalOpen(false)}
-                className="py-2.5 px-5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all cursor-pointer active:scale-95"
+                className="py-2.5 px-5 bg-red-500 hover:bg-red-600 text-white font-bold text-xs rounded-xl transition-all cursor-pointer active:scale-95"
               >
                 Cancelar
               </button>

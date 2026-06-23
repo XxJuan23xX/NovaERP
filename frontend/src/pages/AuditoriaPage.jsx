@@ -238,7 +238,7 @@ export default function AuditoriaPage() {
         <div className="bg-transparent p-5 mb-6 grid grid-cols-1 sm:grid-cols-5 gap-4 items-end">
           {/* Buscar */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+            <label className="text-[10px] font-black uppercase tracking-wider text-slate-500 ml-2">
               Buscar
             </label>
             <input
@@ -251,7 +251,7 @@ export default function AuditoriaPage() {
           </div>
           {/* Módulo */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+            <label className="text-[10px] font-black uppercase tracking-wider text-slate-500 ml-2">
               Módulo
             </label>
             <select
@@ -271,7 +271,7 @@ export default function AuditoriaPage() {
           </div>
           {/* Gravedad */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+            <label className="text-[10px] font-black uppercase tracking-wider text-slate-500 ml-2">
               Gravedad
             </label>
             <select
@@ -287,7 +287,7 @@ export default function AuditoriaPage() {
           </div>
           {/* Fecha Desde */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+            <label className="text-[10px] font-black uppercase tracking-wider text-slate-500 ml-2">
               Desde
             </label>
             <input
@@ -299,7 +299,7 @@ export default function AuditoriaPage() {
           </div>
           {/* Fecha Hasta */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+            <label className="text-[10px] font-black uppercase tracking-wider text-slate-500 ml-2">
               Hasta
             </label>
             <input
@@ -363,7 +363,7 @@ export default function AuditoriaPage() {
         </div>
 
         {/* TABLA DE AUDITORÍAS */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex-1 flex flex-col">
+        <div className="bg-white rounded-sm border border-slate-100 shadow-sm overflow-hidden flex-1 flex flex-col">
           {error && (
             <div className="p-4">
               <Alert message={error} type="error" />
@@ -394,7 +394,7 @@ export default function AuditoriaPage() {
             <div className="overflow-x-auto flex-1 flex flex-col justify-between">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-100 select-none">
+                  <tr className="bg-slate-200 border-b border-slate-100 select-none">
                     <th className="px-4 py-3 text-[10px] font-black uppercase tracking-wider text-slate-700">
                       Fecha
                     </th>
@@ -483,9 +483,10 @@ export default function AuditoriaPage() {
               {lastPage > 1 && (
                 <div className="flex items-center justify-between px-6 py-4 bg-slate-50 border-t border-slate-100 select-none mt-auto">
                   <div className="text-xs text-slate-500 font-semibold">
-                    Registros del {currentPage * itemsPerPage - (itemsPerPage - 1)} al{" "}
-                    {Math.min(currentPage * itemsPerPage, totalRecords)} de {totalRecords}{" "}
-                    logs
+                    Registros del{" "}
+                    {currentPage * itemsPerPage - (itemsPerPage - 1)} al{" "}
+                    {Math.min(currentPage * itemsPerPage, totalRecords)} de{" "}
+                    {totalRecords} logs
                   </div>
                   <div className="flex gap-2">
                     <button

@@ -214,12 +214,9 @@ export default function Navigation() {
   const filteredMenuItems = menuItems
     .filter((item) => {
       if (user?.role === "empleado") {
-        return [
-          "/pos",
-          "/inventario/productos",
-          "/cotizaciones",
-          "/inventario/traspasos",
-        ].includes(item.path);
+        return ["/pos", "/inventario/productos", "/cotizaciones"].includes(
+          item.path,
+        );
       }
       return true;
     })

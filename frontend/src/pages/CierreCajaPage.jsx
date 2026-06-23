@@ -132,7 +132,7 @@ export default function CierreCajaPage() {
     if (!cajaData) return;
 
     const { sesion, resumen, empleados } = cajaData;
-    let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+    let csvContent = "sep=;\n";
 
     // Títulos / Cabecera
     csvContent += "REPORTE DE CIERRE DE CAJA\n";
@@ -159,13 +159,17 @@ export default function CierreCajaPage() {
       csvContent += `"${emp.nombre}";${emp.tickets};${emp.efectivo_monto};${emp.efectivo_ventas};${emp.tarjeta_monto};${emp.tarjeta_ventas};${emp.cancelaciones_monto};${emp.total_neto}\n`;
     });
 
-    const encodedUri = encodeURI(csvContent);
+    const blob = new Blob(["\uFEFF" + csvContent], {
+      type: "text/csv;charset=utf-8;",
+    });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
+    link.setAttribute("href", url);
     link.setAttribute("download", `cierre_caja_${sesion?.id || "resumen"}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   // Estado de la sesión de caja
@@ -173,7 +177,7 @@ export default function CierreCajaPage() {
   const esCerrada = sesionEstado === "cerrada";
 
   return (
-    <div className="flex min-h-screen bg-slate-100 font-sans antialiased text-slate-800">
+    <div className="flex min-h-screen bg-slate-100 font-sans antialiased text-slate-800 print:block">
       {/* Barra de Navegación Lateral */}
       <Navigation />
 
@@ -206,10 +210,10 @@ export default function CierreCajaPage() {
             <button
               onClick={handleExportar}
               disabled={loading || !cajaData}
-              className="bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 px-4 py-2 rounded-xl font-bold text-xs shadow-sm hover:shadow transition-all flex items-center gap-2 cursor-pointer active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-green-500 hover:bg-green-600 text-white border border-green-500 px-4 py-2 rounded-xl font-bold text-xs shadow-sm hover:shadow transition-all flex items-center gap-2 cursor-pointer active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg
-                className="h-4 w-4 text-slate-700"
+                className="h-4 w-4 text-white"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -422,17 +426,17 @@ export default function CierreCajaPage() {
             </div>
 
             {/* Fila Central: Tabla de Empleados */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm print:border-0 print:shadow-none print:p-0">
+            <div className="bg-white border border-slate-200 rounded-sm p-6 shadow-sm print:border-0 print:shadow-none print:p-0">
               <div className="flex items-center justify-between mb-6 pb-3 border-b border-slate-200">
                 <h2 className="text-[20px]! font-black text-black! select-none">
                   Ventas y Operaciones por Cajero
                 </h2>
-                <span className="text-[11px] font-black bg-slate-100 border border-slate-350 text-slate-800 px-3 py-1 rounded-lg select-none">
+                <span className="text-[11px] font-black bg-slate-100 border border-slate-350 text-slate-800 px-3 py-1 rounded-sm select-none">
                   {cajaData.empleados?.length || 0} cajeros activos
                 </span>
               </div>
 
-              <div className="overflow-x-auto border border-slate-100 rounded-2xl">
+              <div className="overflow-x-auto border border-slate-100 rounded-sm">
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="bg-slate-50 border-b border-slate-200 text-[10.5px] font-bold uppercase tracking-wider text-slate-700">
@@ -529,7 +533,7 @@ export default function CierreCajaPage() {
             {/* Arqueo de Caja y Confirmación (Footer del Módulo) */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch print:grid-cols-1 print:gap-4">
               {/* Bloque 1: Resumen de Balance Esperado (Ocupa 2 columnas en LG screens) */}
-              <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col justify-between lg:col-span-2 print:border print:shadow-none">
+              <div className="bg-white border border-slate-200 rounded-sm p-6 shadow-sm flex flex-col justify-between lg:col-span-2 print:border print:shadow-none">
                 <div className="mb-4 pb-3 border-b border-slate-100">
                   <h3 className="text-xs font-black uppercase tracking-wider text-slate-700 select-none">
                     Balance Esperado por el Sistema
@@ -579,7 +583,7 @@ export default function CierreCajaPage() {
               </div>
 
               {/* Bloque 2: Formulario de Arqueo y Cierre (Ocupa 1 columna) */}
-              <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm print:border print:shadow-none">
+              <div className="bg-white border border-slate-200 rounded-sm p-6 shadow-sm print:border print:shadow-none">
                 <div className="mb-4 pb-3 border-b border-slate-100">
                   <h3 className="text-xs font-black uppercase tracking-wider text-slate-700 select-none">
                     Arqueo de Efectivo Físico
@@ -721,13 +725,15 @@ export default function CierreCajaPage() {
             background-color: white !important;
             color: black !important;
           }
-          nav, .print\\:hidden, button, form button {
+          aside, nav, .print\\:hidden, button, form button, input[type="submit"] {
             display: none !important;
           }
           main {
             padding: 0 !important;
             margin: 0 !important;
             width: 100% !important;
+            max-width: 100% !important;
+            display: block !important;
           }
           .bg-white {
             background: white !important;

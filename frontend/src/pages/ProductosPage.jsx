@@ -54,7 +54,7 @@ export default function ProductosPage() {
           { id: 4, nombre: "Ferretería" },
           { id: 5, nombre: "Electricidad" },
           { id: 6, nombre: "Pinturas" },
-          { id: 7, nombre: "Herramientas" }
+          { id: 7, nombre: "Herramientas" },
         ]);
       }
 
@@ -74,7 +74,7 @@ export default function ProductosPage() {
           { id: 4, nombre: "Aceros Apex" },
           { id: 5, nombre: "IUSA" },
           { id: 6, font_bold: false, nombre: "Comex" },
-          { id: 7, nombre: "DeWalt" }
+          { id: 7, nombre: "DeWalt" },
         ]);
       }
 
@@ -88,8 +88,18 @@ export default function ProductosPage() {
       } catch (err) {
         console.warn("Error al cargar almacenes, usando locales:", err);
         setAlmacenesList([
-          { id: 1, nombre: "Almacén Central", codigo: "ALM-01", ubicacion: "Zona Industrial" },
-          { id: 2, nombre: "Sucursal Norte", codigo: "ALM-02", ubicacion: "Blvd. Norte #450" }
+          {
+            id: 1,
+            nombre: "Almacén Central",
+            codigo: "ALM-01",
+            ubicacion: "Zona Industrial",
+          },
+          {
+            id: 2,
+            nombre: "Sucursal Norte",
+            codigo: "ALM-02",
+            ubicacion: "Blvd. Norte #450",
+          },
         ]);
       }
     };
@@ -243,7 +253,8 @@ export default function ProductosPage() {
 
   // ── MANEJADORES DE OPERACIONES (Exclusivos Admin para mutate, pero declarados al inicio) ──
   const handleOpenModal = async (producto = null) => {
-    const defaultAlmacenId = almacenesList.length > 0 ? almacenesList[0].id : "";
+    const defaultAlmacenId =
+      almacenesList.length > 0 ? almacenesList[0].id : "";
     if (producto) {
       setSelectedProducto(producto);
       setForm({
@@ -267,10 +278,10 @@ export default function ProductosPage() {
         const detailedProd = response.data?.data || response.data;
         if (detailedProd) {
           setSelectedProducto(detailedProd);
-          
+
           // Buscar stock en el almacén seleccionado por defecto
           const matchedAlmacen = detailedProd.almacenes?.find(
-            (a) => Number(a.id) === Number(defaultAlmacenId)
+            (a) => Number(a.id) === Number(defaultAlmacenId),
           );
           const initialStock = matchedAlmacen ? matchedAlmacen.stock_actual : 0;
 
@@ -316,13 +327,18 @@ export default function ProductosPage() {
       setAlmacenes(listAlmacenes);
 
       // 2. Obtener detalle de producto (para existencias reales por almacén)
-      const prodResponse = await api.get(`/inventario/productos/${producto.id}`);
+      const prodResponse = await api.get(
+        `/inventario/productos/${producto.id}`,
+      );
       const detailedProd = prodResponse.data?.data || prodResponse.data;
       if (detailedProd) {
         setSelectedProducto(detailedProd);
       }
     } catch (err) {
-      console.warn("Error al cargar desglose de almacenes, usando fallback:", err);
+      console.warn(
+        "Error al cargar desglose de almacenes, usando fallback:",
+        err,
+      );
       setAlmacenes([
         {
           id: 1,
@@ -364,15 +380,21 @@ export default function ProductosPage() {
             ? checked
             : type === "number"
               ? parseFloat(value) || 0
-              : name === "categoria_id" || name === "marca_id" || name === "almacen_id"
+              : name === "categoria_id" ||
+                  name === "marca_id" ||
+                  name === "almacen_id"
                 ? parseInt(value, 10) || ""
                 : value,
       };
 
       // Si cambia de almacén en modo edición, se actualiza el stock correspondiente
-      if (name === "almacen_id" && selectedProducto && selectedProducto.almacenes) {
+      if (
+        name === "almacen_id" &&
+        selectedProducto &&
+        selectedProducto.almacenes
+      ) {
         const matchedAlmacen = selectedProducto.almacenes.find(
-          (a) => Number(a.id) === Number(updated.almacen_id)
+          (a) => Number(a.id) === Number(updated.almacen_id),
         );
         updated.stock = matchedAlmacen ? matchedAlmacen.stock_actual : 0;
       }
@@ -405,19 +427,28 @@ export default function ProductosPage() {
         err,
       );
 
-      const selectedCat = categoriasList.find(c => Number(c.id) === Number(form.categoria_id));
-      const selectedMarca = marcasList.find(m => Number(m.id) === Number(form.marca_id));
+      const selectedCat = categoriasList.find(
+        (c) => Number(c.id) === Number(form.categoria_id),
+      );
+      const selectedMarca = marcasList.find(
+        (m) => Number(m.id) === Number(form.marca_id),
+      );
 
       const localProduct = {
         ...payload,
         sku: form.sku || `SKU-${String(productos.length + 1).padStart(5, "0")}`,
-        categoria: selectedCat ? { id: selectedCat.id, nombre: selectedCat.nombre } : { id: form.categoria_id, nombre: "Sin Categoría" },
-        marca: selectedMarca ? { id: selectedMarca.id, nombre: selectedMarca.nombre } : { id: form.marca_id, nombre: "Genérico" },
+        categoria: selectedCat
+          ? { id: selectedCat.id, nombre: selectedCat.nombre }
+          : { id: form.categoria_id, nombre: "Sin Categoría" },
+        marca: selectedMarca
+          ? { id: selectedMarca.id, nombre: selectedMarca.nombre }
+          : { id: form.marca_id, nombre: "Genérico" },
         // Add almacenes mapping for the offline mock details
-        almacenes: almacenesList.map(a => ({
+        almacenes: almacenesList.map((a) => ({
           id: a.id,
           nombre: a.nombre,
-          stock_actual: Number(a.id) === Number(form.almacen_id) ? Number(form.stock) : 0
+          stock_actual:
+            Number(a.id) === Number(form.almacen_id) ? Number(form.stock) : 0,
         })),
         stock: form.stock,
       };
@@ -447,7 +478,9 @@ export default function ProductosPage() {
     } catch (err) {
       if (err.response) {
         // El servidor respondió con un error (ej. 422 por tener movimientos de Kardex)
-        const errorMsg = err.response.data?.message || "Error al intentar eliminar el producto.";
+        const errorMsg =
+          err.response.data?.message ||
+          "Error al intentar eliminar el producto.";
         alert(`No se pudo eliminar del servidor: ${errorMsg}`);
       } else {
         // Conexión fallida (offline)
@@ -493,22 +526,6 @@ export default function ProductosPage() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
             <div>
               <h1 className="text-[22px]! font-extrabold tracking-tight text-black! flex items-center gap-3">
-                <span className="p-2 bg-white rounded-xl border border-slate-200 text-blue-600 shadow-sm">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-7 w-7"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                    />
-                  </svg>
-                </span>
                 Catálogo de Inventario
               </h1>
               <p className="mt-1 text-slate-400 text-xs font-medium">
@@ -554,25 +571,6 @@ export default function ProductosPage() {
                 />
               </div>
 
-              {/* Botón de Filtrar */}
-              <button className="inline-flex items-center gap-2 border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-semibold px-4 py-2.5 rounded-xl text-[12px] transition-all cursor-pointer active:scale-98">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4.5 w-4.5 text-slate-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-                  />
-                </svg>
-                Filtrar
-              </button>
-
               {busqueda && (
                 <button
                   onClick={() => setBusqueda("")}
@@ -609,97 +607,49 @@ export default function ProductosPage() {
           {/* TARJETAS DE MÉTRICAS (KPIs) - MODO CLARO */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {/* Tarjeta 1 (Total productos) */}
-            <div className="bg-white border border-slate-100 p-5 rounded-2xl flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-200">
-              <div className="p-3.5 rounded-xl bg-blue-50 text-blue-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                  />
-                </svg>
-              </div>
+            <div className="bg-blue-100 border border-blue-400/20 rounded-sm p-5 shadow-sm hover:shadow-md transition-all">
               <div>
-                <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
+                <span className="text-[10px] font-black uppercase tracking-wider text-gray-500 block">
                   Total productos
                 </span>
-                <h3 className="text-[18px] font-bold text-slate-900 mt-0.5">
+                <p className="text-2xl font-black text-blue-900 mt-1">
                   {totalItems.toLocaleString("es-MX")}
-                </h3>
+                </p>
               </div>
             </div>
 
             {/* Tarjeta 2 (Stock bajo) */}
-            <div className="bg-white border border-slate-100 p-5 rounded-2xl flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-200">
-              <div className="p-3.5 rounded-xl bg-yellow-50 text-yellow-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                  />
-                </svg>
-              </div>
+            <div className="bg-amber-100 border border-amber-400/20 rounded-sm p-5 shadow-sm hover:shadow-md transition-all">
               <div>
-                <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
+                <span className="text-[10px] font-black uppercase tracking-wider text-gray-500 block">
                   Stock bajo
                 </span>
-                <h3 className="text-[18px] font-bold text-slate-900 mt-0.5">
+                <p className="text-2xl font-black text-amber-800 mt-1">
                   {lowStockCount.toLocaleString("es-MX")}
-                </h3>
+                </p>
               </div>
             </div>
 
             {/* Tarjeta 3 (Sin stock) */}
-            <div className="bg-white border border-slate-100 p-5 rounded-2xl flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-200">
-              <div className="p-3.5 rounded-xl bg-red-50 text-red-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </div>
+            <div className="bg-red-100 border border-red-400/20 rounded-sm p-5 shadow-sm hover:shadow-md transition-all">
               <div>
-                <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
+                <span className="text-[10px] font-black uppercase tracking-wider text-gray-500 block">
                   Sin stock
                 </span>
-                <h3 className="text-[18px] font-bold text-slate-900 mt-0.5">
+                <p className="text-2xl font-black text-red-800 mt-1">
                   {outOfStockCount.toLocaleString("es-MX")}
-                </h3>
+                </p>
               </div>
             </div>
           </div>
 
           {/* ALERTA DE MENSAJE OFF-LINE */}
           {error && (
-            <div className="mb-6 bg-white border-l-4 border-amber-500 p-4 rounded-r-xl flex items-center justify-between shadow-sm border border-slate-200 border-l-amber-500">
+            <div className="mb-6 bg-white border-l-4 border-amber-500 p-4 rounded-r-xl flex items-center justify-between shadow-sm border border-l-amber-500">
               <div className="flex items-center gap-3 text-amber-600 text-sm">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 flex-shrink-0"
+                  className="h-5 w-5 shrink-0"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
@@ -721,7 +671,7 @@ export default function ProductosPage() {
           )}
 
           {/* TABLA PRINCIPAL DE INVENTARIO */}
-          <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm flex flex-col">
+          <div className="bg-white border border-slate-100 rounded-sm overflow-hidden shadow-sm flex flex-col">
             {loading ? (
               <div className="flex flex-col items-center justify-center py-20 text-slate-500 gap-3">
                 <div className="h-10 w-10 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin" />
@@ -757,7 +707,7 @@ export default function ProductosPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 text-[11px] font-bold uppercase tracking-wider">
+                    <tr className="bg-slate-300 border-b border-slate-100 text-slate-500 text-[11px] font-bold uppercase tracking-wider">
                       <th className="px-3 py-2.5">SKU</th>
                       <th className="px-3 py-2.5">PRODUCTO</th>
                       <th className="px-3 py-2.5">Categoría &amp; Marca</th>
@@ -983,9 +933,9 @@ export default function ProductosPage() {
       {stockModalOpen && selectedProducto && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-slate-900/60 backdrop-blur-sm">
           <div className="w-full max-w-lg bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-xl animate-in fade-in zoom-in-95 duration-200 text-slate-800 flex flex-col max-h-[90vh]">
-            <div className="flex justify-between items-center px-6 py-4 bg-slate-50 border-b border-slate-100 flex-shrink-0">
+            <div className="flex justify-between items-center px-6 py-4 bg-slate-50 border-b border-slate-100 shrink-0">
               <div>
-                <h2 className="text-lg font-bold text-slate-900">
+                <h2 className="text-lg font-bold text-black!">
                   Ubicación y Existencias
                 </h2>
                 <p className="text-xs text-indigo-600 font-semibold mt-0.5">
@@ -1012,15 +962,17 @@ export default function ProductosPage() {
                 <div className="space-y-3">
                   {almacenes.map((alm) => {
                     const matchedAlmacen = selectedProducto.almacenes?.find(
-                      (a) => Number(a.id) === Number(alm.id)
+                      (a) => Number(a.id) === Number(alm.id),
                     );
-                    const stockPorAlmacen = matchedAlmacen !== undefined
-                      ? matchedAlmacen.stock_actual
-                      : (selectedProducto.stock > 0
+                    const stockPorAlmacen =
+                      matchedAlmacen !== undefined
+                        ? matchedAlmacen.stock_actual
+                        : selectedProducto.stock > 0
                           ? Math.floor(
-                              selectedProducto.stock / almacenes.length
-                            ) + (selectedProducto.id % (alm.id || 1) === 0 ? 2 : 0)
-                          : 0);
+                              selectedProducto.stock / almacenes.length,
+                            ) +
+                            (selectedProducto.id % (alm.id || 1) === 0 ? 2 : 0)
+                          : 0;
 
                     return (
                       <div
@@ -1052,7 +1004,7 @@ export default function ProductosPage() {
                 </div>
               )}
             </div>
-            <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end flex-shrink-0">
+            <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end shrink-0">
               <button
                 onClick={handleCloseStockModal}
                 className="px-4.5 py-2 text-xs font-semibold bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl cursor-pointer"
@@ -1069,7 +1021,7 @@ export default function ProductosPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-slate-900/60 backdrop-blur-sm transition-all duration-300">
           <div className="w-full max-w-lg bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-xl animate-in fade-in zoom-in-95 duration-200 text-slate-800 flex flex-col max-h-[90vh]">
             {/* Cabecera de modal */}
-            <div className="flex justify-between items-center px-5 py-3.5 bg-slate-50 border-b border-slate-100 flex-shrink-0">
+            <div className="flex justify-between items-center px-5 py-3.5 bg-slate-50 border-b border-slate-100 shrink-0">
               <h2 className="text-base font-bold text-black!">
                 {selectedProducto ? "Editar Producto" : "Nuevo Producto"}
               </h2>
@@ -1095,7 +1047,10 @@ export default function ProductosPage() {
             </div>
 
             {/* Formulario */}
-            <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col flex-1 overflow-hidden"
+            >
               <div className="flex-1 overflow-y-auto p-5 space-y-3.5">
                 <div className="grid grid-cols-2 gap-3.5">
                   {/* SKU (Solo visible en EDICIÓN y desactivado) */}
@@ -1115,7 +1070,13 @@ export default function ProductosPage() {
                   )}
 
                   {/* Nombre Comercial */}
-                  <div className={selectedProducto ? "col-span-2 sm:col-span-1" : "col-span-2"}>
+                  <div
+                    className={
+                      selectedProducto
+                        ? "col-span-2 sm:col-span-1"
+                        : "col-span-2"
+                    }
+                  >
                     <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">
                       Nombre Comercial
                     </label>
@@ -1159,7 +1120,9 @@ export default function ProductosPage() {
                       required
                       className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10 transition-all duration-150 cursor-pointer"
                     >
-                      <option value="" disabled>Selecciona una categoría</option>
+                      <option value="" disabled>
+                        Selecciona una categoría
+                      </option>
                       {categoriasList.map((cat) => (
                         <option key={cat.id} value={cat.id}>
                           {cat.nombre}
@@ -1180,7 +1143,9 @@ export default function ProductosPage() {
                       required
                       className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10 transition-all duration-150 cursor-pointer"
                     >
-                      <option value="" disabled>Selecciona una marca</option>
+                      <option value="" disabled>
+                        Selecciona una marca
+                      </option>
                       {marcasList.map((marca) => (
                         <option key={marca.id} value={marca.id}>
                           {marca.nombre}
@@ -1203,7 +1168,9 @@ export default function ProductosPage() {
                       required
                       className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10 transition-all duration-150 cursor-pointer"
                     >
-                      <option value="" disabled>Selecciona un almacén</option>
+                      <option value="" disabled>
+                        Selecciona un almacén
+                      </option>
                       {almacenesList.map((alm) => (
                         <option key={alm.id} value={alm.id}>
                           {alm.nombre} ({alm.codigo})
@@ -1215,7 +1182,9 @@ export default function ProductosPage() {
                   {/* Existencias */}
                   <div className="col-span-2 sm:col-span-1">
                     <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">
-                      {selectedProducto ? "Stock Actual en Almacén" : "Existencias Iniciales"}
+                      {selectedProducto
+                        ? "Stock Actual en Almacén"
+                        : "Existencias Iniciales"}
                     </label>
                     <input
                       type="number"
@@ -1303,11 +1272,11 @@ export default function ProductosPage() {
               </div>
 
               {/* Acciones del Formulario */}
-              <div className="flex items-center justify-end gap-3 px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex-shrink-0">
+              <div className="flex items-center justify-end gap-3 px-5 py-3.5 bg-slate-50 border-t border-slate-100 shrink-0">
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="px-4 py-1.5 text-xs font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-xl transition-all cursor-pointer"
+                  className="px-4 py-1.5 bg-red-500 text-xs font-semibold text-white hover:text-white hover:bg-red-400 rounded-xl transition-all cursor-pointer"
                 >
                   Cancelar
                 </button>

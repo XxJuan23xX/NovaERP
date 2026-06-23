@@ -534,7 +534,7 @@ export default function CotizacionesPage() {
             </div>
 
             {/* TABLA PRINCIPAL */}
-            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+            <div className="bg-white border border-slate-200 rounded-sm overflow-hidden shadow-sm">
               {loading ? (
                 <div className="flex flex-col items-center justify-center py-20 text-slate-500 gap-3">
                   <div className="h-10 w-10 border-4 border-slate-200 border-t-indigo-600 rounded-full animate-spin" />
@@ -570,7 +570,7 @@ export default function CotizacionesPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-[10px] font-black uppercase tracking-wider">
+                      <tr className="bg-slate-300 border-b border-slate-200 text-slate-500 text-[10px] font-black uppercase tracking-wider">
                         <th className="px-5 py-4">FOLIO</th>
                         <th className="px-5 py-4">CLIENTE</th>
                         <th className="px-5 py-4 text-right">TOTAL</th>

@@ -657,7 +657,7 @@ export default function PuntoVentaPage() {
                 <div
                   key={prod.id}
                   onClick={() => !sinStock && agregarAlCarrito(prod)}
-                  className={`bg-white border border-slate-300 rounded-2xl p-5 shadow-sm select-none transition-all ${
+                  className={`bg-white border border-slate-300 rounded-sm p-5 shadow-sm select-none transition-all ${
                     sinStock
                       ? "opacity-60 cursor-not-allowed filter grayscale-20"
                       : "hover:shadow-md hover:border-slate-400 active:scale-98 hover:-translate-y-0.5 cursor-pointer"
