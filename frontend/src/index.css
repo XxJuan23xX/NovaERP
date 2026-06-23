@@ -105,3 +105,28 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* Custom Scrollbar Global para NovaERP */
+@layer base {
+  /* Tamaño de la barra */
+  ::-webkit-scrollbar {
+    width: 6px;  /* Para scroll vertical */
+    height: 6px; /* Para scroll horizontal */
+  }
+
+  /* El fondo de la barra (Track) */
+  ::-webkit-scrollbar-track {
+    background: transparent; 
+  }
+
+  /* La barra arrastrable (Thumb) */
+  ::-webkit-scrollbar-thumb {
+    background: #a3a7ab; /* Color slate-300 en Modo Claro */
+    border-radius: 100px;
+  }
+
+  /* Efecto Hover para cuando el usuario pasa el mouse */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8; /* Color slate-400 */
+  }
+}
