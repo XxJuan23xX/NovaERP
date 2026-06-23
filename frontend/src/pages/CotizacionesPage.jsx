@@ -430,23 +430,7 @@ export default function CotizacionesPage() {
             {/* Cabecera */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
               <div>
-                <h1 className="text-2xl font-extrabold tracking-tight text-black! flex items-center gap-3">
-                  <span className="p-2 bg-white rounded-xl border border-slate-200 text-indigo-600 shadow-sm">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-7 w-7"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                      />
-                    </svg>
-                  </span>
+                <h1 className="text-[28px]! font-extrabold tracking-tight text-black! flex items-center gap-3">
                   Cotizaciones
                 </h1>
                 <p className="mt-1 text-slate-500 text-xs font-semibold">
@@ -463,7 +447,7 @@ export default function CotizacionesPage() {
                   setObservaciones("");
                   setIsCreating(true);
                 }}
-                className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-600/10 hover:shadow transition-all duration-150 active:scale-98 cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs! font-black px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-600/10 hover:shadow transition-all duration-150 active:scale-98 cursor-pointer"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -500,11 +484,6 @@ export default function CotizacionesPage() {
                 <span>{error}</span>
               </div>
             )}
-
-            {/* Contadores */}
-            <div className="text-xs text-slate-500 font-bold mb-6 select-none bg-slate-100/80 border border-slate-200 px-4 py-3 rounded-2xl w-fit">
-              📊 {filteredCotizaciones.length} cotizaciones encontradas
-            </div>
 
             {/* FILTROS */}
             <div className="bg-transparent rounded-2xl mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -547,6 +526,11 @@ export default function CotizacionesPage() {
                   <option value="convertida">Convertida</option>
                 </select>
               </div>
+            </div>
+
+            {/* Contadores */}
+            <div className="bg-green-200 border border-slate-200 px-4 py-2.5 rounded-sm text-[10px] font-black uppercase tracking-wider text-slate-800 select-none w-fit mb-6">
+              {filteredCotizaciones.length} cotizaciones encontradas
             </div>
 
             {/* TABLA PRINCIPAL */}
@@ -697,7 +681,7 @@ export default function CotizacionesPage() {
             {/* Cabecera Formulario */}
             <div className="flex items-center justify-between pb-5 border-b border-slate-200 mb-6">
               <div>
-                <h1 className="text-xl font-extrabold text-slate-900">
+                <h1 className="text-[28px]! font-extrabold text-black!">
                   {selectedCotizacion
                     ? `Editar Cotización ${selectedCotizacion.folio}`
                     : "Nueva Cotización"}
@@ -711,7 +695,7 @@ export default function CotizacionesPage() {
                   setIsCreating(false);
                   setSelectedCotizacion(null);
                 }}
-                className="py-2 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all cursor-pointer"
+                className="py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl transition-all cursor-pointer"
               >
                 Volver al listado
               </button>
@@ -743,7 +727,7 @@ export default function CotizacionesPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Bloque izquierdo: Formulario de Datos */}
               <div className="lg:col-span-2 space-y-6">
-                <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+                <div className="bg-white border border-slate-200 rounded-sm p-5 shadow-sm space-y-4">
                   <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-2">
                     Datos del Encabezado
                   </h3>
@@ -847,7 +831,7 @@ export default function CotizacionesPage() {
                 </div>
 
                 {/* Carrito de Productos */}
-                <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+                <div className="bg-white border border-slate-200 rounded-sm p-5 shadow-sm space-y-4">
                   <div className="flex justify-between items-center border-b border-slate-100 pb-2">
                     <h3 className="text-xs font-black uppercase tracking-wider text-slate-400">
                       Productos a Cotizar
@@ -1018,7 +1002,7 @@ export default function CotizacionesPage() {
 
               {/* Bloque derecho: Resumen Financiero y Acciones */}
               <div className="space-y-6 select-none">
-                <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-5 flex flex-col justify-between">
+                <div className="bg-white border border-slate-200 rounded-sm p-5 shadow-sm space-y-5 flex flex-col justify-between">
                   <div>
                     <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-2 mb-4">
                       Resumen del Presupuesto
@@ -1064,7 +1048,7 @@ export default function CotizacionesPage() {
                   <div className="space-y-3 pt-3 border-t border-slate-100">
                     <button
                       onClick={() => handleSaveCotizacion("borrador")}
-                      className="w-full py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 font-black text-xs rounded-xl transition-all cursor-pointer select-none active:scale-95 text-center block border border-slate-200"
+                      className="w-full py-3 px-4 bg-amber-200 hover:bg-amber-300 text-slate-800 font-black text-xs rounded-xl transition-all cursor-pointer select-none active:scale-95 text-center block border border-slate-200"
                     >
                       [Guardar como Borrador]
                     </button>
