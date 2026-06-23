@@ -20,7 +20,7 @@ El ecosistema de **NovaERP** se divide en dos componentes principales totalmente
 *   **Tecnología Core:** React.js 18+ (Javascript)
 *   **Herramientas de Construcción:** Vite (Entorno de desarrollo rápido y empaquetamiento optimizado)
 *   **Enrutamiento:** React Router DOM v6 con guardianes de ruta jerárquicos (`PrivateRoute`, `AdminRoute`, `PublicRoute`).
-*   **Estilos:** Hojas de estilos optimizadas (Vanilla CSS / App.css / index.css) diseñadas con una paleta de colores moderna en tonos oscuros e índigo (`slate-900`, `indigo-600`), soporte de colapsado dinámico y diseño responsivo.
+*   **Estilos:** Hojas de estilos optimizadas (Vanilla CSS / App.css / index.css) diseñadas en **Modo Claro (Light Mode)** con una paleta de colores moderna en tonos grises e índigo (`slate-700`, `indigo-600`), soporte de colapsado dinámico y diseño responsivo.
 *   **Manejo de Estado Global:** React Context API (`AuthContext`) para la persistencia del estado de autenticación de usuario.
 *   **Consumo de API:** Axios configurado en una instancia centralizada (`api.js`) con interceptores para adjuntar automáticamente el Bearer Token guardado en el navegador (`localStorage`).
 
@@ -28,7 +28,7 @@ El ecosistema de **NovaERP** se divide en dos componentes principales totalmente
 
 ## 2. Modelado de Base de Datos (Esquema de Migraciones)
 
-La estructura relacional de la base de datos de NovaERP se compone de 20 migraciones que modelan los catálogos base, flujos de inventarios y transacciones del Punto de Venta:
+La estructura relacional de la base de datos de NovaERP se compone de migraciones que modelan los catálogos base, flujos de inventarios y transacciones del Punto de Venta:
 
 ### A. Gestión de Accesos e Identidades
 *   `users`: Almacena el personal del sistema.
@@ -36,39 +36,43 @@ La estructura relacional de la base de datos de NovaERP se compone de 20 migraci
 *   `personal_access_tokens`: Tabla nativa de Laravel Sanctum para gestionar sesiones multi-dispositivo activas.
 
 ### B. Inventario y Catálogos (Módulo 1)
-*   `categorias`: Clasificación de productos (ej. Refrescos, Sabritas, Lácteos).
-*   `marcas`: Fabricantes de los productos (ej. Coca-Cola, Sabritas, Lala).
+*   `categorias`: Clasificación de productos (ej. Computación, Electrónica, Accesorios).
+*   `marcas`: Fabricantes de los productos (ej. Lenovo, Samsung, Apple).
 *   `productos`: Catálogo maestro de productos comercializables.
-    *   Campos clave: `id`, `sku` (único), `nombre`, `descripcion`, `precio_compra` (oculto para empleados), `precio_venta`, `stock_minimo`, `categoria_id`, `marca_id`, `activo`.
-*   `almacenes`: Listado de sucursales físicas o bodegas (ej. Bodega Principal, Sucursal Centro).
+    *   Campos clave: `id`, `sku` (único, autogenerado secuencialmente `SKU-XXXXX`), `nombre`, `descripcion`, `precio_compra` (oculto para empleados), `precio_venta`, `stock_minimo`, `categoria_id`, `marca_id`, `activo`.
+*   `almacenes`: Listado de sucursales físicas o bodegas (ej. Almacén Central, Sucursal Norte).
 *   `producto_almacen`: Relación muchos a muchos para el control de inventario físico.
     *   Campos clave: `id`, `producto_id`, `almacen_id`, `stock_actual`.
 
 ### C. Kardex y Movimientos de Mercancía
 *   `kardex_movimientos`: Bitácora inmutable de ingresos, egresos y ajustes manuales en almacenes.
-    *   Campos clave: `id`, `producto_id`, `almacen_id`, `user_id`, `tipo` (`entrada`, `salida`, `ajuste`), `cantidad`, `stock_anterior`, `stock_nuevo`, `motivo`.
+    *   Campos clave: `id`, `producto_id`, `almacen_id`, `user_id`, `tipo` (`entrada_compra`, `salida_venta`, `entrada_ajuste`, `salida_ajuste`, `entrada_traspaso`, `salida_traspaso`), `cantidad`, `stock_anterior`, `stock_nuevo`, `motivo`, `referencia_documento`, `costo_unitario`.
 *   `traspasos`: Control de traslados de mercancía entre diferentes almacenes (sucursales).
-    *   Campos clave: `id`, `almacen_origen_id`, `almacen_destino_id`, `user_creador_id`, `user_confirmador_id`, `estado` (`pendiente`, `confirmado`, `cancelado`), `fecha_solicitud`, `fecha_confirmacion`.
+    *   Campos clave: `id`, `codigo_traspaso` (único, formato `TR-XXXXX`), `almacen_origen_id`, `almacen_destino_id`, `user_id` (remitente), `estado` (`pendiente`, `en_transito`, `recibido`, `rechazado`), `fecha_envio`, `fecha_recepcion`.
 *   `traspaso_detalles`: Detalle de productos solicitados en cada traspaso.
     *   Campos clave: `id`, `traspaso_id`, `producto_id`, `cantidad`.
 
 ### D. Clientes, Ventas y Cotizaciones (Módulo 2 & CRM)
 *   `clientes`: Directorio de clientes con perfil de facturación opcional.
-    *   Campos clave: `id`, `nombre_razon_social`, `rfc`, `regimen_fiscal`, `codigo_postal`, `correo_electronico`, `telefono`, `perfil_completo` (booleano calculado).
+    *   Campos clave: `id`, `nombre_razon_social`, `rfc`, `regimen_fiscal`, `uso_cfdi`, `codigo_postal_fiscal`, `direccion_fiscal_calle`, `direccion_fiscal_num_ext`, `direccion_fiscal_num_int`, `direccion_fiscal_colonia`, `direccion_fiscal_municipio`, `direccion_fiscal_estado`, `tipo_cliente`, `limite_credito`, `vendedor_id`.
 *   `ventas`: Transacciones de cobro en el POS.
-    *   Campos clave: `id`, `ticket_no` (ej. V-2001), `almacen_id`, `user_id` (cajero), `cliente_id` (opcional), `sesion_caja_id`, `cotizacion_id` (opcional), `total`, `metodo_pago` (`efectivo`, `tarjeta`), `estado` (`completada`, `cancelada`), `fecha_venta`.
+    *   Campos clave: `id`, `numero_ticket` (ej. V-2001), `sesion_caja_id`, `user_id` (cajero), `almacen_id`, `subtotal`, `iva`, `total`, `metodo_pago` (`efectivo`, `tarjeta`), `estado` (`completada`, `cancelada`).
 *   `venta_detalles`: Artículos vendidos en la transacción.
-    *   Campos clave: `id`, `venta_id`, `producto_id`, `cantidad`, `precio_unitario`.
-*   `cotizaciones`: Propuestas de venta que pueden ser presentadas a clientes.
-    *   Campos clave: `id`, `cotizacion_no` (ej. C-1001), `cliente_id`, `user_id`, `total`, `estado` (`pendiente`, `convertida`, `cancelada`), `fecha_expiracion`.
+    *   Campos clave: `id`, `venta_id`, `producto_id`, `cantidad`, `precio_unitario`, `subtotal`.
+*   `cotizaciones`: Propuestas de venta que pueden ser presentadas a clientes y convertidas en ventas directas.
+    *   Campos clave: `id`, `folio` (ej. COT-081), `cliente_id`, `vendedor_id`, `fecha_emision`, `fecha_vigencia`, `subtotal`, `iva`, `total`, `estado` (`borrador`, `vigente`, `vencida`, `convertida`), `observaciones`.
 *   `cotizacion_detalles`: Artículos cotizados.
-    *   Campos clave: `id`, `cotizacion_id`, `producto_id`, `cantidad`, `precio_unitario`.
+    *   Campos clave: `id`, `cotizacion_id`, `producto_id`, `cantidad`, `precio_unitario`, `descuento_porcentaje`, `total`.
 
 ### E. Flujo y Control de Caja (Turnos y Arqueos)
 *   `cajas`: Puntos de cobro físicos asociados a almacenes específicos.
     *   Campos clave: `id`, `nombre`, `almacen_id`, `activo`.
 *   `sesiones_caja`: Historial de aperturas y cierres de caja (turnos).
     *   Campos clave: `id`, `caja_id`, `user_id` (cajero), `fondo_inicial`, `efectivo_real` (declarado al cerrar), `descuadre` (diferencia monetaria calculada), `estado` (`abierta`, `cerrada`), `fecha_apertura`, `fecha_cierre`.
+
+### F. Auditoría y Logs de Seguridad
+*   `auditorias`: Bitácora inmutable que registra las operaciones críticas del sistema.
+    *   Campos clave: `id`, `user_id` (ejecutor), `modulo` (`seguridad`, `usuarios`, `inventario`, `ventas`, `caja`, `clientes`, `cotizaciones`), `accion` (`LOGIN`, `LOGOUT`, `CREAR`, `EDITAR`, `ELIMINAR`, `APERTURA`, `CIERRE`, `CONFIRMAR`, `AJUSTE`), `severidad` (`info`, `warning`, `danger`), `descripcion`, `valores_anteriores` (JSON), `valores_nuevos` (JSON), `ip_address`, `user_agent`.
 
 ---
 
@@ -103,14 +107,14 @@ A continuación, se listan los endpoints organizados por su respectiva capa de s
 | `PUT/PATCH`| `/api/inventario/almacenes/{id}` | `role:admin` | Modifica un almacén. |
 | `DELETE` | `/api/inventario/almacenes/{id}` | `role:admin` | Elimina un almacén. |
 | `GET` | `/api/inventario/productos` | `role:admin,empleado` | Consulta de productos con filtros de búsqueda y almacén (oculta `precio_compra` a empleados). |
-| `POST` | `/api/inventario/productos` | `role:admin` | Crea un producto y le asigna stock inicial por almacén. |
-| `PUT/PATCH`| `/api/inventario/productos/{id}` | `role:admin` | Edita datos de un producto. |
-| `DELETE` | `/api/inventario/productos/{id}` | `role:admin` | Elimina un producto. |
+| `POST` | `/api/inventario/productos` | `role:admin` | Crea un producto, genera SKU incremental, e inicializa stock por Kardex. |
+| `PUT/PATCH`| `/api/inventario/productos/{id}` | `role:admin` | Edita datos y actualiza stock mediante Kardex. |
+| `DELETE` | `/api/inventario/productos/{id}` | `role:admin` | Elimina un producto si no cuenta con movimientos registrados. |
 | `POST` | `/api/inventario/kardex/ajustes` | `role:admin` | Registra una entrada, salida o corrección manual de stock. |
 | `GET` | `/api/inventario/kardex` | `role:admin` | Historial total de movimientos de stock. |
 | `GET` | `/api/inventario/traspasos` | `role:admin,empleado` | Historial de traspasos entre almacenes. |
-| `POST` | `/api/inventario/traspasos` | `role:admin,empleado` | Crea una orden de traspaso de mercancía (estado `pendiente`). |
-| `POST` | `/api/inventario/traspasos/{id}/confirmar`| `role:admin,empleado` | Confirma y aplica el traspaso restando stock en origen e sumando en destino. |
+| `POST` | `/api/inventario/traspasos` | `role:admin,empleado` | Crea una orden de traspaso en tránsito. |
+| `POST` | `/api/inventario/traspasos/{id}/confirmar`| `role:admin,empleado` | Confirma o rechaza el traspaso en sucursal destino afectando Kardex y existencias. |
 
 ### C. Módulo de Punto de Venta (POS) y Turnos (Módulo 2)
 | Método | Endpoint | Middleware | Descripción |
@@ -136,6 +140,16 @@ A continuación, se listan los endpoints organizados por su respectiva capa de s
 | `PUT/PATCH`| `/api/cotizaciones/{id}` | `role:admin,empleado` | Edita una cotización. |
 | `DELETE` | `/api/cotizaciones/{id}` | `role:admin,empleado` | Elimina/cancela una cotización. |
 | `PATCH` | `/api/cotizaciones/{id}/convertir`| `role:admin,empleado` | Convierte una cotización en venta real procesando stocks y tickets en el POS. |
+
+### E. Módulo de Auditoría y Seguridad
+| Método | Endpoint | Middleware | Descripción |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/auditoria` | `auth:sanctum`, `role:admin` | Retorna la bitácora de auditorías con filtros por búsqueda, módulo, severidad y rango de fechas. |
+
+### F. Módulo de Indicadores y Dashboard (Módulo 4)
+| Método | Endpoint | Middleware | Descripción |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/dashboard` | `auth:sanctum` | Obtiene las agregaciones y datos para las gráficas de ventas e indicadores diarios. |
 
 ---
 
@@ -178,7 +192,7 @@ graph TD
 
 ### A. Seguridad y Restricción Dinámica de Precios (RBAC)
 *   **En el Backend:** El archivo `ProductoController` utiliza un recurso especializado `ProductoResource` que detecta el rol del usuario autenticado vía middleware. Si el usuario logueado tiene el rol de `empleado`, la API remueve dinámicamente el campo `precio_compra` de la respuesta JSON para que la información financiera confidencial nunca viaje por la red.
-*   **En el Frontend:** El componente `Navigation` filtra los menús automáticamente. Si un empleado intenta tipear `/inventario/kardex` o `/usuarios` en la URL, el guardián `AdminRoute` intercepta la acción en milisegundos y lo redirige automáticamente a la consulta de productos de lectura.
+*   **En el Frontend:** El componente `Navigation` filtra los menús automáticamente. Si un empleado intenta tipear `/inventario/kardex` o `/usuarios` en la URL, el guardián `AdminRoute` intercepta la acción y lo redirige automáticamente a la consulta de productos de lectura.
 
 ### B. Proceso de Traspasos entre Almacenes en Dos Fases
 Para evitar pérdidas de stock y errores humanos, los traspasos se efectúan bajo un esquema de solicitud y verificación:
@@ -197,12 +211,16 @@ Para evitar pérdidas de stock y errores humanos, los traspasos se efectúan baj
 
 ### D. Cierre de Caja y Arqueo (Arqueo con Descuadre)
 Al final del día laboral, el cajero accede a la pantalla de Cierre de Caja. El backend recopila todos los eventos transaccionales desde la hora de la apertura:
-*   Monto de ventas pagadas en efectivo.
-*   Monto de ventas pagadas con tarjeta.
+*   Monto de ventas pagadas en efectivo y con tarjeta.
 *   Fondo inicial de apertura.
 *   Monto de tickets cancelados.
 *   **Cálculo:** `Efectivo Esperado = Fondo Inicial + Total Ventas Efectivo`.
 *   El cajero cuenta físicamente el dinero en caja y escribe el valor en la pantalla (`Efectivo Real`). El sistema calcula inmediatamente el descuadre (`Diferencia = Efectivo Real - Efectivo Esperado`), registrando sobrantes (número positivo) o faltantes (número negativo) en la tabla `sesiones_caja` para auditorías posteriores.
+
+### E. Gráficos Visuales y Dashboards Interactivos (Módulo 4)
+*   **Gráfica de Ventas Semanales (Líneas Bézier Cúbicas)**: Desarrollamos un algoritmo de Catmull-Rom para conectar los puntos de venta fluidamente mediante curvas SVG. Incluye degradado de fondo, grid horizontal, tooltips flotantes en hover, y una animación que dibuja el trazo progresivamente de izquierda a derecha.
+*   **Gráfica de Reparto por Categorías (Donut Reactivo)**: Gráfico de anillos reactivo calculado mediante `strokeDashoffset` con leyendas dinámicas y colores armoniosos. Incorpora una separación visual constante de 5px entre segmentos y animación secuencial de dibujado de segmentos.
+*   **Bitácora y Detalle de Logs en Auditoría**: El panel de auditorías ofrece filtros combinados y una vista modal para inspeccionar cambios (valores anteriores y valores nuevos) en formato JSON estructurado, facilitando la trazabilidad.
 
 ---
 
