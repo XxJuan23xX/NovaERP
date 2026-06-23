@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/useAuth'
 import AuthLayout from '../components/AuthLayout'
 import InputField from '../components/InputField'
@@ -94,13 +94,6 @@ export default function LoginPage() {
           {loading ? 'Autenticando...' : 'Ingresar al Sistema'}
         </button>
       </form>
-
-      <div className="mt-6 rounded-xl border border-indigo-50 bg-indigo-50/50 px-4 py-3 text-center">
-        <span className="text-sm text-slate-600">¿No tienes cuenta? </span>
-        <Link to="/register" className="text-sm font-semibold text-indigo-600 transition-colors hover:text-indigo-800">
-          Regístrate aquí
-        </Link>
-      </div>
     </AuthLayout>
   )
 }
