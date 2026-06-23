@@ -176,9 +176,9 @@ export default function App() {
         <Route
           path="/inventario/traspasos"
           element={
-            <PrivateRoute>
+            <AdminRoute>
               <AuditoriaTraspasosPage />
-            </PrivateRoute>
+            </AdminRoute>
           }
         />
         <Route

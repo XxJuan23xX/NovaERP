@@ -293,7 +293,7 @@ export default function UsuariosPage() {
         {tableError && <Alert message={tableError} type="error" />}
 
         {/* Tarjeta contenedora de la Tabla */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex-1 flex flex-col">
+        <div className="bg-white rounded-sm border border-slate-100 shadow-sm overflow-hidden flex-1 flex flex-col">
           {tableLoading ? (
             <div className="flex-1 flex flex-col items-center justify-center py-20 space-y-3">
               <div className="w-10 h-10 border-4 border-slate-200 border-t-[#4f46e5] rounded-full animate-spin"></div>
@@ -331,7 +331,7 @@ export default function UsuariosPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-100 select-none">
+                  <tr className="bg-slate-300 border-b border-slate-100 select-none">
                     <th className="px-4 py-3 text-[10px] font-black uppercase tracking-wider text-slate-700">
                       ID
                     </th>
@@ -367,7 +367,14 @@ export default function UsuariosPage() {
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2.5">
                           <div className="h-7 w-7 rounded-full bg-linear-to-br from-indigo-500 to-purple-600 text-white font-bold text-[10px] flex items-center justify-center shrink-0 select-none shadow-sm">
-                            {item.name ? item.name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase() : "??"}
+                            {item.name
+                              ? item.name
+                                  .split(" ")
+                                  .map((n) => n[0])
+                                  .slice(0, 2)
+                                  .join("")
+                                  .toUpperCase()
+                              : "??"}
                           </div>
                           <div>
                             <p className="text-[11.5px] font-bold text-slate-900 leading-tight">
@@ -649,8 +656,8 @@ export default function UsuariosPage() {
                         : "border-slate-200 focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/10"
                     }`}
                 >
-                  <option value="empleado">👤 Empleado</option>
-                  <option value="admin">🔑 Administrador</option>
+                  <option value="empleado"> Empleado</option>
+                  <option value="admin"> Administrador</option>
                 </select>
                 {fieldErrors.role && (
                   <p className="text-xs text-red-500 mt-0.5">
@@ -878,7 +885,7 @@ export default function UsuariosPage() {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="flex-1 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold px-4 py-2.5 text-sm transition-all cursor-pointer active:scale-98"
+                  className="flex-1 bg-red-500 text-white rounded-lg border border-slate-200 font-semibold px-4 py-2.5 text-sm transition-all cursor-pointer active:scale-98"
                 >
                   Cancelar
                 </button>
