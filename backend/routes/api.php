@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\KardexController;
 use App\Http\Controllers\Api\VentaController;
 use App\Http\Controllers\Api\TraspasoController;
 use App\Http\Controllers\Api\AuditoriaController;
+use App\Http\Controllers\Api\DashboardController;
 
 // ─── Rutas públicas (sin autenticación) ─────────────────────────────────────
 Route::post('/login',    [AuthController::class, 'login']);
@@ -30,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Usuario autenticado
     Route::get('/user', fn (Request $request) => $request->user());
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/dashboard', [DashboardController::class, 'index']);
 
     // =========================================================================
     // MÓDULO 1: INVENTARIO Y CATÁLOGO

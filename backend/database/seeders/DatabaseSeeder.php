@@ -16,6 +16,7 @@ use App\Services\InventarioService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
@@ -96,6 +97,21 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        $producto3 = Producto::firstOrCreate(
+            ['sku' => 'ACC-APP-20W'],
+            [
+                'nombre'        => 'Cargador Apple USB-C 20W',
+                'descripcion'   => 'Cargador de pared Apple de 20W USB-C',
+                'categoria_id'  => $catAccesorios->id,
+                'marca_id'      => $marcaApple->id,
+                'precio_compra' => 15.00,
+                'precio_venta'  => 25.00,
+                'stock_minimo'  => 10,
+                'unidad_medida' => 'pieza',
+                'activo'        => true,
+            ]
+        );
+
         // ─── 6. Inicializar Stock vía InventarioService (Regla de Oro) ───────
         $inventarioService = app(InventarioService::class);
 
@@ -136,12 +152,31 @@ class DatabaseSeeder extends Seeder
             );
         }
 
+        // Registrar stock inicial para Cargador Apple en Almacén Central
+        $tieneMovimientos3 = KardexMovimiento::where('producto_id', $producto3->id)
+            ->where('almacen_id', $almacenCentral->id)
+            ->exists();
+
+        if (!$tieneMovimientos3) {
+            $inventarioService->registrarMovimiento(
+                productoId:          $producto3->id,
+                almacenId:           $almacenCentral->id,
+                userId:              $admin->id,
+                tipoMovimiento:      KardexMovimiento::TIPO_ENTRADA_COMPRA,
+                cantidad:            50,
+                motivo:              'Carga inicial de inventario por compra',
+                referenciaDocumento: 'OC-0003',
+                costoUnitario:       15.00
+            );
+        }
+
         // ─── 7. Módulo Cierre de Caja: Caja, Sesiones de caja y Ventas ─────────
         // Limpiamos los registros de ventas de prueba para evitar duplicaciones
         DB::table('venta_detalles')->delete();
         DB::table('ventas')->delete();
         DB::table('sesiones_caja')->delete();
         DB::table('cajas')->delete();
+        DB::table('cotizaciones')->delete();
         DB::table('clientes')->delete();
 
         // Crear Caja Principal
@@ -151,8 +186,85 @@ class DatabaseSeeder extends Seeder
             'activo'     => true,
         ]);
 
-        // Nota: No pre-creamos ninguna sesión de caja activa ni ventas asociadas
-        // para permitir el flujo limpio de apertura manual.
+        // Helper para registrar las ventas consolidadas
+        $registrarVentaAux = function ($ticket, $user, $almacen, $sesion, $total, $metodoPago, $fecha, $producto, $estado = 'completada') {
+            $subtotal = round($total / 1.16, 2);
+            $iva = round($total - $subtotal, 2);
+            
+            $venta = Venta::create([
+                'numero_ticket'  => $ticket,
+                'sesion_caja_id' => $sesion->id,
+                'user_id'        => $user->id,
+                'almacen_id'     => $almacen->id,
+                'subtotal'       => $subtotal,
+                'iva'            => $iva,
+                'total'          => $total,
+                'metodo_pago'    => $metodoPago,
+                'estado'         => $estado,
+                'created_at'     => $fecha,
+                'updated_at'     => $fecha,
+            ]);
+
+            VentaDetalle::create([
+                'venta_id'        => $venta->id,
+                'producto_id'     => $producto->id,
+                'cantidad'        => 1,
+                'precio_unitario' => $subtotal,
+                'subtotal'        => $subtotal,
+                'created_at'      => $fecha,
+                'updated_at'      => $fecha,
+            ]);
+        };
+
+        // Generar sesiones y ventas para los últimos 7 días (miércoles a martes hoy)
+        $salesMock = [
+            6 => 10200.00, // Miércoles (6 días atrás)
+            5 => 12400.00, // Jueves (5 días atrás)
+            4 => 15800.00, // Viernes (4 días atrás)
+            3 => 18900.00, // Sábado (3 días atrás)
+            2 => 7500.00,  // Domingo (2 días atrás)
+            1 => 13200.00, // Lunes (1 día atrás)
+            0 => 15650.00  // Martes (Hoy)
+        ];
+
+        for ($i = 6; $i >= 0; $i--) {
+            $date = Carbon::today()->subDays($i);
+            $isToday = ($i === 0);
+
+            // Crear sesión de caja para ese día
+            $sesion = SesionCaja::create([
+                'caja_id'         => $caja->id,
+                'user_id'         => $admin->id,
+                'fondo_inicial'   => 5000.00,
+                'estado'          => $isToday ? 'abierta' : 'cerrada',
+                'fecha_apertura'  => (clone $date)->addHours(9),
+                'fecha_cierre'    => $isToday ? null : (clone $date)->addHours(18),
+                'efectivo_real'   => $isToday ? 0 : 5000.00 + ($salesMock[$i] * 0.4),
+                'descuadre'       => 0,
+                'created_at'      => $date,
+                'updated_at'      => $date,
+            ]);
+
+            // Distribuir el monto total de ventas del día en dos transacciones
+            $totalDelDia = $salesMock[$i];
+            
+            // Distribuir productos para diversificar categorías
+            $p1 = ($i % 3 === 0) ? $producto1 : (($i % 3 === 1) ? $producto2 : $producto3);
+            $p2 = ($i % 3 === 0) ? $producto2 : (($i % 3 === 1) ? $producto3 : $producto1);
+            $p3 = ($i % 3 === 0) ? $producto3 : (($i % 3 === 1) ? $producto1 : $producto2);
+
+            // Venta 1 (Efectivo)
+            $montoEfectivo = round($totalDelDia * 0.4, 2);
+            $registrarVentaAux("V-{$date->format('md')}1", $admin, $almacenCentral, $sesion, $montoEfectivo, 'efectivo', (clone $date)->addHours(11), $p1);
+
+            // Venta 2 (Tarjeta)
+            $montoTarjeta = round($totalDelDia * 0.6, 2);
+            $registrarVentaAux("V-{$date->format('md')}2", $empleado, $almacenCentral, $sesion, $montoTarjeta, 'tarjeta', (clone $date)->addHours(15), $p2);
+            
+            // Agregar una venta cancelada (para dar realismo a los indicadores de cancelaciones)
+            $montoCancelado = round($totalDelDia * 0.1, 2);
+            $registrarVentaAux("V-{$date->format('md')}3", $admin, $almacenCentral, $sesion, $montoCancelado, 'efectivo', (clone $date)->addHours(16), $p3, 'cancelada');
+        }
 
         // ─── 8. Módulo Clientes (CRM) ─────────────────────────────────────────
         $c1 = \App\Models\Cliente::create([
