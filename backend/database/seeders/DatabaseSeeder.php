@@ -176,6 +176,7 @@ class DatabaseSeeder extends Seeder
         DB::table('ventas')->delete();
         DB::table('sesiones_caja')->delete();
         DB::table('cajas')->delete();
+        DB::table('cotizacion_detalles')->delete();
         DB::table('cotizaciones')->delete();
         DB::table('clientes')->delete();
 
@@ -340,6 +341,9 @@ class DatabaseSeeder extends Seeder
             'direccion_fiscal_municipio' => 'Guadalajara',
             'direccion_fiscal_estado' => 'Jalisco',
         ]);
+
+        // ─── Módulo Cotizaciones (Seeders) ───────────────────────────────────
+        $this->call(CotizacionesSeeder::class);
 
         // ─── 9. Módulo Traspasos (Seeders) ───────────────────────────────────
         DB::table('traspaso_detalles')->delete();
