@@ -432,15 +432,15 @@ export default function AuditoriaTraspasosPage() {
             <h1 className="text-[28px]! font-black text-black! tracking-tight m-0 select-none">
               Auditoría de Traspasos
             </h1>
-            <p className="text-slate-500 text-xs font-bold mt-1 select-none">
+            <p className="text-slate-400 text-xs font-semibold mt-1 select-none">
+              {fechaFormateada}
+            </p>
+            <p className="text-slate-500 text-xs font-bold mt-1.5 select-none">
               Historial de envío y recepción de existencias entre sucursales de
               la empresa.
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-xs text-slate-800 font-black bg-slate-200 border border-slate-300 px-3 py-1.5 rounded-lg select-none">
-              {fechaFormateada}
-            </span>
             <button
               onClick={abrirModalCreacion}
               className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs rounded-xl flex items-center gap-1.5 shadow-sm transition-all active:scale-95 cursor-pointer select-none"
@@ -487,7 +487,7 @@ export default function AuditoriaTraspasosPage() {
               placeholder="Buscar por código de traspaso (ej. TR-10001)..."
               value={busqueda}
               onChange={handleBusquedaChange}
-              className="w-full bg-white border border-slate-300 text-slate-900 placeholder-slate-450 font-bold rounded-2xl pl-12 pr-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm font-sans"
+              className="w-full bg-white border border-slate-300 text-slate-900 placeholder-slate-450 font-bold rounded-2xl pl-12 pr-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-xs font-sans"
             />
           </div>
 
@@ -496,7 +496,7 @@ export default function AuditoriaTraspasosPage() {
             <select
               value={estadoFiltro}
               onChange={handleEstadoFiltroChange}
-              className="w-full bg-white border border-slate-300 text-slate-900 font-bold rounded-2xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm font-sans cursor-pointer appearance-none"
+              className="w-full bg-white border border-slate-300 text-slate-900 font-bold rounded-2xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-xs font-sans cursor-pointer appearance-none"
             >
               <option value="">Filtro: Todos los Estados</option>
               <option value="en_transito">En Tránsito</option>
