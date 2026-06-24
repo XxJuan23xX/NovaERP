@@ -12,6 +12,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->redirectGuestsTo(fn ($request) => $request->is('api/*') ? null : '/login');
+
+        $middleware->api(prepend: [
+            \App\Http\Middleware\TokenQueryMiddleware::class,
+        ]);
+
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
         ]);
