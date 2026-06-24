@@ -875,31 +875,16 @@ export default function AuditoriaTraspasosPage() {
 
       {/* MODAL: Nuevo Traspaso (Ajuste de seguridad 3) */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            {/* Modal Header */}
-            <div className="px-6 py-4 bg-slate-50 border-b border-slate-150 flex items-center justify-between">
-              <h2 className="text-base font-black text-black!">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all duration-300">
+          <div className="bg-white rounded-3xl border border-slate-150 shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200 text-slate-800">
+            {/* Modal Header (Sin la X, muy minimalista y elegante) */}
+            <div className="px-6 py-5 bg-white border-b border-slate-100 shrink-0">
+              <h2 className="text-base font-extrabold tracking-tight" style={{ color: 'black' }}>
                 Crear Nuevo Traspaso de Inventario
               </h2>
-              <button
-                onClick={() => setShowCreateModal(false)}
-                className="text-slate-400 hover:text-slate-650 transition-colors cursor-pointer select-none"
-              >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2.5}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
+              <p className="text-[11px] text-slate-400 mt-0.5 font-medium">
+                Transfiere mercancía de forma controlada entre sucursales o almacenes del sistema
+              </p>
             </div>
 
             {/* Modal Body */}
@@ -913,153 +898,188 @@ export default function AuditoriaTraspasosPage() {
                 </div>
               )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Almacén Origen */}
-                <div>
-                  <label className="block text-[10px] font-black uppercase text-slate-500 mb-1.5">
-                    Almacén Origen
-                  </label>
-                  <select
-                    value={almacenOrigenId}
-                    onChange={handleAlmacenOrigenChange}
-                    disabled={
-                      !(user?.role === "admin" && user?.sucursal === "Matriz")
-                    }
-                    className="w-full bg-white border border-slate-300 text-slate-900 font-bold rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all disabled:bg-slate-100 disabled:text-slate-500 disabled:cursor-not-allowed"
-                  >
-                    <option value="">-- Seleccionar Origen --</option>
-                    {almacenes.map((a) => (
-                      <option key={a.id} value={a.id}>
-                        {a.nombre}
-                      </option>
-                    ))}
-                  </select>
+              {/* SECCIÓN 1: RUTA DEL TRASPASO */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 pb-1 border-b border-slate-150">
+                  <span className="text-[11px] font-bold text-[#1a2130] uppercase tracking-wider">
+                    1. Ruta del Traspaso (¿De dónde sale y a dónde va?)
+                  </span>
                 </div>
 
-                {/* Almacén Destino */}
-                <div>
-                  <label className="block text-[10px] font-black uppercase text-slate-500 mb-1.5">
-                    Almacén Destino
-                  </label>
-                  <select
-                    value={almacenDestinoId}
-                    onChange={(e) => setAlmacenDestinoId(e.target.value)}
-                    className="w-full bg-white border border-slate-300 text-slate-900 font-bold rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
-                  >
-                    <option value="">-- Seleccionar Destino --</option>
-                    {almacenes
-                      .filter((a) => a.id !== Number(almacenOrigenId))
-                      .map((a) => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Almacén Origen */}
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                      Almacén Origen
+                    </label>
+                    <select
+                      value={almacenOrigenId}
+                      onChange={handleAlmacenOrigenChange}
+                      disabled={
+                        !(user?.role === "admin" && user?.sucursal === "Matriz")
+                      }
+                      className="w-full bg-slate-50/50 border border-slate-200 text-slate-900 font-bold rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:bg-white focus:border-indigo-500 transition-all disabled:bg-slate-100 disabled:text-slate-500 disabled:cursor-not-allowed cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236b7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25rem_1.25rem] bg-[right_0.5rem_center] bg-no-repeat pr-8"
+                    >
+                      <option value="">-- Seleccionar origen --</option>
+                      {almacenes.map((a) => (
                         <option key={a.id} value={a.id}>
                           {a.nombre}
                         </option>
                       ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* Selector de Productos */}
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
-                <h3 className="text-xs font-black text-slate-850">
-                  Agregar Artículos al Traspaso
-                </h3>
-
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <div className="flex-1">
-                    <select
-                      value={productoSeleccionadoId}
-                      onChange={(e) =>
-                        setProductoSeleccionadoId(e.target.value)
-                      }
-                      disabled={loadingProductosModal || !almacenOrigenId}
-                      className="w-full bg-white border border-slate-300 text-slate-950 font-semibold rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-                    >
-                      {loadingProductosModal ? (
-                        <option>Cargando catálogo...</option>
-                      ) : !almacenOrigenId ? (
-                        <option>Selecciona un Almacén de Origen</option>
-                      ) : productosOrigen.length === 0 ? (
-                        <option>Sin stock disponible en este almacén</option>
-                      ) : (
-                        <>
-                          <option value="">-- Seleccionar producto --</option>
-                          {productosOrigen.map((p) => (
-                            <option key={p.id} value={p.id}>
-                              {p.nombre} ({p.sku}) - Disponible: {p.stock}{" "}
-                              {p.unidad_medida || "uds"}
-                            </option>
-                          ))}
-                        </>
-                      )}
                     </select>
+                    <span className="text-[9.5px] text-slate-450 leading-normal">
+                      Sucursal donde se encuentra la mercancía actualmente.
+                    </span>
                   </div>
 
-                  <div className="w-full sm:w-28 flex gap-2">
-                    <input
-                      type="number"
-                      min="0.01"
-                      step="any"
-                      placeholder="Cant"
-                      value={cantidadProducto}
-                      onChange={(e) => setCantidadProducto(e.target.value)}
-                      disabled={!productoSeleccionadoId}
-                      className="w-full bg-white border border-slate-300 text-slate-900 font-extrabold rounded-xl px-2.5 py-2 text-xs text-center focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 disabled:bg-slate-100"
-                    />
-                    <button
-                      type="button"
-                      onClick={agregarProducto}
-                      disabled={!productoSeleccionadoId}
-                      className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-350 disabled:cursor-not-allowed text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer select-none"
+                  {/* Almacén Destino */}
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                      Almacén Destino
+                    </label>
+                    <select
+                      value={almacenDestinoId}
+                      onChange={(e) => setAlmacenDestinoId(e.target.value)}
+                      className="w-full bg-slate-50/50 border border-slate-200 text-slate-900 font-bold rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:bg-white focus:border-indigo-500 transition-all cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236b7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25rem_1.25rem] bg-[right_0.5rem_center] bg-no-repeat pr-8"
                     >
-                      +
-                    </button>
+                      <option value="">-- Seleccionar destino --</option>
+                      {almacenes
+                        .filter((a) => a.id !== Number(almacenOrigenId))
+                        .map((a) => (
+                          <option key={a.id} value={a.id}>
+                            {a.nombre}
+                          </option>
+                        ))}
+                    </select>
+                    <span className="text-[9.5px] text-slate-450 leading-normal">
+                      Sucursal o bodega que recibirá los artículos y los sumará a su stock.
+                    </span>
                   </div>
                 </div>
               </div>
 
-              {/* Lista de Seleccionados */}
-              <div>
-                <h4 className="text-[10px] font-black uppercase text-slate-500 mb-1.5">
-                  Artículos en el Traspaso ({productosSeleccionados.length})
-                </h4>
+              {/* SECCIÓN 2: SELECCIÓN DE ARTÍCULOS */}
+              <div className="space-y-3 pt-1">
+                <div className="flex items-center gap-2 pb-1 border-b border-slate-150">
+                  <span className="text-[11px] font-bold text-[#1a2130] uppercase tracking-wider">
+                    2. Selección de Artículos (¿Qué productos y qué cantidad vas a enviar?)
+                  </span>
+                </div>
+
+                <div className="bg-slate-50/50 p-4 rounded-2xl border border-slate-100 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+                    {/* Producto */}
+                    <div className="md:col-span-2 flex flex-col gap-1">
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-slate-450">
+                        Producto a traspasar
+                      </label>
+                      <select
+                        value={productoSeleccionadoId}
+                        onChange={(e) =>
+                          setProductoSeleccionadoId(e.target.value)
+                        }
+                        disabled={loadingProductosModal || !almacenOrigenId}
+                        className="w-full bg-white border border-slate-200 text-slate-900 font-bold rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-indigo-500 transition-all cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236b7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25rem_1.25rem] bg-[right_0.5rem_center] bg-no-repeat pr-8 disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed"
+                      >
+                        {loadingProductosModal ? (
+                          <option>Cargando catálogo...</option>
+                        ) : !almacenOrigenId ? (
+                          <option>Selecciona un Almacén de Origen primero</option>
+                        ) : productosOrigen.length === 0 ? (
+                          <option>Sin stock disponible en este almacén</option>
+                        ) : (
+                          <>
+                            <option value="">-- Seleccionar producto --</option>
+                            {productosOrigen.map((p) => (
+                              <option key={p.id} value={p.id}>
+                                {p.nombre} ({p.sku}) - Disponible: {p.stock} {p.unidad_medida || "uds"}
+                              </option>
+                            ))}
+                          </>
+                        )}
+                      </select>
+                      <span className="text-[9.5px] text-slate-400 leading-normal">
+                        Solo se listan productos con existencias físicas en el almacén de origen.
+                      </span>
+                    </div>
+
+                    {/* Cantidad y botón agregar */}
+                    <div className="flex gap-2 items-end h-full">
+                      <div className="flex-1 flex flex-col gap-1">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-slate-450">
+                          Cantidad
+                        </label>
+                        <input
+                          type="number"
+                          min="0.01"
+                          step="any"
+                          placeholder="0.00"
+                          value={cantidadProducto}
+                          onChange={(e) => setCantidadProducto(e.target.value)}
+                          disabled={!productoSeleccionadoId}
+                          className="w-full bg-white border border-slate-200 text-slate-900 font-extrabold rounded-xl px-3.5 py-2.5 text-xs text-center focus:outline-none focus:border-indigo-500 disabled:bg-slate-100 disabled:text-slate-400"
+                        />
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={agregarProducto}
+                        disabled={!productoSeleccionadoId}
+                        className="px-4.5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold text-xs rounded-xl shadow-sm shadow-blue-600/10 transition-all cursor-pointer select-none active:scale-95 h-[38px] flex items-center justify-center"
+                        title="Agregar artículo a la lista de traspaso"
+                      >
+                        + Agregar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* SECCIÓN 3: LISTA DE ARTÍCULOS SELECCIONADOS */}
+              <div className="space-y-3 pt-1">
+                <div className="flex items-center gap-2 pb-1 border-b border-slate-150">
+                  <span className="text-[11px] font-bold text-[#1a2130] uppercase tracking-wider">
+                    3. Artículos a Traspasar (Revisa tu lista de envío antes de guardar)
+                  </span>
+                </div>
 
                 {productosSeleccionados.length === 0 ? (
-                  <div className="text-center py-8 border border-dashed border-slate-300 rounded-2xl text-xs text-slate-450 font-bold">
-                    No se han seleccionado artículos.
+                  <div className="text-center py-8 border border-dashed border-slate-200 rounded-2xl text-xs text-slate-450 font-bold bg-slate-50/50">
+                    Aún no has agregado ningún artículo a la lista. Usa el paso 2 para agregar productos.
                   </div>
                 ) : (
                   <div className="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm">
                     <table className="min-w-full divide-y divide-slate-100 text-xs">
                       <thead className="bg-slate-50">
                         <tr>
-                          <th className="px-3 py-2 text-left text-[9px] font-black uppercase text-slate-500">
+                          <th className="px-4 py-2.5 text-left text-[9px] font-black uppercase text-slate-500">
                             Producto
                           </th>
-                          <th className="px-3 py-2 text-left text-[9px] font-black uppercase text-slate-500">
+                          <th className="px-4 py-2.5 text-left text-[9px] font-black uppercase text-slate-500">
                             SKU
                           </th>
-                          <th className="px-3 py-2 text-center text-[9px] font-black uppercase text-slate-500">
+                          <th className="px-4 py-2.5 text-center text-[9px] font-black uppercase text-slate-500">
                             Disponible
                           </th>
-                          <th className="px-3 py-2 text-center text-[9px] font-black uppercase text-slate-500 w-24">
-                            Cantidad
+                          <th className="px-4 py-2.5 text-center text-[9px] font-black uppercase text-slate-500 w-24">
+                            Cantidad a Enviar
                           </th>
-                          <th className="px-3 py-2 text-right"></th>
+                          <th className="px-4 py-2.5 text-right w-20">Acciones</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
                         {productosSeleccionados.map((item, idx) => (
-                          <tr key={item.producto_id}>
-                            <td className="px-3 py-2 font-bold text-slate-800">
+                          <tr key={item.producto_id} className="hover:bg-slate-50/50 transition-colors">
+                            <td className="px-4 py-2.5 font-bold text-slate-800">
                               {item.nombre}
                             </td>
-                            <td className="px-3 py-2 font-mono text-slate-500">
+                            <td className="px-4 py-2.5 font-mono text-slate-500 text-[10px] font-semibold">
                               {item.sku}
                             </td>
-                            <td className="px-3 py-2 text-center font-bold text-slate-700">
+                            <td className="px-4 py-2.5 text-center font-bold text-slate-750">
                               {item.stock_disponible} {item.unidad_medida}
                             </td>
-                            <td className="px-3 py-2 text-center">
+                            <td className="px-4 py-2.5 text-center">
                               <input
                                 type="number"
                                 min="0.01"
@@ -1072,10 +1092,10 @@ export default function AuditoriaTraspasosPage() {
                                   copia[idx].cantidad = isNaN(val) ? "" : val;
                                   setProductosSeleccionados(copia);
                                 }}
-                                className="w-16 px-1.5 py-0.5 border border-slate-350 rounded-lg text-center font-bold text-slate-900"
+                                className="w-16 px-2 py-1 border border-slate-250 rounded-lg text-center font-extrabold text-slate-900 focus:outline-none focus:border-indigo-500"
                               />
                             </td>
-                            <td className="px-3 py-2 text-right">
+                            <td className="px-4 py-2.5 text-right">
                               <button
                                 type="button"
                                 onClick={() => {
@@ -1084,7 +1104,7 @@ export default function AuditoriaTraspasosPage() {
                                   );
                                   setProductosSeleccionados(copia);
                                 }}
-                                className="text-rose-600 hover:text-rose-800 font-extrabold cursor-pointer transition-colors"
+                                className="text-red-600 hover:text-red-700 font-bold hover:underline cursor-pointer transition-colors text-xs"
                               >
                                 Quitar
                               </button>
@@ -1098,19 +1118,19 @@ export default function AuditoriaTraspasosPage() {
               </div>
             </form>
 
-            {/* Modal Footer */}
-            <div className="px-6 py-4 bg-slate-50 border-t border-slate-150 flex items-center justify-end gap-3 select-none">
+            {/* Modal Footer (Botón Cancelar arreglado con fondo rojo sólido) */}
+            <div className="px-6 py-4 bg-slate-50 border-t border-slate-150 flex items-center justify-end gap-3 select-none shrink-0">
               <button
                 type="button"
                 onClick={() => setShowCreateModal(false)}
-                className="px-4 py-2 bg-red-500 text-white border border-slate-300 font-extrabold text-xs rounded-xl hover:bg-slate-150 transition-all cursor-pointer"
+                className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-xs font-bold text-white rounded-xl transition-all active:scale-95 cursor-pointer shadow-sm shadow-red-600/10"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleSubmitTraspaso}
                 disabled={loadingSubmit || productosSeleccionados.length === 0}
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-350 disabled:cursor-not-allowed text-white font-extrabold text-xs rounded-xl shadow-sm transition-all cursor-pointer"
+                className="px-6 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm shadow-blue-600/10 active:scale-95 cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loadingSubmit ? "Guardando..." : "Enviar Traspaso"}
               </button>
@@ -1124,28 +1144,10 @@ export default function AuditoriaTraspasosPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in">
           <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-md overflow-hidden">
             {/* Header */}
-            <div className="px-6 py-4 bg-slate-50 border-b border-slate-150 flex items-center justify-between">
+            <div className="px-6 py-4 bg-slate-50 border-b border-slate-150">
               <h2 className="text-sm font-black text-slate-900">
                 Confirmar Acción
               </h2>
-              <button
-                onClick={() => setShowConfirmModal(false)}
-                className="text-slate-400 hover:text-slate-650 transition-colors cursor-pointer select-none"
-              >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2.5}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
             </div>
 
             {/* Body */}
