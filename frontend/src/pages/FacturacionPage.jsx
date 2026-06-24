@@ -6,11 +6,11 @@ export default function FacturacionPage() {
   const [facturas, setFacturas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   // Filtros
   const [busqueda, setBusqueda] = useState("");
   const [statusFiltro, setStatusFiltro] = useState("Todos");
-  
+
   // Paginación
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
@@ -69,13 +69,19 @@ export default function FacturacionPage() {
   const handleDescargarXml = (id) => {
     // Abrir endpoint de descarga directa en pestaña nueva
     const token = localStorage.getItem("token");
-    window.open(`http://127.0.0.1:8000/api/facturas/${id}/descargar-xml?token=${token}`, "_blank");
+    window.open(
+      `http://127.0.0.1:8000/api/facturas/${id}/descargar-xml?token=${token}`,
+      "_blank",
+    );
   };
 
   const handleDescargarPdf = (id) => {
     // Abrir endpoint de visualización/impresión
     const token = localStorage.getItem("token");
-    window.open(`http://127.0.0.1:8000/api/facturas/${id}/descargar-pdf?token=${token}`, "_blank");
+    window.open(
+      `http://127.0.0.1:8000/api/facturas/${id}/descargar-pdf?token=${token}`,
+      "_blank",
+    );
   };
 
   const handleOpenCancelModal = (factura) => {
@@ -99,7 +105,10 @@ export default function FacturacionPage() {
       }
     } catch (err) {
       console.error("Error al cancelar factura:", err);
-      alert(err.response?.data?.message || "Ocurrió un error al intentar cancelar la factura.");
+      alert(
+        err.response?.data?.message ||
+          "Ocurrió un error al intentar cancelar la factura.",
+      );
     } finally {
       setSubmittingCancel(false);
     }
@@ -119,7 +128,7 @@ export default function FacturacionPage() {
         status: "error",
         estado: "Error de consulta",
         codigo_estatus: "N/A",
-        es_cancelable: "Desconocido"
+        es_cancelable: "Desconocido",
       });
     } finally {
       setLoadingValidacion(false);
@@ -139,7 +148,7 @@ export default function FacturacionPage() {
       month: "short",
       year: "numeric",
       hour: "2-digit",
-      minute: "2-digit"
+      minute: "2-digit",
     });
   };
 
@@ -152,33 +161,18 @@ export default function FacturacionPage() {
           {/* ENCABEZADO */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
             <div>
-              <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 flex items-center gap-3">
-                <span className="p-2 bg-white rounded-xl border border-slate-200 text-indigo-600 shadow-sm">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-7 w-7"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    />
-                  </svg>
-                </span>
+              <h1 className="text-[28px]! font-extrabold tracking-tight text-black! flex items-center gap-3">
                 Facturación (CFDI 4.0)
               </h1>
               <p className="mt-1 text-slate-500 text-xs font-semibold">
-                Historial de comprobantes emitidos ante el SAT y control de cancelaciones
+                Historial de comprobantes emitidos ante el SAT y control de
+                cancelaciones
               </p>
             </div>
           </div>
 
           {/* FILTROS */}
-          <div className="bg-white border border-slate-200/80 p-5 rounded-2xl mb-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="bg-white border border-slate-200/80 p-5 rounded-sm mb-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3 w-full sm:w-auto flex-1">
               <div className="relative flex-1 max-w-md">
                 <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -218,25 +212,39 @@ export default function FacturacionPage() {
             </div>
 
             <div className="text-xs text-slate-500 font-semibold select-none">
-              Mostrando <strong className="text-slate-900">{totalFacturas}</strong> comprobantes
+              Mostrando{" "}
+              <strong className="text-slate-900">{totalFacturas}</strong>{" "}
+              comprobantes
             </div>
           </div>
 
           {/* LISTADO DE COMPROBANTES */}
           {error && (
             <div className="mb-6 bg-red-50 border border-red-200 p-4 rounded-xl text-red-800 text-xs font-bold flex items-center gap-2">
-              <svg className="h-5 w-5 text-red-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              <svg
+                className="h-5 w-5 text-red-500 shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
               </svg>
               <span>{error}</span>
             </div>
           )}
 
-          <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm flex flex-col">
+          <div className="bg-white border border-slate-200 rounded-sm overflow-hidden shadow-sm flex flex-col">
             {loading ? (
               <div className="flex flex-col items-center justify-center py-20 text-slate-500 gap-3">
                 <div className="h-10 w-10 border-4 border-slate-200 border-t-indigo-600 rounded-full animate-spin" />
-                <span className="text-xs font-semibold">Cargando facturas...</span>
+                <span className="text-xs font-semibold">
+                  Cargando facturas...
+                </span>
               </div>
             ) : facturas.length === 0 ? (
               <div className="text-center py-20 text-slate-500">
@@ -254,9 +262,12 @@ export default function FacturacionPage() {
                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                   />
                 </svg>
-                <h3 className="text-sm font-bold text-slate-800">No se encontraron facturas</h3>
+                <h3 className="text-sm font-bold text-slate-800">
+                  No se encontraron facturas
+                </h3>
                 <p className="text-xs text-slate-500 mt-1">
-                  Ningún ticket de venta ha sido facturado con los filtros aplicados.
+                  Ningún ticket de venta ha sido facturado con los filtros
+                  aplicados.
                 </p>
               </div>
             ) : (
@@ -277,22 +288,31 @@ export default function FacturacionPage() {
                     {facturas.map((fact) => {
                       const esCancelada = fact.status === "cancelada";
                       return (
-                        <tr key={fact.id} className="hover:bg-slate-50/50 transition-colors duration-150">
+                        <tr
+                          key={fact.id}
+                          className="hover:bg-slate-50/50 transition-colors duration-150"
+                        >
                           {/* Folio */}
-                          <td className="px-5 py-3.5 whitespace-nowrap text-slate-900 font-extrabold">
+                          <td className="px-5 py-3.5 whitespace-nowrap text-blue-600 font-extrabold">
                             {fact.serie}-{fact.folio}
                           </td>
                           {/* UUID */}
                           <td className="px-5 py-3.5 whitespace-nowrap font-mono text-[10px] text-slate-500">
-                            <span title={fact.uuid}>{fact.uuid.substring(0, 18)}...</span>
+                            <span title={fact.uuid}>
+                              {fact.uuid.substring(0, 18)}...
+                            </span>
                           </td>
                           {/* Cliente */}
                           <td className="px-5 py-3.5">
-                            <div className="text-slate-900 font-bold max-w-xs truncate">{fact.razon_social_receptor}</div>
-                            <div className="text-[10px] text-slate-400 font-mono mt-0.5">{fact.rfc_receptor}</div>
+                            <div className="text-slate-900 font-bold max-w-xs truncate">
+                              {fact.razon_social_receptor}
+                            </div>
+                            <div className="text-[10px] text-slate-400 font-mono mt-0.5">
+                              {fact.rfc_receptor}
+                            </div>
                           </td>
                           {/* Monto */}
-                          <td className="px-5 py-3.5 text-right whitespace-nowrap font-extrabold text-slate-900">
+                          <td className="px-5 py-3.5 text-right whitespace-nowrap font-extrabold text-green-700">
                             {formatCurrency(fact.venta?.total)}
                           </td>
                           {/* Fecha */}
@@ -320,8 +340,18 @@ export default function FacturacionPage() {
                                 className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 border border-transparent rounded-lg transition-all cursor-pointer"
                                 title="Descargar XML"
                               >
-                                <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                <svg
+                                  className="h-4.5 w-4.5"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                  strokeWidth={2.5}
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                  />
                                 </svg>
                               </button>
 
@@ -331,8 +361,18 @@ export default function FacturacionPage() {
                                 className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 border border-transparent rounded-lg transition-all cursor-pointer"
                                 title="Imprimir / Ver PDF"
                               >
-                                <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                <svg
+                                  className="h-4.5 w-4.5"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                  strokeWidth={2.5}
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                                  />
                                 </svg>
                               </button>
 
@@ -342,8 +382,18 @@ export default function FacturacionPage() {
                                 className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 border border-transparent rounded-lg transition-all cursor-pointer"
                                 title="Validar estatus ante el SAT"
                               >
-                                <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                <svg
+                                  className="h-4.5 w-4.5"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                  strokeWidth={2.5}
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                                  />
                                 </svg>
                               </button>
 
@@ -354,8 +404,18 @@ export default function FacturacionPage() {
                                   className="p-1.5 text-slate-400 hover:text-red-650 hover:bg-red-50 border border-transparent rounded-lg transition-all cursor-pointer"
                                   title="Cancelar Factura"
                                 >
-                                  <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                  <svg
+                                    className="h-4.5 w-4.5"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    strokeWidth={2.5}
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                    />
                                   </svg>
                                 </button>
                               )}
@@ -380,7 +440,9 @@ export default function FacturacionPage() {
                   Anterior
                 </button>
                 <span className="text-xs text-slate-500 font-bold">
-                  Página <strong className="text-slate-900">{currentPage}</strong> de {lastPage}
+                  Página{" "}
+                  <strong className="text-slate-900">{currentPage}</strong> de{" "}
+                  {lastPage}
                 </span>
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
@@ -401,9 +463,12 @@ export default function FacturacionPage() {
           <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100 flex flex-col relative overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="pb-4 border-b border-slate-150 flex items-center justify-between">
               <div>
-                <h2 className="text-slate-950 font-black text-base tracking-tight">Cancelar Factura CFDI</h2>
+                <h2 className="text-slate-950 font-black text-base tracking-tight">
+                  Cancelar Factura CFDI
+                </h2>
                 <p className="text-slate-500 text-[11px] font-semibold mt-0.5">
-                  Selecciona el motivo de cancelación oficial SAT para el folio {selectedFactura.serie}-{selectedFactura.folio}.
+                  Selecciona el motivo de cancelación oficial SAT para el folio{" "}
+                  {selectedFactura.serie}-{selectedFactura.folio}.
                 </p>
               </div>
             </div>
@@ -418,15 +483,24 @@ export default function FacturacionPage() {
                   onChange={(e) => setMotivoCancelacion(e.target.value)}
                   className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs font-bold rounded-xl px-3.5 py-2.5 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all cursor-pointer font-sans"
                 >
-                  <option value="01">01 - Comprobante emitido con errores con relación</option>
-                  <option value="02">02 - Comprobante emitido con errores sin relación</option>
-                  <option value="03">03 - No se llevó a cabo la operación</option>
-                  <option value="04">04 - Operación nominativa relacionada en una factura global</option>
+                  <option value="01">
+                    01 - Comprobante emitido con errores con relación
+                  </option>
+                  <option value="02">
+                    02 - Comprobante emitido con errores sin relación
+                  </option>
+                  <option value="03">
+                    03 - No se llevó a cabo la operación
+                  </option>
+                  <option value="04">
+                    04 - Operación nominativa relacionada en una factura global
+                  </option>
                 </select>
               </div>
 
               <div className="bg-red-50 border border-red-150 p-4 rounded-xl text-red-800 text-[11px] font-bold leading-relaxed">
-                ⚠️ <strong>¡Atención!</strong> Esta acción enviará una petición SOAP de cancelación SAT y es irreversible.
+                ⚠️ <strong>¡Atención!</strong> Esta acción enviará una petición
+                SOAP de cancelación SAT y es irreversible.
               </div>
 
               <div className="flex items-center justify-end gap-2.5 pt-3 select-none">
@@ -456,9 +530,12 @@ export default function FacturacionPage() {
           <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100 flex flex-col relative overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="pb-4 border-b border-slate-150 flex items-center justify-between">
               <div>
-                <h2 className="text-slate-950 font-black text-base tracking-tight">Resultado de Validación SAT</h2>
+                <h2 className="text-slate-950 font-black text-base tracking-tight">
+                  Resultado de Validación SAT
+                </h2>
                 <p className="text-slate-500 text-[11px] font-semibold mt-0.5">
-                  Consulta de estatus en tiempo real en los servidores oficiales del SAT.
+                  Consulta de estatus en tiempo real en los servidores oficiales
+                  del SAT.
                 </p>
               </div>
             </div>
@@ -467,13 +544,17 @@ export default function FacturacionPage() {
               {loadingValidacion ? (
                 <div className="flex flex-col items-center justify-center py-10 text-slate-500 gap-3">
                   <div className="h-8 w-8 border-3 border-slate-250 border-t-indigo-600 rounded-full animate-spin" />
-                  <span className="text-[11px] font-bold text-slate-650">Conectando con Web Service del SAT...</span>
+                  <span className="text-[11px] font-bold text-slate-650">
+                    Conectando con Web Service del SAT...
+                  </span>
                 </div>
               ) : validacionResult ? (
                 <div className="space-y-3.5 text-xs font-semibold text-slate-650">
                   <div className="flex justify-between border-b border-slate-100 pb-2">
                     <span>Folio Fiscal (UUID)</span>
-                    <span className="text-slate-900 font-mono text-[10px] font-bold">{selectedFactura.uuid}</span>
+                    <span className="text-slate-900 font-mono text-[10px] font-bold">
+                      {selectedFactura.uuid}
+                    </span>
                   </div>
                   <div className="flex justify-between border-b border-slate-100 pb-2">
                     <span>Estatus de Comprobante</span>
@@ -489,10 +570,14 @@ export default function FacturacionPage() {
                   </div>
                   <div className="flex justify-between border-b border-slate-100 pb-2">
                     <span>Cancelabilidad</span>
-                    <span className="text-slate-900 font-bold">{validacionResult.es_cancelable}</span>
+                    <span className="text-slate-900 font-bold">
+                      {validacionResult.es_cancelable}
+                    </span>
                   </div>
                   <div className="space-y-1">
-                    <span className="text-[10px] text-slate-400 block uppercase">Código Respuesta SAT</span>
+                    <span className="text-[10px] text-slate-400 block uppercase">
+                      Código Respuesta SAT
+                    </span>
                     <div className="bg-slate-50 border border-slate-200 text-[10.5px] font-bold text-slate-800 p-2.5 rounded-xl font-mono leading-relaxed">
                       {validacionResult.codigo_estatus}
                     </div>
