@@ -769,8 +769,8 @@ export default function PuntoVentaPage() {
               <span
                 className={`text-[9px] font-black px-2 py-0.5 rounded-lg border ${
                   clienteSeleccionado.perfil_completo
-                    ? "bg-emerald-50 text-emerald-700 border-emerald-250"
-                    : "bg-amber-50 text-amber-700 border-amber-250"
+                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                    : "bg-amber-50 text-amber-700 border-amber-200"
                 }`}
               >
                 {clienteSeleccionado.perfil_completo
@@ -778,7 +778,7 @@ export default function PuntoVentaPage() {
                   : "🟡 Perfil Incompleto"}
               </span>
             ) : (
-              <span className="text-[9px] font-black px-2 py-0.5 rounded-lg border bg-slate-100 text-slate-500 border-slate-250">
+              <span className="text-[9px] font-black px-2 py-0.5 rounded-lg border bg-slate-100 text-slate-500 border-slate-200">
                 👥 Público General
               </span>
             )}
@@ -1227,7 +1227,7 @@ export default function PuntoVentaPage() {
                     const token = localStorage.getItem("token");
                     window.open(`http://127.0.0.1:8000/api/facturas/${facturaEmitida.id}/descargar-pdf?token=${token}`, "_blank");
                   }}
-                  className="flex-1 py-2 px-3 bg-emerald-50 border border-emerald-250 hover:bg-emerald-100 text-emerald-700 font-bold text-[11px] rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
+                  className="flex-1 py-2 px-3 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 text-emerald-700 font-bold text-[11px] rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
                 >
                   Imprimir PDF
                 </button>
@@ -1274,7 +1274,7 @@ export default function PuntoVentaPage() {
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-all select-none">
           <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100 flex flex-col relative overflow-hidden animate-in fade-in zoom-in duration-200">
             {/* Cabecera del Modal */}
-            <div className="text-center pb-5 border-b border-slate-150">
+            <div className="text-center pb-5 border-b border-slate-200">
               <div className="h-14 w-14 bg-indigo-50 border border-indigo-100 rounded-full flex items-center justify-center mx-auto text-indigo-600 mb-3 shadow-inner">
                 <svg
                   className="h-7 w-7"
@@ -1322,7 +1322,7 @@ export default function PuntoVentaPage() {
               )}
 
               {successApertura && (
-                <div className="bg-emerald-50 border border-emerald-250 text-emerald-800 px-4 py-3 rounded-2xl flex items-start gap-2.5 shadow-sm animate-in fade-in zoom-in-95 duration-100">
+                <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-2xl flex items-start gap-2.5 shadow-sm animate-in fade-in zoom-in-95 duration-100">
                   <svg
                     className="h-5 w-5 mt-0.5 shrink-0 text-emerald-500"
                     fill="none"
