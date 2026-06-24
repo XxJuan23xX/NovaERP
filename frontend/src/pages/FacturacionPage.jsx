@@ -273,7 +273,7 @@ export default function FacturacionPage() {
                       <th className="px-5 py-3 text-center">Acciones SAT</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 text-xs text-slate-650 font-semibold">
+                  <tbody className="divide-y divide-slate-100 text-xs text-slate-600 font-semibold">
                     {facturas.map((fact) => {
                       const esCancelada = fact.status === "cancelada";
                       return (
@@ -346,12 +346,10 @@ export default function FacturacionPage() {
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                 </svg>
                               </button>
-
-                              {/* Cancelar Factura */}
                               {!esCancelada && (
                                 <button
                                   onClick={() => handleOpenCancelModal(fact)}
-                                  className="p-1.5 text-slate-400 hover:text-red-650 hover:bg-red-50 border border-transparent rounded-lg transition-all cursor-pointer"
+                                  className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 border border-transparent rounded-lg transition-all cursor-pointer"
                                   title="Cancelar Factura"
                                 >
                                   <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -368,8 +366,6 @@ export default function FacturacionPage() {
                 </table>
               </div>
             )}
-
-            {/* Paginación */}
             {!loading && lastPage > 1 && (
               <div className="bg-slate-50 border-t border-slate-100 px-5 py-4 flex items-center justify-between select-none">
                 <button
@@ -399,24 +395,29 @@ export default function FacturacionPage() {
       {cancelModalOpen && selectedFactura && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-all select-none">
           <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100 flex flex-col relative overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="pb-4 border-b border-slate-150 flex items-center justify-between">
+            <div className="pb-4 border-b border-slate-200 flex items-center gap-3">
+              <span className="p-2 bg-red-50 rounded-xl text-red-600">
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </span>
               <div>
-                <h2 className="text-slate-950 font-black text-base tracking-tight">Cancelar Factura CFDI</h2>
-                <p className="text-slate-500 text-[11px] font-semibold mt-0.5">
-                  Selecciona el motivo de cancelación oficial SAT para el folio {selectedFactura.serie}-{selectedFactura.folio}.
+                <h2 className="text-slate-900 font-extrabold text-base tracking-tight">Cancelar Factura CFDI</h2>
+                <p className="text-slate-500 text-xs font-semibold mt-0.5">
+                  Motivo de cancelación oficial SAT para {selectedFactura.serie}-{selectedFactura.folio}.
                 </p>
               </div>
             </div>
 
             <form onSubmit={handleCancelarFactura} className="space-y-4 my-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-wider text-slate-700 block">
+                <label className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 block">
                   Motivo de Cancelación
                 </label>
                 <select
                   value={motivoCancelacion}
                   onChange={(e) => setMotivoCancelacion(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs font-bold rounded-xl px-3.5 py-2.5 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all cursor-pointer font-sans"
+                  className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs font-bold rounded-xl px-3.5 py-2.5 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all cursor-pointer font-sans"
                 >
                   <option value="01">01 - Comprobante emitido con errores con relación</option>
                   <option value="02">02 - Comprobante emitido con errores sin relación</option>
@@ -425,22 +426,22 @@ export default function FacturacionPage() {
                 </select>
               </div>
 
-              <div className="bg-red-50 border border-red-150 p-4 rounded-xl text-red-800 text-[11px] font-bold leading-relaxed">
-                ⚠️ <strong>¡Atención!</strong> Esta acción enviará una petición SOAP de cancelación SAT y es irreversible.
+              <div className="bg-red-50 border border-red-200 p-4 rounded-xl text-red-800 text-xs font-medium leading-relaxed">
+                ⚠️ <strong>¡Atención!</strong> Esta acción enviará una petición SOAP de cancelación al SAT y es irreversible.
               </div>
 
               <div className="flex items-center justify-end gap-2.5 pt-3 select-none">
                 <button
                   type="button"
                   onClick={() => setCancelModalOpen(false)}
-                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-[11px] px-4 py-2.5 rounded-xl transition-all cursor-pointer"
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-4 py-2.5 rounded-xl transition-all cursor-pointer"
                 >
                   Regresar
                 </button>
                 <button
                   type="submit"
                   disabled={submittingCancel}
-                  className="bg-red-600 hover:bg-red-700 text-white font-black text-[11px] px-4 py-2.5 rounded-xl shadow-sm hover:shadow active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                  className="bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-md hover:shadow active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                 >
                   {submittingCancel ? "Cancelando..." : "Confirmar Cancelación"}
                 </button>
@@ -454,10 +455,15 @@ export default function FacturacionPage() {
       {validarModalOpen && selectedFactura && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-all select-none">
           <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100 flex flex-col relative overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="pb-4 border-b border-slate-150 flex items-center justify-between">
+            <div className="pb-4 border-b border-slate-200 flex items-center gap-3">
+              <span className="p-2 bg-indigo-50 rounded-xl text-indigo-600">
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </span>
               <div>
-                <h2 className="text-slate-950 font-black text-base tracking-tight">Resultado de Validación SAT</h2>
-                <p className="text-slate-500 text-[11px] font-semibold mt-0.5">
+                <h2 className="text-slate-900 font-extrabold text-base tracking-tight">Resultado de Validación SAT</h2>
+                <p className="text-slate-500 text-xs font-semibold mt-0.5">
                   Consulta de estatus en tiempo real en los servidores oficiales del SAT.
                 </p>
               </div>
@@ -466,35 +472,39 @@ export default function FacturacionPage() {
             <div className="space-y-4 my-6">
               {loadingValidacion ? (
                 <div className="flex flex-col items-center justify-center py-10 text-slate-500 gap-3">
-                  <div className="h-8 w-8 border-3 border-slate-250 border-t-indigo-600 rounded-full animate-spin" />
-                  <span className="text-[11px] font-bold text-slate-650">Conectando con Web Service del SAT...</span>
+                  <div className="h-10 w-10 border-4 border-slate-200 border-t-indigo-600 rounded-full animate-spin" />
+                  <span className="text-xs font-bold text-slate-600">Conectando con Web Service del SAT...</span>
                 </div>
               ) : validacionResult ? (
-                <div className="space-y-3.5 text-xs font-semibold text-slate-650">
-                  <div className="flex justify-between border-b border-slate-100 pb-2">
-                    <span>Folio Fiscal (UUID)</span>
-                    <span className="text-slate-900 font-mono text-[10px] font-bold">{selectedFactura.uuid}</span>
-                  </div>
-                  <div className="flex justify-between border-b border-slate-100 pb-2">
-                    <span>Estatus de Comprobante</span>
-                    <span
-                      className={`text-[10px] font-black px-2 py-0.5 rounded-lg border ${
-                        validacionResult.estado?.includes("Vigente")
-                          ? "bg-emerald-50 text-emerald-700 border-emerald-250"
-                          : "bg-red-50 text-red-700 border-red-250"
-                      }`}
-                    >
-                      {validacionResult.estado}
+                <div className="space-y-4 text-xs font-semibold text-slate-700">
+                  <div className="flex flex-col gap-1 border-b border-slate-100 pb-2.5">
+                    <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Folio Fiscal (UUID)</span>
+                    <span className="text-slate-900 font-mono text-[11px] font-bold select-all bg-slate-50 p-2.5 rounded-lg border border-slate-100 overflow-x-auto block w-full whitespace-nowrap scrollbar-thin">
+                      {selectedFactura.uuid}
                     </span>
                   </div>
-                  <div className="flex justify-between border-b border-slate-100 pb-2">
-                    <span>Cancelabilidad</span>
-                    <span className="text-slate-900 font-bold">{validacionResult.es_cancelable}</span>
+                  <div className="flex justify-between items-center border-b border-slate-100 pb-2.5">
+                    <span className="text-slate-500 font-medium">Estatus de Comprobante</span>
+                    <span
+                      className={`text-[10px] font-black px-2.5 py-1 rounded-lg border uppercase tracking-wide ${
+                        validacionResult.estado?.includes("Vigente")
+                          ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                          : "bg-red-50 text-red-700 border-red-200"
+                      }`}
+                    >
+                      {validacionResult.estado || "Vigente"}
+                    </span>
                   </div>
-                  <div className="space-y-1">
-                    <span className="text-[10px] text-slate-400 block uppercase">Código Respuesta SAT</span>
-                    <div className="bg-slate-50 border border-slate-200 text-[10.5px] font-bold text-slate-800 p-2.5 rounded-xl font-mono leading-relaxed">
-                      {validacionResult.codigo_estatus}
+                  <div className="flex justify-between items-center border-b border-slate-100 pb-2.5">
+                    <span className="text-slate-500 font-medium">Cancelabilidad</span>
+                    <span className="text-slate-950 font-extrabold bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md text-[11px]">
+                      {validacionResult.es_cancelable || "No cancelable"}
+                    </span>
+                  </div>
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Código Respuesta SAT</span>
+                    <div className="bg-slate-900 border border-slate-800 text-[11px] font-medium text-emerald-400 p-3 rounded-xl font-mono leading-relaxed overflow-x-auto shadow-inner w-full block">
+                      {validacionResult.codigo_estatus || "S/D"}
                     </div>
                   </div>
                 </div>
@@ -509,7 +519,7 @@ export default function FacturacionPage() {
               <button
                 type="button"
                 onClick={() => setValidarModalOpen(false)}
-                className="bg-indigo-650 hover:bg-indigo-750 text-white font-black text-[11.5px] px-5 py-2.5 rounded-xl shadow-sm hover:shadow transition-all cursor-pointer"
+                className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-sm hover:shadow active:scale-95 transition-all cursor-pointer text-center"
               >
                 Cerrar Consulta
               </button>
