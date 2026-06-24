@@ -142,6 +142,8 @@ Sigue los siguientes pasos para levantar ambos entornos de desarrollo localmente
     La aplicación se abrirá localmente en `http://localhost:5173`.
 
 ---
+CONTROL DE VERSIONES:
+VERSIÓN ACTUAL: 1.0.0
 
 ## 🔐 Credenciales de Acceso por Defecto (Seeders)
 
