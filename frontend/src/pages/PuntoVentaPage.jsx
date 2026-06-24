@@ -34,6 +34,11 @@ export default function PuntoVentaPage() {
   const [successVenta, setSuccessVenta] = useState(null); // Para el modal de ticket de cobro
   const [showReceiptModal, setShowReceiptModal] = useState(false);
 
+  // Estados para Facturación SAT 4.0
+  const [solicitarFactura, setSolicitarFactura] = useState(false);
+  const [formaPagoSAT, setFormaPagoSAT] = useState("01");
+  const [facturaEmitida, setFacturaEmitida] = useState(null);
+
   // Estados de Sesión de Caja
   const [sesionActiva, setSesionActiva] = useState(null);
   const [sesionActivaId, setSesionActivaId] = useState(null); // ID de la sesión activa en estado local
@@ -430,11 +435,34 @@ export default function PuntoVentaPage() {
       if (res.data?.status === "success") {
         const ventaRealizada = res.data.data;
         setSuccessVenta(ventaRealizada);
+        
+        let fact = null;
+        if (solicitarFactura) {
+          try {
+            const resFact = await api.post("/facturas/emitir", {
+              venta_id: ventaRealizada.id,
+              forma_pago: formaPagoSAT
+            });
+            if (resFact.data?.status === "success") {
+              fact = resFact.data.data;
+              setFacturaEmitida(fact);
+            }
+          } catch (factErr) {
+            console.error("Error al emitir factura automática:", factErr);
+            alert("Venta guardada pero ocurrió un error al timbrar la factura CFDI: " + (factErr.response?.data?.message || "Servicio no disponible"));
+            setFacturaEmitida(null);
+          }
+        } else {
+          setFacturaEmitida(null);
+        }
+
         setShowReceiptModal(true);
 
         // Limpiar carrito y actualizar estados
         setCart([]);
         setClienteSeleccionadoId("");
+        setSolicitarFactura(false);
+        setFormaPagoSAT("01");
         setCotizacionId(null);
         await actualizarSiguienteTicket();
 
@@ -925,6 +953,51 @@ export default function PuntoVentaPage() {
             </div>
           </div>
 
+          {/* Facturación Electrónica SAT 4.0 */}
+          <div className="flex flex-col gap-2 mt-4 pb-4 border-b border-slate-200 select-none">
+            <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+              Facturación SAT 4.0
+            </span>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="solicitar_factura"
+                checked={solicitarFactura}
+                onChange={(e) => setSolicitarFactura(e.target.checked)}
+                disabled={!clienteSeleccionado || !clienteSeleccionado.perfil_completo}
+                className="rounded border-slate-350 text-indigo-600 focus:ring-indigo-500/20 h-4 w-4 cursor-pointer disabled:cursor-not-allowed"
+              />
+              <label
+                htmlFor="solicitar_factura"
+                className={`text-[12px] font-bold cursor-pointer ${
+                  !clienteSeleccionado || !clienteSeleccionado.perfil_completo
+                    ? "text-slate-400 cursor-not-allowed"
+                    : "text-slate-800"
+                }`}
+              >
+                ¿Solicitar Factura Fiscal?
+              </label>
+            </div>
+            
+            {solicitarFactura && (
+              <div className="mt-2 space-y-1.5 animate-in fade-in duration-150">
+                <span className="text-[9px] font-bold text-slate-500 block uppercase">
+                  Forma de Pago (SAT)
+                </span>
+                <select
+                  value={formaPagoSAT}
+                  onChange={(e) => setFormaPagoSAT(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs font-bold rounded-xl px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer font-sans"
+                >
+                  <option value="01">01 - Efectivo</option>
+                  <option value="03">03 - Transferencia electrónica</option>
+                  <option value="04">04 - Tarjeta de crédito</option>
+                  <option value="28">28 - Tarjeta de débito</option>
+                </select>
+              </div>
+            )}
+          </div>
+          
           {/* Botones de Cobro / Impresión */}
           <div className="flex gap-3">
             <button
@@ -1134,6 +1207,32 @@ export default function PuntoVentaPage() {
                 </div>
               </div>
             </div>
+
+            {/* Acciones de la factura (si fue timbrada) */}
+            {facturaEmitida && (
+              <div className="px-1 pb-4 border-b border-dashed border-slate-200 flex gap-2.5 shrink-0 select-none">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const token = localStorage.getItem("token");
+                    window.open(`http://127.0.0.1:8000/api/facturas/${facturaEmitida.id}/descargar-xml?token=${token}`, "_blank");
+                  }}
+                  className="flex-1 py-2 px-3 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 text-indigo-700 font-bold text-[11px] rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
+                >
+                  Descargar XML
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const token = localStorage.getItem("token");
+                    window.open(`http://127.0.0.1:8000/api/facturas/${facturaEmitida.id}/descargar-pdf?token=${token}`, "_blank");
+                  }}
+                  className="flex-1 py-2 px-3 bg-emerald-50 border border-emerald-250 hover:bg-emerald-100 text-emerald-700 font-bold text-[11px] rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
+                >
+                  Imprimir PDF
+                </button>
+              </div>
+            )}
 
             {/* Acciones del recibo */}
             <div className="pt-4 border-t border-slate-100 flex gap-3 shrink-0 print:hidden">

@@ -120,6 +120,15 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/pos/ventas',           [VentaController::class, 'index']);
         Route::post('/pos/ventas',          [VentaController::class, 'store']);
         Route::get('/pos/siguiente-ticket', [VentaController::class, 'siguienteTicket']);
+
+        // MÓDULO: FACTURACIÓN SAT 4.0
+        Route::get('/facturas', [\App\Http\Controllers\Api\FacturaController::class, 'index']);
+        Route::post('/facturas/emitir', [\App\Http\Controllers\Api\FacturaController::class, 'emitir']);
+        Route::post('/facturas/{id}/cancelar', [\App\Http\Controllers\Api\FacturaController::class, 'cancelar']);
+        Route::get('/facturas/{id}/validar-sat', [\App\Http\Controllers\Api\FacturaController::class, 'validarSat']);
+        Route::get('/facturas/{id}/descargar-xml', [\App\Http\Controllers\Api\FacturaController::class, 'descargarXml']);
+        Route::get('/facturas/{id}/descargar-pdf', [\App\Http\Controllers\Api\FacturaController::class, 'descargarPdf']);
+
         // MÓDULO: CLIENTES (CRM)
         Route::apiResource('clientes', \App\Http\Controllers\Api\ClienteController::class);
 
