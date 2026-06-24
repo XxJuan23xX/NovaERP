@@ -523,376 +523,325 @@ export default function UsuariosPage() {
 
       {/* ── MODAL DE REGISTRO EN MODO CLARO ── */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300">
-          <div className="w-full max-w-lg bg-white border border-slate-100 p-8 rounded-2xl shadow-xl flex flex-col relative max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
-            {/* Botón cerrar modal */}
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="absolute right-4 top-4 p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-all cursor-pointer"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-
-            <div className="mb-6">
-              <h2 className="text-2xl font-extrabold text-black! flex items-center gap-3">
-                <span className="p-2 bg-slate-50 rounded-xl border border-slate-100 text-[#4f46e5]">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-                    />
-                  </svg>
-                </span>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all duration-300">
+          <div className="w-full max-w-2xl bg-white border border-slate-150 rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200 text-slate-800 flex flex-col max-h-[90vh]">
+            {/* Cabecera de modal (Sin la X, muy minimalista y elegante) */}
+            <div className="px-6 py-5 bg-white border-b border-slate-100 shrink-0">
+              <h2 className="text-base font-extrabold tracking-tight" style={{ color: 'black' }}>
                 Registrar Nuevo Usuario
               </h2>
-              <p className="mt-1 text-slate-500 text-sm">
-                Crea una cuenta de personal interno con privilegios específicos
+              <p className="text-[11px] text-slate-400 mt-0.5 font-medium">
+                Crea una cuenta de personal interno con privilegios específicos en el sistema
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-              <Alert message={formError} type="error" />
-              <Alert message={formSuccess} type="success" />
+            {/* Formulario */}
+            <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden" noValidate>
+              <div className="flex-1 overflow-y-auto p-6 space-y-5">
+                <Alert message={formError} type="error" />
+                <Alert message={formSuccess} type="success" />
 
-              {/* Nombre completo */}
-              <div className="flex flex-col gap-1">
-                <label
-                  htmlFor="name"
-                  className="text-xs font-bold uppercase tracking-wider text-slate-500"
-                >
-                  Nombre completo
-                </label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  value={form.name}
-                  onChange={handleChange}
-                  placeholder="Juan Pérez"
-                  disabled={formLoading}
-                  className={`w-full rounded-lg border px-3.5 py-2.5 text-sm bg-white text-slate-900 placeholder-slate-400 outline-none transition-all duration-150
-                    ${
-                      fieldErrors.name
-                        ? "border-red-500 ring-1 ring-red-500/30"
-                        : "border-slate-200 focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/10"
-                    }`}
-                />
-                {fieldErrors.name && (
-                  <p className="text-xs text-red-500 mt-0.5">
-                    {fieldErrors.name}
-                  </p>
-                )}
-              </div>
-
-              {/* Correo electrónico */}
-              <div className="flex flex-col gap-1">
-                <label
-                  htmlFor="email"
-                  className="text-xs font-bold uppercase tracking-wider text-slate-500"
-                >
-                  Correo electrónico
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  placeholder="usuario@empresa.com"
-                  disabled={formLoading}
-                  className={`w-full rounded-lg border px-3.5 py-2.5 text-sm bg-white text-slate-900 placeholder-slate-400 outline-none transition-all duration-150
-                    ${
-                      fieldErrors.email
-                        ? "border-red-500 ring-1 ring-red-500/30"
-                        : "border-slate-200 focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/10"
-                    }`}
-                />
-                {fieldErrors.email && (
-                  <p className="text-xs text-red-500 mt-0.5">
-                    {fieldErrors.email}
-                  </p>
-                )}
-              </div>
-
-              {/* Rol de Usuario */}
-              <div className="flex flex-col gap-1">
-                <label
-                  htmlFor="role"
-                  className="text-xs font-bold uppercase tracking-wider text-slate-500"
-                >
-                  Rol de Usuario
-                </label>
-                <select
-                  id="role"
-                  name="role"
-                  value={form.role}
-                  onChange={handleChange}
-                  disabled={formLoading}
-                  className={`w-full rounded-lg border px-3.5 py-2.5 text-sm bg-white text-slate-900 outline-none transition-all duration-150 
-                    ${
-                      fieldErrors.role
-                        ? "border-red-500 ring-1 ring-red-500/30"
-                        : "border-slate-200 focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/10"
-                    }`}
-                >
-                  <option value="empleado"> Empleado</option>
-                  <option value="admin"> Administrador</option>
-                </select>
-                {fieldErrors.role && (
-                  <p className="text-xs text-red-500 mt-0.5">
-                    {fieldErrors.role}
-                  </p>
-                )}
-              </div>
-
-              {/* Sucursal Asignada */}
-              <div className="flex flex-col gap-1">
-                <label
-                  htmlFor="sucursal"
-                  className="text-xs font-bold uppercase tracking-wider text-slate-500"
-                >
-                  Sucursal Asignada
-                </label>
-                <select
-                  id="sucursal"
-                  name="sucursal"
-                  value={form.sucursal}
-                  onChange={handleChange}
-                  disabled={formLoading}
-                  className={`w-full rounded-lg border px-3.5 py-2.5 text-sm bg-white text-slate-900 outline-none transition-all duration-150 
-                    ${
-                      fieldErrors.sucursal
-                        ? "border-red-500 ring-1 ring-red-500/30"
-                        : "border-slate-200 focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/10"
-                    }`}
-                >
-                  <option value="">
-                    {sucursales.length === 0
-                      ? "Cargando sucursales..."
-                      : "Seleccione una sucursal..."}
-                  </option>
-                  {sucursales.map((suc, idx) => (
-                    <option key={idx} value={suc}>
-                      {suc}
-                    </option>
-                  ))}
-                </select>
-                {fieldErrors.sucursal && (
-                  <p className="text-xs text-red-500 mt-0.5">
-                    {fieldErrors.sucursal}
-                  </p>
-                )}
-              </div>
-
-              {/* Contraseña */}
-              <div className="flex flex-col gap-1">
-                <label
-                  htmlFor="password"
-                  className="text-xs font-bold uppercase tracking-wider text-slate-500"
-                >
-                  Contraseña
-                </label>
-                <div className="relative">
-                  <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    value={form.password}
-                    onChange={handleChange}
-                    placeholder="Mínimo 8 caracteres"
-                    disabled={formLoading}
-                    className={`w-full rounded-lg border px-3.5 py-2.5 pr-10 text-sm bg-white text-slate-900 placeholder-slate-400 outline-none transition-all duration-150
-                      ${
-                        fieldErrors.password
-                          ? "border-red-500 ring-1 ring-red-500/30"
-                          : "border-slate-200 focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/10"
-                      }`}
-                  />
-                  <button
-                    type="button"
-                    tabIndex={-1}
-                    onClick={() => setShowPassword((v) => !v)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
-                  >
-                    {showPassword ? (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-4 h-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
-                        />
-                      </svg>
-                    ) : (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-4 h-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                </div>
-                {fieldErrors.password && (
-                  <p className="text-xs text-red-500 mt-0.5">
-                    {fieldErrors.password}
-                  </p>
-                )}
-              </div>
-
-              {/* Fuerza de la contraseña */}
-              {form.password && (
-                <div className="space-y-1">
-                  <div className="flex gap-1">
-                    {[1, 2, 3, 4].map((level) => (
-                      <div
-                        key={level}
-                        className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${
-                          level <= strength
-                            ? strengthColors[strength]
-                            : "bg-slate-200"
-                        }`}
-                      />
-                    ))}
+                {/* SECCIÓN 1: DATOS PERSONALES */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 pb-1 border-b border-slate-150">
+                    <span className="text-[11px] font-bold text-[#1a2130] uppercase tracking-wider">1. Información Personal (¿Quién es?)</span>
                   </div>
-                  {strength > 0 && (
-                    <p className="text-[10px] text-slate-400">
-                      Seguridad:{" "}
-                      <span className="font-semibold text-slate-600">
-                        {strengthLabels[strength]}
-                      </span>
-                    </p>
-                  )}
-                </div>
-              )}
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Nombre completo */}
+                    <div className="flex flex-col gap-1">
+                      <label
+                        htmlFor="name"
+                        className="text-[10px] font-bold uppercase tracking-wider text-slate-500"
+                      >
+                        Nombre completo
+                      </label>
+                      <input
+                        id="name"
+                        name="name"
+                        type="text"
+                        value={form.name}
+                        onChange={handleChange}
+                        placeholder="Ej. Juan Pérez García"
+                        disabled={formLoading}
+                        className={`w-full bg-slate-50/50 border rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 font-bold focus:outline-none focus:bg-white transition-all duration-150
+                          ${
+                            fieldErrors.name
+                              ? "border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-500/5"
+                              : "border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5"
+                          }`}
+                      />
+                      <span className="text-[9.5px] text-slate-450 leading-normal">Escribe el nombre real y los apellidos del nuevo integrante.</span>
+                      {fieldErrors.name && (
+                        <p className="text-[10px] text-red-500 mt-0.5 font-semibold">
+                          {fieldErrors.name}
+                        </p>
+                      )}
+                    </div>
 
-              {/* Confirmar contraseña */}
-              <div className="flex flex-col gap-1">
-                <label
-                  htmlFor="password_confirmation"
-                  className="text-xs font-bold uppercase tracking-wider text-slate-500"
-                >
-                  Confirmar contraseña
-                </label>
-                <div className="relative">
-                  <input
-                    id="password_confirmation"
-                    name="password_confirmation"
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={form.password_confirmation}
-                    onChange={handleChange}
-                    placeholder="Repite la contraseña"
-                    disabled={formLoading}
-                    className={`w-full rounded-lg border px-3.5 py-2.5 pr-10 text-sm bg-white text-slate-900 placeholder-slate-400 outline-none transition-all duration-150
-                      ${
-                        fieldErrors.password_confirmation
-                          ? "border-red-500 ring-1 ring-red-500/30"
-                          : "border-slate-200 focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/10"
-                      }`}
-                  />
-                  <button
-                    type="button"
-                    tabIndex={-1}
-                    onClick={() => setShowConfirmPassword((v) => !v)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
-                  >
-                    {showConfirmPassword ? (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-4 h-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
+                    {/* Correo electrónico */}
+                    <div className="flex flex-col gap-1">
+                      <label
+                        htmlFor="email"
+                        className="text-[10px] font-bold uppercase tracking-wider text-slate-500"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
-                        />
-                      </svg>
-                    ) : (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-4 h-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                        />
-                      </svg>
-                    )}
-                  </button>
+                        Correo electrónico
+                      </label>
+                      <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={form.email}
+                        onChange={handleChange}
+                        placeholder="ejemplo@novaerp.com"
+                        disabled={formLoading}
+                        className={`w-full bg-slate-50/50 border rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 font-bold focus:outline-none focus:bg-white transition-all duration-150
+                          ${
+                            fieldErrors.email
+                              ? "border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-500/5"
+                              : "border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5"
+                          }`}
+                      />
+                      <span className="text-[9.5px] text-slate-450 leading-normal">Correo corporativo (será su nombre de usuario).</span>
+                      {fieldErrors.email && (
+                        <p className="text-[10px] text-red-500 mt-0.5 font-semibold">
+                          {fieldErrors.email}
+                        </p>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                {fieldErrors.password_confirmation && (
-                  <p className="text-xs text-red-500 mt-0.5">
-                    {fieldErrors.password_confirmation}
-                  </p>
-                )}
+
+                {/* SECCIÓN 2: ASIGNACIÓN Y ROL */}
+                <div className="space-y-4 pt-1">
+                  <div className="flex items-center gap-2 pb-1 border-b border-slate-150">
+                    <span className="text-[11px] font-bold text-[#1a2130] uppercase tracking-wider">2. Permisos y Lugar de Trabajo (¿Qué nivel de acceso tendrá y dónde labora?)</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Rol de Usuario */}
+                    <div className="flex flex-col gap-1">
+                      <label
+                        htmlFor="role"
+                        className="text-[10px] font-bold uppercase tracking-wider text-slate-500"
+                      >
+                        Rol de Usuario (Acceso)
+                      </label>
+                      <select
+                        id="role"
+                        name="role"
+                        value={form.role}
+                        onChange={handleChange}
+                        disabled={formLoading}
+                        className={`w-full bg-slate-50/50 border rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-bold focus:outline-none focus:bg-white transition-all duration-150 cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236b7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25rem_1.25rem] bg-[right_0.5rem_center] bg-no-repeat pr-8
+                          ${
+                            fieldErrors.role
+                              ? "border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-500/5"
+                              : "border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5"
+                          }`}
+                      >
+                        <option value="empleado">Empleado (Solo ventas e inventario)</option>
+                        <option value="admin">Administrador (Acceso total al sistema)</option>
+                      </select>
+                      <span className="text-[9.5px] text-slate-450 leading-normal">Administradores pueden configurar; Empleados solo operan.</span>
+                      {fieldErrors.role && (
+                        <p className="text-[10px] text-red-500 mt-0.5 font-semibold">
+                          {fieldErrors.role}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Sucursal Asignada */}
+                    <div className="flex flex-col gap-1">
+                      <label
+                        htmlFor="sucursal"
+                        className="text-[10px] font-bold uppercase tracking-wider text-slate-500"
+                      >
+                        Sucursal Asignada
+                      </label>
+                      <select
+                        id="sucursal"
+                        name="sucursal"
+                        value={form.sucursal}
+                        onChange={handleChange}
+                        disabled={formLoading}
+                        className={`w-full bg-slate-50/50 border rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-bold focus:outline-none focus:bg-white transition-all duration-150 cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236b7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25rem_1.25rem] bg-[right_0.5rem_center] bg-no-repeat pr-8
+                          ${
+                            fieldErrors.sucursal
+                              ? "border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-500/5"
+                              : "border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5"
+                          }`}
+                      >
+                        <option value="">
+                          {sucursales.length === 0
+                            ? "Cargando sucursales..."
+                            : "Seleccione una sucursal..."}
+                        </option>
+                        {sucursales.map((suc, idx) => (
+                          <option key={idx} value={suc}>
+                            {suc}
+                          </option>
+                        ))}
+                      </select>
+                      <span className="text-[9.5px] text-slate-450 leading-normal">Establecimiento físico al que pertenece.</span>
+                      {fieldErrors.sucursal && (
+                        <p className="text-[10px] text-red-500 mt-0.5 font-semibold">
+                          {fieldErrors.sucursal}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* SECCIÓN 3: SEGURIDAD DE ACCESO */}
+                <div className="space-y-4 pt-1">
+                  <div className="flex items-center gap-2 pb-1 border-b border-slate-150">
+                    <span className="text-[11px] font-bold text-[#1a2130] uppercase tracking-wider">3. Seguridad de Acceso (¿Cómo ingresará al sistema?)</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Contraseña */}
+                    <div className="flex flex-col gap-1">
+                      <label
+                        htmlFor="password"
+                        className="text-[10px] font-bold uppercase tracking-wider text-slate-500"
+                      >
+                        Contraseña
+                      </label>
+                      <div className="relative">
+                        <input
+                          id="password"
+                          name="password"
+                          type={showPassword ? "text" : "password"}
+                          value={form.password}
+                          onChange={handleChange}
+                          placeholder="Mínimo 8 caracteres"
+                          disabled={formLoading}
+                          className={`w-full bg-slate-50/50 border rounded-xl px-3.5 py-2.5 pr-10 text-xs text-slate-900 placeholder-slate-400 font-bold focus:outline-none focus:bg-white transition-all duration-150
+                            ${
+                              fieldErrors.password
+                                ? "border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-500/5"
+                                : "border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5"
+                            }`}
+                        />
+                        <button
+                          type="button"
+                          tabIndex={-1}
+                          onClick={() => setShowPassword((v) => !v)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                        >
+                          {showPassword ? (
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                            </svg>
+                          ) : (
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                          )}
+                        </button>
+                      </div>
+                      <span className="text-[9.5px] text-slate-450 leading-normal">Combina letras y números para mayor seguridad.</span>
+                      {fieldErrors.password && (
+                        <p className="text-[10px] text-red-500 mt-0.5 font-semibold">
+                          {fieldErrors.password}
+                        </p>
+                      )}
+
+                      {/* Fuerza de la contraseña */}
+                      {form.password && (
+                        <div className="space-y-1 mt-1.5">
+                          <div className="flex gap-1">
+                            {[1, 2, 3, 4].map((level) => (
+                              <div
+                                key={level}
+                                className={`h-1 flex-1 rounded-full transition-colors duration-300 ${
+                                  level <= strength
+                                    ? strengthColors[strength]
+                                    : "bg-slate-100"
+                                }`}
+                              />
+                            ))}
+                          </div>
+                          {strength > 0 && (
+                            <p className="text-[9px] text-slate-400 font-medium">
+                              Seguridad:{" "}
+                              <span className="font-bold text-slate-650">
+                                {strengthLabels[strength]}
+                              </span>
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Confirmar contraseña */}
+                    <div className="flex flex-col gap-1">
+                      <label
+                        htmlFor="password_confirmation"
+                        className="text-[10px] font-bold uppercase tracking-wider text-slate-500"
+                      >
+                        Confirmar contraseña
+                      </label>
+                      <div className="relative">
+                        <input
+                          id="password_confirmation"
+                          name="password_confirmation"
+                          type={showConfirmPassword ? "text" : "password"}
+                          value={form.password_confirmation}
+                          onChange={handleChange}
+                          placeholder="Repite la contraseña"
+                          disabled={formLoading}
+                          className={`w-full bg-slate-50/50 border rounded-xl px-3.5 py-2.5 pr-10 text-xs text-slate-900 placeholder-slate-400 font-bold focus:outline-none focus:bg-white transition-all duration-150
+                            ${
+                              fieldErrors.password_confirmation
+                                ? "border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-500/5"
+                                : "border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5"
+                            }`}
+                        />
+                        <button
+                          type="button"
+                          tabIndex={-1}
+                          onClick={() => setShowConfirmPassword((v) => !v)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                        >
+                          {showConfirmPassword ? (
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                            </svg>
+                          ) : (
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                          )}
+                        </button>
+                      </div>
+                      <span className="text-[9.5px] text-slate-450 leading-normal">Debe ser idéntica a la escrita arriba.</span>
+                      {fieldErrors.password_confirmation && (
+                        <p className="text-[10px] text-red-500 mt-0.5 font-semibold">
+                          {fieldErrors.password_confirmation}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div className="flex gap-3 pt-2">
+              {/* Acciones del Formulario */}
+              <div className="flex items-center justify-end gap-3 px-6 py-4.5 bg-slate-50 border-t border-slate-100 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="flex-1 bg-red-500 text-white rounded-lg border border-slate-200 font-semibold px-4 py-2.5 text-sm transition-all cursor-pointer active:scale-98"
+                  className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-xs font-bold text-white rounded-xl transition-all active:scale-95 cursor-pointer shadow-sm shadow-red-600/10"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={formLoading}
-                  className="flex-1 rounded-lg bg-[#4f46e5] hover:bg-indigo-700 text-white font-semibold px-4 py-2.5 text-sm shadow-sm transition-all duration-150 active:scale-98 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+                  className="px-6 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm shadow-blue-600/10 active:scale-95 cursor-pointer transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {formLoading ? "Registrando..." : "Registrar"}
                 </button>

@@ -128,8 +128,8 @@ export default function CotizacionesPage() {
         cot.folio.toLowerCase().includes(busqueda.toLowerCase()) ||
         (cot.cliente
           ? cot.cliente.nombre_razon_social
-              .toLowerCase()
-              .includes(busqueda.toLowerCase())
+            .toLowerCase()
+            .includes(busqueda.toLowerCase())
           : "mostrador".includes(busqueda.toLowerCase()));
 
       const matchEstado =
@@ -194,9 +194,9 @@ export default function CotizacionesPage() {
       cartItems.map((item) =>
         item.producto.id === prodId
           ? {
-              ...item,
-              descuento_porcentaje: disc < 0 ? 0 : disc > 100 ? 100 : disc,
-            }
+            ...item,
+            descuento_porcentaje: disc < 0 ? 0 : disc > 100 ? 100 : disc,
+          }
           : item,
       ),
     );
@@ -597,15 +597,14 @@ export default function CotizacionesPage() {
                           </td>
                           <td className="px-5 py-4 text-center">
                             <span
-                              className={`text-[9px] font-black tracking-wider uppercase px-2 py-0.5 rounded-lg border ${
-                                cot.estado === "borrador"
-                                  ? "bg-slate-50 text-slate-600 border-slate-200"
-                                  : cot.estado === "vigente"
-                                    ? "bg-indigo-50 text-indigo-700 border-indigo-200"
-                                    : cot.estado === "vencida"
-                                      ? "bg-red-50 text-red-700 border-red-200"
-                                      : "bg-emerald-50 text-emerald-700 border-emerald-200"
-                              }`}
+                              className={`text-[9px] font-black tracking-wider uppercase px-2 py-0.5 rounded-lg border ${cot.estado === "borrador"
+                                ? "bg-slate-50 text-slate-600 border-slate-200"
+                                : cot.estado === "vigente"
+                                  ? "bg-indigo-50 text-indigo-700 border-indigo-200"
+                                  : cot.estado === "vencida"
+                                    ? "bg-red-50 text-red-700 border-red-200"
+                                    : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                }`}
                             >
                               {cot.estado}
                             </span>
@@ -1070,28 +1069,10 @@ export default function CotizacionesPage() {
       {quickClientModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-all select-none">
           <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 flex flex-col relative overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            <div className="pb-3 border-b border-slate-150 flex items-center justify-between">
-              <h2 className="text-slate-950 font-black text-base tracking-tight">
+            <div className="pb-3 border-b border-slate-150">
+              <h2 className="font-black text-base tracking-tight" style={{ color: '#1a2130' }}>
                 Nuevo Cliente Rápido
               </h2>
-              <button
-                onClick={() => setQuickClientModal(false)}
-                className="text-slate-400 hover:text-slate-600 transition-colors p-1 cursor-pointer"
-              >
-                <svg
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2.5}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
             </div>
 
             <form onSubmit={handleQuickClientSubmit} className="space-y-4 py-4">
@@ -1109,11 +1090,10 @@ export default function CotizacionesPage() {
                     })
                   }
                   placeholder="Ej. Juan Pérez"
-                  className={`w-full bg-slate-50 border ${
-                    quickClientErrors.nombre_razon_social
-                      ? "border-red-500 ring-2 ring-red-500/10"
-                      : "border-slate-300 focus:border-indigo-500"
-                  } text-slate-900 text-xs font-bold rounded-xl px-3.5 py-2 focus:outline-none`}
+                  className={`w-full bg-slate-50 border ${quickClientErrors.nombre_razon_social
+                    ? "border-red-500 ring-2 ring-red-500/10"
+                    : "border-slate-300 focus:border-indigo-500"
+                    } text-slate-900 text-xs font-bold rounded-xl px-3.5 py-2 focus:outline-none`}
                 />
                 {quickClientErrors.nombre_razon_social && (
                   <p className="text-[10px] font-bold text-red-650 mt-1 animate-in fade-in duration-100">
@@ -1136,11 +1116,10 @@ export default function CotizacionesPage() {
                     })
                   }
                   placeholder="XAXX010101000"
-                  className={`w-full bg-slate-50 border ${
-                    quickClientErrors.rfc
-                      ? "border-red-500 ring-2 ring-red-500/10"
-                      : "border-slate-300 focus:border-indigo-500"
-                  } text-slate-900 text-xs font-mono font-bold rounded-xl px-3.5 py-2 focus:outline-none`}
+                  className={`w-full bg-slate-50 border ${quickClientErrors.rfc
+                    ? "border-red-500 ring-2 ring-red-500/10"
+                    : "border-slate-300 focus:border-indigo-500"
+                    } text-slate-900 text-xs font-mono font-bold rounded-xl px-3.5 py-2 focus:outline-none`}
                 />
                 {quickClientErrors.rfc && (
                   <p className="text-[10px] font-bold text-red-650 mt-1 animate-in fade-in duration-100">
@@ -1163,11 +1142,10 @@ export default function CotizacionesPage() {
                     })
                   }
                   placeholder="cliente@ejemplo.com"
-                  className={`w-full bg-slate-50 border ${
-                    quickClientErrors.email
-                      ? "border-red-500 ring-2 ring-red-500/10"
-                      : "border-slate-300 focus:border-indigo-500"
-                  } text-slate-900 text-xs font-bold rounded-xl px-3.5 py-2 focus:outline-none`}
+                  className={`w-full bg-slate-50 border ${quickClientErrors.email
+                    ? "border-red-500 ring-2 ring-red-500/10"
+                    : "border-slate-300 focus:border-indigo-500"
+                    } text-slate-900 text-xs font-bold rounded-xl px-3.5 py-2 focus:outline-none`}
                 />
                 {quickClientErrors.email && (
                   <p className="text-[10px] font-bold text-red-650 mt-1 animate-in fade-in duration-100">
@@ -1190,11 +1168,10 @@ export default function CotizacionesPage() {
                     })
                   }
                   placeholder="10 dígitos"
-                  className={`w-full bg-slate-50 border ${
-                    quickClientErrors.telefono
-                      ? "border-red-500 ring-2 ring-red-500/10"
-                      : "border-slate-300 focus:border-indigo-500"
-                  } text-slate-900 text-xs font-bold rounded-xl px-3.5 py-2 focus:outline-none`}
+                  className={`w-full bg-slate-50 border ${quickClientErrors.telefono
+                    ? "border-red-500 ring-2 ring-red-500/10"
+                    : "border-slate-300 focus:border-indigo-500"
+                    } text-slate-900 text-xs font-bold rounded-xl px-3.5 py-2 focus:outline-none`}
                 />
                 {quickClientErrors.telefono && (
                   <p className="text-[10px] font-bold text-red-650 mt-1 animate-in fade-in duration-100">
@@ -1207,7 +1184,7 @@ export default function CotizacionesPage() {
                 <button
                   type="button"
                   onClick={() => setQuickClientModal(false)}
-                  className="py-2 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all cursor-pointer"
+                  className="py-2 px-4 bg-red-500 hover:bg-red-600 text-white font-bold text-xs rounded-xl transition-all active:scale-95 cursor-pointer shadow-md shadow-red-500/10"
                 >
                   Cancelar
                 </button>
@@ -1281,15 +1258,14 @@ export default function CotizacionesPage() {
                         Estado
                       </span>
                       <span
-                        className={`inline-block text-[9px] font-black tracking-wider uppercase px-2 py-0.5 rounded-lg border mt-1.5 ${
-                          detailData.estado === "borrador"
-                            ? "bg-slate-50 text-slate-600 border-slate-200"
-                            : detailData.estado === "vigente"
-                              ? "bg-indigo-50 text-indigo-700 border-indigo-200"
-                              : detailData.estado === "vencida"
-                                ? "bg-red-50 text-red-700 border-red-200"
-                                : "bg-emerald-50 text-emerald-700 border-emerald-200"
-                        }`}
+                        className={`inline-block text-[9px] font-black tracking-wider uppercase px-2 py-0.5 rounded-lg border mt-1.5 ${detailData.estado === "borrador"
+                          ? "bg-slate-50 text-slate-600 border-slate-200"
+                          : detailData.estado === "vigente"
+                            ? "bg-indigo-50 text-indigo-700 border-indigo-200"
+                            : detailData.estado === "vencida"
+                              ? "bg-red-50 text-red-700 border-red-200"
+                              : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                          }`}
                       >
                         {detailData.estado}
                       </span>

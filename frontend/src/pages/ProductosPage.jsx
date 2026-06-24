@@ -1019,31 +1019,17 @@ export default function ProductosPage() {
       {/* ── MODAL DE EDICIÓN / ADICIÓN (Exclusivo Admin) - MODO CLARO ── */}
       {modalOpen && isAdmin && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-slate-900/60 backdrop-blur-sm transition-all duration-300">
-          <div className="w-full max-w-lg bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-xl animate-in fade-in zoom-in-95 duration-200 text-slate-800 flex flex-col max-h-[90vh]">
-            {/* Cabecera de modal */}
-            <div className="flex justify-between items-center px-5 py-3.5 bg-slate-50 border-b border-slate-100 shrink-0">
-              <h2 className="text-base font-bold text-black!">
+          <div className="w-full max-w-2xl bg-white border border-slate-150 rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200 text-slate-800 flex flex-col max-h-[90vh]">
+            {/* Cabecera de modal (Sin la X, muy minimalista y elegante) */}
+            <div className="px-6 py-5 bg-white border-b border-slate-100 shrink-0">
+              <h2 className="text-base font-extrabold tracking-tight" style={{ color: 'black' }}>
                 {selectedProducto ? "Editar Producto" : "Nuevo Producto"}
               </h2>
-              <button
-                onClick={handleCloseModal}
-                className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
+              <p className="text-[11px] text-slate-400 mt-0.5 font-medium">
+                {selectedProducto 
+                  ? "Modifica los valores del producto seleccionado en el catálogo" 
+                  : "Registra un nuevo artículo en tu inventario con especificaciones detalladas"}
+              </p>
             </div>
 
             {/* Formulario */}
@@ -1051,239 +1037,270 @@ export default function ProductosPage() {
               onSubmit={handleSubmit}
               className="flex flex-col flex-1 overflow-hidden"
             >
-              <div className="flex-1 overflow-y-auto p-5 space-y-3.5">
-                <div className="grid grid-cols-2 gap-3.5">
-                  {/* SKU (Solo visible en EDICIÓN y desactivado) */}
-                  {selectedProducto && (
-                    <div className="col-span-2 sm:col-span-1">
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">
-                        SKU (Autogenerado)
+              <div className="flex-1 overflow-y-auto p-6 space-y-5">
+                {/* SECCIÓN 1: INFORMACIÓN GENERAL */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 pb-1 border-b border-slate-100">
+                    <span className="text-[11px] font-bold text-[#1a2130] uppercase tracking-wider">Información Básica</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4">
+                    {/* SKU (Solo visible en EDICIÓN y desactivado) */}
+                    {selectedProducto && (
+                      <div className="col-span-3 sm:col-span-1">
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                          SKU (Autogenerado)
+                        </label>
+                        <input
+                          type="text"
+                          name="sku"
+                          value={form.sku}
+                          readOnly
+                          className="w-full bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-mono font-bold focus:outline-none"
+                        />
+                      </div>
+                    )}
+
+                    {/* Nombre Comercial */}
+                    <div
+                      className={
+                        selectedProducto
+                          ? "col-span-3 sm:col-span-2"
+                          : "col-span-3"
+                      }
+                    >
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-450 mb-1">
+                        Nombre Comercial
                       </label>
                       <input
                         type="text"
-                        name="sku"
-                        value={form.sku}
-                        readOnly
-                        className="w-full bg-slate-50 text-slate-500 cursor-not-allowed border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none"
+                        name="nombre"
+                        value={form.nombre}
+                        onChange={handleChange}
+                        required
+                        placeholder="Ej. Tornillo Galvanizado 1/2"
+                        className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 font-bold focus:outline-none focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5 transition-all duration-150"
                       />
                     </div>
-                  )}
 
-                  {/* Nombre Comercial */}
-                  <div
-                    className={
-                      selectedProducto
-                        ? "col-span-2 sm:col-span-1"
-                        : "col-span-2"
-                    }
-                  >
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">
-                      Nombre Comercial
-                    </label>
-                    <input
-                      type="text"
-                      name="nombre"
-                      value={form.nombre}
-                      onChange={handleChange}
-                      required
-                      placeholder="Ej. Tornillos Galvanizados"
-                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10 transition-all duration-150"
-                    />
+                    {/* Descripción */}
+                    <div className="col-span-3">
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-450 mb-1">
+                        Descripción Detallada
+                      </label>
+                      <textarea
+                        name="descripcion"
+                        value={form.descripcion}
+                        onChange={handleChange}
+                        rows={2}
+                        placeholder="Especificaciones técnicas, materiales, usos u observaciones del producto..."
+                        className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 font-medium focus:outline-none focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5 transition-all duration-150 resize-none leading-relaxed"
+                      />
+                    </div>
                   </div>
                 </div>
 
-                {/* Descripción */}
-                <div>
-                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">
-                    Descripción Detallada
-                  </label>
-                  <textarea
-                    name="descripcion"
-                    value={form.descripcion}
-                    onChange={handleChange}
-                    rows={2}
-                    placeholder="Detalles sobre especificaciones técnicas, materiales, usos, etc."
-                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10 transition-all duration-150 resize-none"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-3.5">
-                  {/* Categoría */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">
-                      Categoría
-                    </label>
-                    <select
-                      name="categoria_id"
-                      value={form.categoria_id}
-                      onChange={handleChange}
-                      required
-                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10 transition-all duration-150 cursor-pointer"
-                    >
-                      <option value="" disabled>
-                        Selecciona una categoría
-                      </option>
-                      {categoriasList.map((cat) => (
-                        <option key={cat.id} value={cat.id}>
-                          {cat.nombre}
+                {/* SECCIÓN 2: CLASIFICACIÓN Y UBICACIÓN */}
+                <div className="space-y-4 pt-1">
+                  <div className="flex items-center gap-2 pb-1 border-b border-slate-100">
+                    <span className="text-[11px] font-bold text-[#1a2130] uppercase tracking-wider">Clasificación y Ubicación</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {/* Categoría */}
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-450 mb-1">
+                        Categoría
+                      </label>
+                      <select
+                        name="categoria_id"
+                        value={form.categoria_id}
+                        onChange={handleChange}
+                        required
+                        className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-bold focus:outline-none focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5 transition-all duration-150 cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236b7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25rem_1.25rem] bg-[right_0.5rem_center] bg-no-repeat pr-8"
+                      >
+                        <option value="" disabled>
+                          Selecciona categoría
                         </option>
-                      ))}
-                    </select>
-                  </div>
+                        {categoriasList.map((cat) => (
+                          <option key={cat.id} value={cat.id}>
+                            {cat.nombre}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
-                  {/* Marca */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">
-                      Marca
-                    </label>
-                    <select
-                      name="marca_id"
-                      value={form.marca_id}
-                      onChange={handleChange}
-                      required
-                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10 transition-all duration-150 cursor-pointer"
-                    >
-                      <option value="" disabled>
-                        Selecciona una marca
-                      </option>
-                      {marcasList.map((marca) => (
-                        <option key={marca.id} value={marca.id}>
-                          {marca.nombre}
+                    {/* Marca */}
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-450 mb-1">
+                        Marca
+                      </label>
+                      <select
+                        name="marca_id"
+                        value={form.marca_id}
+                        onChange={handleChange}
+                        required
+                        className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-bold focus:outline-none focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5 transition-all duration-150 cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236b7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25rem_1.25rem] bg-[right_0.5rem_center] bg-no-repeat pr-8"
+                      >
+                        <option value="" disabled>
+                          Selecciona marca
                         </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
+                        {marcasList.map((marca) => (
+                          <option key={marca.id} value={marca.id}>
+                            {marca.nombre}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
-                <div className="grid grid-cols-2 gap-3.5">
-                  {/* Almacén / Sucursal */}
-                  <div className="col-span-2 sm:col-span-1">
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">
-                      Almacén / Sucursal
-                    </label>
-                    <select
-                      name="almacen_id"
-                      value={form.almacen_id}
-                      onChange={handleChange}
-                      required
-                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10 transition-all duration-150 cursor-pointer"
-                    >
-                      <option value="" disabled>
-                        Selecciona un almacén
-                      </option>
-                      {almacenesList.map((alm) => (
-                        <option key={alm.id} value={alm.id}>
-                          {alm.nombre} ({alm.codigo})
+                    {/* Almacén / Sucursal */}
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-450 mb-1">
+                        Almacén de Destino
+                      </label>
+                      <select
+                        name="almacen_id"
+                        value={form.almacen_id}
+                        onChange={handleChange}
+                        required
+                        className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-bold focus:outline-none focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5 transition-all duration-150 cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236b7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25rem_1.25rem] bg-[right_0.5rem_center] bg-no-repeat pr-8"
+                      >
+                        <option value="" disabled>
+                          Selecciona almacén
                         </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Existencias */}
-                  <div className="col-span-2 sm:col-span-1">
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">
-                      {selectedProducto
-                        ? "Stock Actual en Almacén"
-                        : "Existencias Iniciales"}
-                    </label>
-                    <input
-                      type="number"
-                      name="stock"
-                      min="0"
-                      value={form.stock}
-                      onChange={handleChange}
-                      required
-                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10 transition-all duration-150"
-                    />
+                        {almacenesList.map((alm) => (
+                          <option key={alm.id} value={alm.id}>
+                            {alm.nombre}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3.5">
-                  {/* Stock Mínimo */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">
-                      Stock Mínimo
-                    </label>
-                    <input
-                      type="number"
-                      name="stock_minimo"
-                      min="0"
-                      value={form.stock_minimo}
-                      onChange={handleChange}
-                      required
-                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10 transition-all duration-150"
-                    />
+                {/* SECCIÓN 3: CONTROL DE STOCK Y FINANZAS */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                  {/* CARD DE STOCK */}
+                  <div className="p-4 bg-slate-50/50 rounded-2xl border border-slate-100 space-y-3">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#1a2130]"></span>
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Control de Inventario</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      {/* Existencias */}
+                      <div>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-450 mb-1">
+                          {selectedProducto ? "Stock Actual" : "Existencias"}
+                        </label>
+                        <input
+                          type="number"
+                          name="stock"
+                          min="0"
+                          value={form.stock}
+                          onChange={handleChange}
+                          required
+                          className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 font-extrabold focus:outline-none focus:border-[#1a2130] focus:ring-4 focus:ring-[#1a2130]/5 transition-all duration-150"
+                        />
+                      </div>
+                      {/* Stock Mínimo */}
+                      <div>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-455 mb-1">
+                          Stock Mínimo
+                        </label>
+                        <input
+                          type="number"
+                          name="stock_minimo"
+                          min="0"
+                          value={form.stock_minimo}
+                          onChange={handleChange}
+                          required
+                          className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 font-bold focus:outline-none focus:border-[#1a2130] focus:ring-4 focus:ring-[#1a2130]/5 transition-all duration-150"
+                        />
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Precio Venta */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">
-                      P. Venta ($)
-                    </label>
-                    <input
-                      type="number"
-                      name="precio_venta"
-                      min="0"
-                      step="0.01"
-                      value={form.precio_venta}
-                      onChange={handleChange}
-                      required
-                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10 transition-all duration-150"
-                    />
+                  {/* CARD DE FINANZAS */}
+                  <div className="p-4 bg-slate-50/50 rounded-2xl border border-slate-100 space-y-3">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#1a2130]"></span>
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Precios y Costos</span>
+                    </div>
+                    <div className={`grid ${isAdmin ? "grid-cols-2" : "grid-cols-1"} gap-3`}>
+                      {/* Precio Venta */}
+                      <div>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-455 mb-1">
+                          Precio Venta
+                        </label>
+                        <div className="relative">
+                          <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 text-xs font-semibold">$</span>
+                          <input
+                            type="number"
+                            name="precio_venta"
+                            min="0"
+                            step="0.01"
+                            value={form.precio_venta}
+                            onChange={handleChange}
+                            required
+                            className="w-full bg-white border border-slate-200 rounded-xl pl-7 pr-3 py-2 text-xs text-slate-900 font-extrabold focus:outline-none focus:border-[#1a2130] focus:ring-4 focus:ring-[#1a2130]/5 transition-all duration-150"
+                          />
+                        </div>
+                      </div>
+                      {/* Precio Compra (Admin only) */}
+                      {isAdmin && (
+                        <div>
+                          <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-455 mb-1">
+                            Precio Compra
+                          </label>
+                          <div className="relative">
+                            <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 text-xs font-semibold">$</span>
+                            <input
+                              type="number"
+                              name="precio_compra"
+                              min="0"
+                              step="0.01"
+                              value={form.precio_compra}
+                              onChange={handleChange}
+                              required
+                              className="w-full bg-white border border-slate-200 rounded-xl pl-7 pr-3 py-2 text-xs text-slate-900 font-extrabold focus:outline-none focus:border-[#1a2130] focus:ring-4 focus:ring-[#1a2130]/5 transition-all duration-150"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-
-                {/* Costo Compra (Solo visible/editable para Admin) */}
-                {isAdmin && (
-                  <div>
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">
-                      P. Compra ($)
-                    </label>
-                    <input
-                      type="number"
-                      name="precio_compra"
-                      min="0"
-                      step="0.01"
-                      value={form.precio_compra}
-                      onChange={handleChange}
-                      required
-                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10 transition-all duration-150"
-                    />
-                  </div>
-                )}
 
                 {/* Activo / Inactivo */}
-                <div className="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                <div className="flex items-center gap-3 bg-slate-50/50 p-3.5 rounded-2xl border border-slate-100 pt-1">
                   <input
                     type="checkbox"
                     id="activo"
                     name="activo"
                     checked={form.activo}
                     onChange={handleChange}
-                    className="h-4 w-4 rounded border-slate-200 bg-white text-blue-600 focus:ring-blue-500 transition-all cursor-pointer"
+                    className="h-4 w-4 rounded border-slate-300 bg-white text-[#1a2130] focus:ring-[#1a2130] focus:ring-offset-0 transition-all cursor-pointer"
                   />
                   <label
                     htmlFor="activo"
-                    className="text-xs text-slate-700 font-semibold cursor-pointer select-none"
+                    className="text-xs text-slate-700 font-bold cursor-pointer select-none"
                   >
-                    El producto está activo en catálogo
+                    Habilitar producto en catálogo de ventas
                   </label>
                 </div>
               </div>
 
               {/* Acciones del Formulario */}
-              <div className="flex items-center justify-end gap-3 px-5 py-3.5 bg-slate-50 border-t border-slate-100 shrink-0">
+              <div className="flex items-center justify-end gap-3 px-6 py-4.5 bg-slate-50 border-t border-slate-100 shrink-0">
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="px-4 py-1.5 bg-red-500 text-xs font-semibold text-white hover:text-white hover:bg-red-400 rounded-xl transition-all cursor-pointer"
+                  className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-xs font-bold text-white rounded-xl transition-all active:scale-95 cursor-pointer shadow-sm shadow-red-600/10"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-4.5 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm hover:shadow transition-all duration-150 active:scale-98 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="px-6 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm shadow-blue-600/10 active:scale-95 cursor-pointer transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {submitting
                     ? "Guardando..."

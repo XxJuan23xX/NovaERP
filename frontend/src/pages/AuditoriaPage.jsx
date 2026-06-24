@@ -517,81 +517,85 @@ export default function AuditoriaPage() {
       {/* MODAL DETALLE DE AUDITORÍA */}
       {selectedLog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300">
-          <div className="w-full max-w-3xl bg-white border border-slate-100 p-8 rounded-2xl shadow-xl flex flex-col relative max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            {/* Botón Cerrar */}
-            <button
-              onClick={() => setSelectedLog(null)}
-              className="absolute right-4 top-4 p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-all cursor-pointer"
-            >
-              ❌
-            </button>
-
-            {/* Cabecera del Modal */}
-            <div className="mb-6 pb-4 border-b border-slate-100">
-              <h2 className="text-2xl font-extrabold text-slate-900 flex items-center gap-3">
-                <span>🔍</span> Detalle del Log #{selectedLog.id}
+          <div className="w-full max-w-3xl bg-white border border-slate-150 rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200 text-slate-800">
+            {/* Cabecera del Modal (Sin la X, minimalista y elegante) */}
+            <div className="px-6 py-5 bg-white border-b border-slate-100 shrink-0">
+              <h2 className="text-base font-extrabold tracking-tight" style={{ color: 'black' }}>
+                Detalle de Actividad — Log #{selectedLog.id}
               </h2>
-              <p className="mt-1 text-slate-500 text-xs font-semibold">
-                Registrado el {formatDateTime(selectedLog.created_at)}
+              <p className="text-[11px] text-slate-400 mt-0.5 font-medium">
+                Registro completo de auditoría para el control de seguridad y trazabilidad en el ERP
               </p>
             </div>
 
-            {/* Contenido del Modal (Scrollable si es largo) */}
-            <div className="flex-1 overflow-y-auto space-y-6 pr-1 select-text">
-              {/* Bloque Metadatos Básicos */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                <div>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
-                    Usuario
+            {/* Contenido del Modal (Scrollable) */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-5 select-text">
+              {/* SECCIÓN 1: METADATOS BÁSICOS */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 pb-1 border-b border-slate-100">
+                  <span className="text-[10px] font-bold text-[#1a2130] uppercase tracking-wider">
+                    1. Trazabilidad del Evento (¿Quién, cuándo y desde dónde?)
                   </span>
-                  <p className="text-xs font-extrabold text-slate-900 mt-0.5 truncate">
-                    {selectedLog.user ? selectedLog.user.name : "Sistema"}
-                  </p>
                 </div>
-                <div>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
-                    Módulo
-                  </span>
-                  <p className="text-xs font-extrabold text-slate-900 mt-0.5 uppercase">
-                    {selectedLog.modulo}
-                  </p>
-                </div>
-                <div>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
-                    Acción
-                  </span>
-                  <p className="text-xs font-extrabold text-slate-900 mt-0.5 uppercase font-mono">
-                    {selectedLog.accion}
-                  </p>
-                </div>
-                <div>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
-                    Dirección IP
-                  </span>
-                  <p className="text-xs font-extrabold text-slate-900 mt-0.5 font-mono">
-                    {selectedLog.ip_address || "No registrada"}
-                  </p>
+                
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-50/50 p-4 rounded-2xl border border-slate-100">
+                  <div>
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                      Usuario / Operador
+                    </span>
+                    <p className="text-xs font-extrabold text-slate-900 mt-0.5 truncate">
+                      {selectedLog.user ? selectedLog.user.name : "Sistema"}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                      Módulo Afectado
+                    </span>
+                    <p className="text-xs font-extrabold text-slate-900 mt-0.5 uppercase">
+                      {selectedLog.modulo}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                      Acción Ejecutada
+                    </span>
+                    <p className="text-xs font-extrabold text-slate-900 mt-0.5 uppercase font-mono">
+                      {selectedLog.accion}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                      Dirección IP
+                    </span>
+                    <p className="text-xs font-extrabold text-slate-900 mt-0.5 font-mono">
+                      {selectedLog.ip_address || "No registrada"}
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              {/* Descripción */}
-              <div className="flex flex-col gap-1.5">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                  Descripción del Evento
-                </span>
-                <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 text-xs font-bold text-slate-800 leading-relaxed">
+              {/* SECCIÓN 2: DESCRIPCIÓN DEL EVENTO */}
+              <div className="space-y-3 pt-1">
+                <div className="flex items-center gap-2 pb-1 border-b border-slate-100">
+                  <span className="text-[10px] font-bold text-[#1a2130] uppercase tracking-wider">
+                    2. Resumen de la Actividad (¿Qué sucedió?)
+                  </span>
+                </div>
+                <div className="p-4 bg-slate-50/50 rounded-2xl border border-slate-100 text-xs font-bold text-slate-800 leading-relaxed">
                   {selectedLog.descripcion}
                 </div>
               </div>
 
               {/* User Agent */}
               {selectedLog.user_agent && (
-                <div className="flex flex-col gap-1.5">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                    Dispositivo / Agente de Usuario
-                  </span>
+                <div className="space-y-2 pt-1">
+                  <div className="flex items-center gap-2 pb-1 border-b border-slate-100">
+                    <span className="text-[10px] font-bold text-[#1a2130] uppercase tracking-wider">
+                      Detalles del Dispositivo
+                    </span>
+                  </div>
                   <p
-                    className="text-[11px] font-semibold text-slate-500 font-mono bg-slate-50 p-2.5 rounded-lg border border-slate-100 truncate"
+                    className="text-[10px] font-bold text-slate-500 font-mono bg-slate-50/50 p-3 rounded-xl border border-slate-100 truncate"
                     title={selectedLog.user_agent}
                   >
                     {selectedLog.user_agent}
@@ -599,19 +603,22 @@ export default function AuditoriaPage() {
                 </div>
               )}
 
-              {/* COMPARATIVA DE CAMBIOS (Valores anteriores y nuevos) */}
+              {/* SECCIÓN 3: COMPARATIVA DE CAMBIOS */}
               {diffData.length > 0 && (
-                <div className="flex flex-col gap-3">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                    Comparativa de Cambios
-                  </span>
-                  <div className="border border-slate-100 rounded-xl overflow-hidden shadow-sm">
+                <div className="space-y-3 pt-1">
+                  <div className="flex items-center gap-2 pb-1 border-b border-slate-100">
+                    <span className="text-[10px] font-bold text-[#1a2130] uppercase tracking-wider">
+                      3. Comparativa de Cambios (Historial de Valores)
+                    </span>
+                  </div>
+                  
+                  <div className="border border-slate-100 rounded-2xl overflow-hidden bg-white shadow-sm">
                     <table className="w-full text-left text-xs border-collapse">
                       <thead>
                         <tr className="bg-slate-50 border-b border-slate-100 font-bold text-slate-500">
-                          <th className="px-4 py-2.5">Propiedad</th>
-                          <th className="px-4 py-2.5">Antes</th>
-                          <th className="px-4 py-2.5">Después</th>
+                          <th className="px-4 py-2.5 text-[10px] font-black uppercase text-slate-500">Propiedad</th>
+                          <th className="px-4 py-2.5 text-[10px] font-black uppercase text-slate-500">Valor Anterior</th>
+                          <th className="px-4 py-2.5 text-[10px] font-black uppercase text-slate-500">Valor Nuevo</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
@@ -623,10 +630,10 @@ export default function AuditoriaPage() {
                             <td className="px-4 py-2.5 font-bold font-mono text-slate-700">
                               {field.key}
                             </td>
-                            <td className="px-4 py-2.5 text-slate-500 font-medium">
+                            <td className="px-4 py-2.5 text-slate-500 font-semibold">
                               {field.prev !== null ? (
                                 typeof field.prev === "object" ? (
-                                  <pre className="text-[10px] font-mono whitespace-pre-wrap">
+                                  <pre className="text-[10px] font-mono whitespace-pre-wrap font-bold">
                                     {JSON.stringify(field.prev)}
                                   </pre>
                                 ) : (
@@ -634,16 +641,16 @@ export default function AuditoriaPage() {
                                 )
                               ) : (
                                 <span className="text-slate-300 italic">
-                                  nulo/vacío
+                                  nulo / vacío
                                 </span>
                               )}
                             </td>
                             <td
-                              className={`px-4 py-2.5 font-bold ${field.isChanged ? "text-amber-600" : "text-slate-600 font-medium"}`}
+                              className={`px-4 py-2.5 font-extrabold ${field.isChanged ? "text-amber-600" : "text-slate-600"}`}
                             >
                               {field.next !== null ? (
                                 typeof field.next === "object" ? (
-                                  <pre className="text-[10px] font-mono whitespace-pre-wrap">
+                                  <pre className="text-[10px] font-mono whitespace-pre-wrap font-bold">
                                     {JSON.stringify(field.next)}
                                   </pre>
                                 ) : (
@@ -665,12 +672,12 @@ export default function AuditoriaPage() {
             </div>
 
             {/* Pie del modal */}
-            <div className="mt-6 pt-4 border-t border-slate-100 flex justify-end">
+            <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end shrink-0">
               <button
                 onClick={() => setSelectedLog(null)}
-                className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-xl shadow transition-all duration-150 active:scale-95 cursor-pointer"
+                className="px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-xs font-bold text-white rounded-xl transition-all active:scale-95 cursor-pointer shadow-sm shadow-slate-800/10"
               >
-                Entendido
+                Cerrar Detalle
               </button>
             </div>
           </div>
